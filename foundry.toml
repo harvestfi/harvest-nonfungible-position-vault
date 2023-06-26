@@ -1,6 +1,16 @@
 [profile.default]
-src = "src"
-out = "out"
-libs = ["lib"]
+solc_version = '0.8.17'
+optimizer = false
+fs_permissions = [{ access = "read-write", path = "./"}]
+
+[profile.optimized]
+optimizer = true
+optimizer_runs = 10000
+fs_permissions = [{ access = "read-write", path = "./"}]
+
+[fmt]
+line_length=130
+tab_width=4
+func_attrs_with_params_multiline=true
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
