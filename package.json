@@ -1,0 +1,33 @@
+{
+  "name": "harvest-nonfungible-position-vault",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "private": false,
+  "scripts": {
+    "postinstall": "husky install",
+    "prepack": "pinst --disable",
+    "postpack": "pinst --enable"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/harvestfi/harvest-nonfungible-position-vault.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/harvestfi/harvest-nonfungible-position-vault/issues"
+  },
+  "homepage": "https://github.com/harvestfi/harvest-nonfungible-position-vault#readme",
+  "devDependencies": {
+    "@commitlint/cli": "^17.6.6",
+    "@commitlint/config-conventional": "^17.6.6",
+    "husky": "^8.0.3",
+    "pinst": "^3.0.0"
+  }
+}
