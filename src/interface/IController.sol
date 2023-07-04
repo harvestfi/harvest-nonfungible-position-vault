@@ -1,4 +1,4 @@
-pragma solidity 0.7.6;
+pragma solidity 0.8.17;
 
 interface IController {
     function addVaultAndStrategy(address _vault, address _strategy) external;

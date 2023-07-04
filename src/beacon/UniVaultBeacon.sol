@@ -1,4 +1,4 @@
-pragma solidity 0.7.6;
+pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts/proxy/UpgradeableBeacon.sol";
 import "@openzeppelin/contracts-upgradeable/math/SafeMathUpgradeable.sol";

@@ -1,4 +1,4 @@
-pragma solidity 0.7.6;
+pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts/proxy/UpgradeableProxy.sol";
 import "./interface/IUniVaultV1.sol";
