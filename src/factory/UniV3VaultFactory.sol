@@ -1,3 +1,4 @@
+//SPDX-License-Identifier: Unlicense
 pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -69,18 +70,18 @@ contract UniV3VaultFactory is Ownable {
 
         UniVaultStorageV1 vaultStorage = new UniVaultStorageV1(address(vaultProxy));
 
-        IUniVaultV1 vault = IUniVaultV1(address(vaultProxy));
-        vault.initialize(
+        IUniVaultV1 _vault = IUniVaultV1(address(vaultProxy));
+        _vault.initialize(
             univ3PoolId,
             address(vaultStorage),
             address(this), // using the fake storage at first
             zap
         );
 
-        vault.configureVault(depositSubmodule, feeRewardForwarder, profitSharingRatio, platformFeeCollector, platformFeeRatio);
+        _vault.configureVault(depositSubmodule, feeRewardForwarder, profitSharingRatio, platformFeeCollector, platformFeeRatio);
 
-        GovernableInit(address(vault)).setStorage(store); // setting to the right storage
-        lastDeployedAddress = address(vault);
+        GovernableInit(address(_vault)).setStorage(store); // setting to the right storage
+        lastDeployedAddress = address(_vault);
         return lastDeployedAddress;
     }
 
@@ -97,38 +98,38 @@ contract UniV3VaultFactory is Ownable {
 
         UniVaultStorageV1 vaultStorage = new UniVaultStorageV1(address(vaultProxy));
 
-        IUniVaultV1 vault = IUniVaultV1(address(vaultProxy));
-        vault.initialize(
+        IUniVaultV1 _vault = IUniVaultV1(address(vaultProxy));
+        _vault.initialize(
             univ3PoolIds[0],
             address(vaultStorage),
             address(this), // using the fake storage at first
             zap
         );
 
-        vault.configureVault(
+        _vault.configureVault(
             depositSubmoduleManaged, feeRewardForwarder, profitSharingRatio, platformFeeCollector, platformFeeRatio
         );
 
         require(changeRangeSubmoduleManaged != address(0), "change range submodule not defined");
-        vault.setSubmodule(bytes32(keccak256("changeRange")), changeRangeSubmoduleManaged);
+        _vault.setSubmodule(bytes32(keccak256("changeRange")), changeRangeSubmoduleManaged);
 
         // transferring other position tokens
         for (uint256 i = 1; i < univ3PoolIds.length; i++) {
             uniV3posManager.transferFrom(address(this), address(vaultProxy), univ3PoolIds[i]);
         }
-        IUniVaultSubmoduleChangeRangeV2Managed(address(vault)).addPositionIds(univ3PoolIds);
+        IUniVaultSubmoduleChangeRangeV2Managed(address(_vault)).addPositionIds(univ3PoolIds);
 
-        GovernableInit(address(vault)).setStorage(store); // setting to the right storage
-        lastDeployedAddress = address(vault);
+        GovernableInit(address(_vault)).setStorage(store); // setting to the right storage
+        lastDeployedAddress = address(_vault);
         return lastDeployedAddress;
     }
 
-    function info(address vault)
+    function info(address _vault)
         external
         view
         returns (address[] memory Underlying, address NewVault, address DataContract, uint256 FeeAmount, uint256 PosId)
     {
-        DataContract = address(IUniVaultV1(vault).getStorage());
+        DataContract = address(IUniVaultV1(_vault).getStorage());
         PosId = IUniVaultStorageV1(DataContract).posId();
         address token0;
         address token1;
@@ -139,7 +140,7 @@ contract UniV3VaultFactory is Ownable {
         Underlying = new address[](2);
         Underlying[0] = token0;
         Underlying[1] = token1;
-        NewVault = vault;
+        NewVault = _vault;
         FeeAmount = uint256(fee);
     }
 

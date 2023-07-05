@@ -116,10 +116,10 @@ contract UniVaultSubmoduleRewardV1LiquidateOnly is ReentrancyGuardUpgradeable, C
 
     // rewardToken to liquidate
     // guarded by onlyGovernance
-    function setLiquidationPath(address rewardToken, bytes32[] memory _dexes, address[] memory _path) public onlyGovernance {
+    function setLiquidationPath(address _rewardToken, bytes32[] memory _dexes, address[] memory _path) public onlyGovernance {
         LocalStorage storage localStorage = getLocalStorage();
-        localStorage.dexes[rewardToken] = _dexes;
-        localStorage.path[rewardToken] = _path;
+        localStorage.dexes[_rewardToken] = _dexes;
+        localStorage.path[_rewardToken] = _path;
     }
 
     // Guarded by onlyGovernance in the main contract.
@@ -157,18 +157,17 @@ contract UniVaultSubmoduleRewardV1LiquidateOnly is ReentrancyGuardUpgradeable, C
         LocalStorage storage localStorage = getLocalStorage();
 
         uint256 rewardCount = localStorage.tokens.length;
-        uint256 profitShareRatio = getStorage().profitShareRatio();
 
         for (uint256 i = 0; i < rewardCount; i++) {
-            address rewardToken = localStorage.tokens[i];
-            uint256 remainingAmount = IERC20Upgradeable(rewardToken).balanceOf(address(this));
+            address _rewardToken = localStorage.tokens[i];
+            uint256 remainingAmount = IERC20Upgradeable(_rewardToken).balanceOf(address(this));
             if (remainingAmount > 0) {
                 address ulAddress = IUniversalLiquidatorRegistry(_UL_REGISTRY_ADDRESS).universalLiquidator();
 
-                IERC20Upgradeable(rewardToken).safeApprove(ulAddress, 0);
-                IERC20Upgradeable(rewardToken).safeApprove(ulAddress, remainingAmount);
+                IERC20Upgradeable(_rewardToken).safeApprove(ulAddress, 0);
+                IERC20Upgradeable(_rewardToken).safeApprove(ulAddress, remainingAmount);
                 IUniversalLiquidator(ulAddress).swapTokenOnMultipleDEXes(
-                    remainingAmount, 0, address(this), localStorage.dexes[rewardToken], localStorage.path[rewardToken]
+                    remainingAmount, 0, address(this), localStorage.dexes[_rewardToken], localStorage.path[_rewardToken]
                 );
             }
         }
