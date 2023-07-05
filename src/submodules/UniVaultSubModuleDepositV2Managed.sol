@@ -70,7 +70,7 @@ contract UniVaultSubmoduleDepositV2Managed is UniVaultSubmoduleDepositV1 {
         }
     }
 
-    function withdraw(uint256, bool, bool, uint256, uint256) public override returns (uint256, uint256) {
+    function withdraw(uint256, bool, bool, uint256, uint256) public pure override returns (uint256, uint256) {
         revert("please use new interface for withdraw()");
     }
 
@@ -157,7 +157,7 @@ contract UniVaultSubmoduleDepositV2Managed is UniVaultSubmoduleDepositV1 {
         return currentValueInCapToken() >= localStorage.capInCapToken;
     }
 
-    function deposit(uint256, uint256, bool, bool, uint256, uint256) public override returns (uint256, uint256) {
+    function deposit(uint256, uint256, bool, uint256, uint256) public pure override returns (uint256, uint256) {
         revert("please use new interface for deposit()");
     }
 
@@ -176,7 +176,12 @@ contract UniVaultSubmoduleDepositV2Managed is UniVaultSubmoduleDepositV1 {
         );
     }
 
-    function migrateToNftFromV2(uint256, uint256, uint256, bool, uint256, uint256) public override returns (uint256, uint256) {
+    function migrateToNftFromV2(uint256, uint256, uint256, bool, uint256, uint256)
+        public
+        pure
+        override
+        returns (uint256, uint256)
+    {
         revert("please use new interface for migrateToNftFromV2");
     }
 

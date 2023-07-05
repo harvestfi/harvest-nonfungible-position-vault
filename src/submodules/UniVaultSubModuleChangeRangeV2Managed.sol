@@ -66,7 +66,7 @@ contract UniVaultSubmoduleChangeRangeV2Managed is UniVaultSubmoduleChangeRangeV1
         localStorage.sellPath = newSellPath;
     }
 
-    function isManaged() public view returns (bool) {
+    function isManaged() public pure returns (bool) {
         return true;
     }
 
@@ -121,7 +121,7 @@ contract UniVaultSubmoduleChangeRangeV2Managed is UniVaultSubmoduleChangeRangeV1
     }
 
     function isInRange(uint256 positionId) public view returns (bool) {
-        (,, address _token0, address _token1, uint24 _fee, int24 _tickLower, int24 _tickUpper, uint128 _liquidity,,,,) =
+        (,, address _token0, address _token1, uint24 _fee, int24 _tickLower, int24 _tickUpper,,,,,) =
             INonfungiblePositionManager(_NFT_POSITION_MANAGER).positions(positionId);
         uint160 sqrtRatioX96 = getSqrtPriceX96(_token0, _token1, _fee);
         uint160 sqrtRatioXA96 = TickMath.getSqrtRatioAtTick(_tickLower);
