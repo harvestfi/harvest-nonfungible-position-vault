@@ -1,3 +1,4 @@
+//SPDX-License-Identifier: Unlicense
 pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
