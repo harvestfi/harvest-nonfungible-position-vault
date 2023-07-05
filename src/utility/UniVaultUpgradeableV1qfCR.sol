@@ -69,7 +69,7 @@ contract UniVaultUpgradeableV1qfCR is ERC20Upgradeable, ERC721HolderUpgradeable,
         token1().safeApprove(_NFT_POSITION_MANAGER, 0);
         token1().safeApprove(_NFT_POSITION_MANAGER, _initAmount1);
 
-        (uint256 _tokenId, uint128 _initialLiquidity,,) = INonfungiblePositionManager(_NFT_POSITION_MANAGER).mint(
+        INonfungiblePositionManager(_NFT_POSITION_MANAGER).mint(
             INonfungiblePositionManager.MintParams({
                 token0: address(token0()),
                 token1: address(token1()),
@@ -103,7 +103,7 @@ contract UniVaultUpgradeableV1qfCR is ERC20Upgradeable, ERC721HolderUpgradeable,
         uint256 oldPosId = getStorage().posId();
 
         // remove liquidity from old
-        (uint256 _receivedToken0, uint256 _receivedToken1) = INonfungiblePositionManager(_NFT_POSITION_MANAGER).decreaseLiquidity(
+        INonfungiblePositionManager(_NFT_POSITION_MANAGER).decreaseLiquidity(
             INonfungiblePositionManager.DecreaseLiquidityParams({
                 tokenId: oldPosId,
                 liquidity: _oldLiquidity,
@@ -143,7 +143,7 @@ contract UniVaultUpgradeableV1qfCR is ERC20Upgradeable, ERC721HolderUpgradeable,
         token1().safeApprove(_NFT_POSITION_MANAGER, 0);
         token1().safeApprove(_NFT_POSITION_MANAGER, _amount1);
         // increase the liquidity
-        (uint128 _liquidity,,) = INonfungiblePositionManager(_NFT_POSITION_MANAGER).increaseLiquidity(
+        INonfungiblePositionManager(_NFT_POSITION_MANAGER).increaseLiquidity(
             INonfungiblePositionManager.IncreaseLiquidityParams({
                 tokenId: getStorage().posId(),
                 amount0Desired: _amount0,

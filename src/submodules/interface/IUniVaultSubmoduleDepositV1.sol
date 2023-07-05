@@ -24,7 +24,7 @@ interface IUniVaultSubmoduleDepositV1 {
         uint160 _sqrtPriceLimitX96
     ) external returns (uint256, uint256);
 
-    function deposit(uint256 _amount0, uint256 _amount1, bool _zapFunds, bool _sweep, uint256 _sqrtRatioX96, uint256 _tolerance)
+    function deposit(uint256 _amount0, uint256 _amount1, bool _zapFunds, uint256 _sqrtRatioX96, uint256 _tolerance)
         external
         returns (uint256, uint256);
 

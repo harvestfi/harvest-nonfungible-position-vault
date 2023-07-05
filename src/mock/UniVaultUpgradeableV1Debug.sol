@@ -138,23 +138,15 @@ contract UniVaultUpgradeableV1Debug is ERC20Upgradeable, ERC721HolderUpgradeable
 
     /**
      * Removes the liquidity from v2 and deposits it into v3
-     * @param _amount the amount of the V2 tokens to migrate
-     * @param _minAmount0 the amount of token0 that needs to be extracted from the v2 pair
-     * @param _minAmount1 the amount of token1 that needs to be extracted from the v2 pair
-     * @param _zapFunds indicates if the tokens should be traded to the required ratio
-     * @param _sweep indicates if the tokens left over should be send to the msg.sender
      * @param _sqrtRatioX96 the sqrtRatioX96 when the transaction is being submitted
      * @param _tolerance indicates the maximum accepted deviation in percents (100% is 1000) from the ratio
      */
-    function migrateToNftFromV2(
-        uint256 _amount,
-        uint256 _minAmount0,
-        uint256 _minAmount1,
-        bool _zapFunds,
-        bool _sweep,
-        uint256 _sqrtRatioX96,
-        uint256 _tolerance
-    ) public checkSqrtPriceX96(_sqrtRatioX96, _tolerance) nonReentrant checkSubmoduleConfig {
+    function migrateToNftFromV2(uint256 _sqrtRatioX96, uint256 _tolerance)
+        public
+        checkSqrtPriceX96(_sqrtRatioX96, _tolerance)
+        nonReentrant
+        checkSubmoduleConfig
+    {
         (bool success, bytes memory data) = (getAddress(_VAULT_SUBMODULE_DEPOSIT_SLOT)).delegatecall(msg.data);
         string memory revertMsg = data._getRevertMsgFromRes();
         require(success, revertMsg);
@@ -162,14 +154,10 @@ contract UniVaultUpgradeableV1Debug is ERC20Upgradeable, ERC721HolderUpgradeable
 
     /**
      * @dev Makes a deposit for the sender.
-     * @param _amount0 the amount of token0 to deposit
-     * @param _amount1 the amount of token1 to deposit
-     * @param _zapFunds indicates if the tokens should be traded to the required ratio
-     * @param _sweep indicates if the tokens left over should be send to the msg.sender
      * @param _sqrtRatioX96 the sqrtRatioX96 when the transaction is being submitted
      * @param _tolerance indicates the maximum accepted deviation in percents (100% is 1000) from the ratio
      */
-    function deposit(uint256 _amount0, uint256 _amount1, bool _zapFunds, bool _sweep, uint256 _sqrtRatioX96, uint256 _tolerance)
+    function deposit(uint256 _sqrtRatioX96, uint256 _tolerance)
         public
         checkSqrtPriceX96(_sqrtRatioX96, _tolerance)
         nonReentrant
@@ -182,13 +170,10 @@ contract UniVaultUpgradeableV1Debug is ERC20Upgradeable, ERC721HolderUpgradeable
 
     /**
      * @dev Makes a deposit for the sender by extracting funds from a matching NFT.
-     * @param _tokenId the ID of the NFT to extract funds from
-     * @param _zapFunds indicates if the tokens should be traded to the required ratio
-     * @param _sweep indicates if the tokens left over should be send to the msg.sender
      * @param _sqrtRatioX96 the sqrtRatioX96 when the transaction is being submitted
      * @param _tolerance indicates the maximum accepted deviation in percents (100% is 1000) from the ratio
      */
-    function depositNFT(uint256 _tokenId, bool _zapFunds, bool _sweep, uint256 _sqrtRatioX96, uint256 _tolerance)
+    function depositNFT(uint256 _sqrtRatioX96, uint256 _tolerance)
         public
         checkSqrtPriceX96(_sqrtRatioX96, _tolerance)
         nonReentrant
@@ -201,13 +186,10 @@ contract UniVaultUpgradeableV1Debug is ERC20Upgradeable, ERC721HolderUpgradeable
 
     /**
      * @dev Withdraws shares from the vault in the form of the underlying tokens
-     * @param _numberOfShares how many shares should be burned and withdrawn
-     * @param _token0 false if the sender wants only token1's
-     * @param _token1 false if the sender wants only token0's
      * @param _sqrtRatioX96 the sqrtRatioX96 when the transaction is being submitted
      * @param _tolerance indicates the maximum accepted deviation in percents (100% is 1000) from the ratio
      */
-    function withdraw(uint256 _numberOfShares, bool _token0, bool _token1, uint256 _sqrtRatioX96, uint256 _tolerance)
+    function _withdraw(uint256 _sqrtRatioX96, uint256 _tolerance)
         public
         checkSqrtPriceX96(_sqrtRatioX96, _tolerance)
         nonReentrant
@@ -222,12 +204,11 @@ contract UniVaultUpgradeableV1Debug is ERC20Upgradeable, ERC721HolderUpgradeable
      * @dev Withdraws shares from the vault in the form of the underlying tokens. Both the tokens
      * will be withdrawn as returned by Uniswap. The method is safeguarded in the modifier
      * in the underlying method.
-     * @param _numberOfShares how many shares should be burned and withdrawn
      * @param _sqrtRatioX96 the sqrtRatioX96 when the transaction is being submitted
      * @param _tolerance indicates the maximum accepted deviation in percents (100% is 1000) from the ratio
      */
-    function withdraw(uint256 _numberOfShares, uint256 _sqrtRatioX96, uint256 _tolerance) external nonReentrant {
-        withdraw(_numberOfShares, true, true, _sqrtRatioX96, _tolerance);
+    function withdraw(uint256 _sqrtRatioX96, uint256 _tolerance) external nonReentrant {
+        _withdraw(_sqrtRatioX96, _tolerance);
     }
 
     /**

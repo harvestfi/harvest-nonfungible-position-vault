@@ -1,3 +1,4 @@
+//SPDX-License-Identifier: Unlicense
 pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
@@ -17,7 +18,7 @@ contract UniVaultProxy is ERC1967Proxy {
 
         // the finalization needs to be executed on itself to update the storage of this proxy
         // it also needs to be invoked by the governance, not by address(this), so delegatecall is needed
-        (bool success, bytes memory result) = address(this).delegatecall(abi.encodeWithSignature("finalizeUpgrade()"));
+        (bool success,) = address(this).delegatecall(abi.encodeWithSignature("finalizeUpgrade()"));
 
         require(success, "Issue when finalizing the upgrade");
     }

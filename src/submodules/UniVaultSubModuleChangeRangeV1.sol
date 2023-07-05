@@ -103,7 +103,7 @@ contract UniVaultSubmoduleChangeRangeV1 is ReentrancyGuardUpgradeable, Controlla
         uint256 oldPosId = getStorage().posId();
 
         // remove liquidity from old
-        (uint256 _receivedToken0, uint256 _receivedToken1) = INonfungiblePositionManager(_NFT_POSITION_MANAGER).decreaseLiquidity(
+        INonfungiblePositionManager(_NFT_POSITION_MANAGER).decreaseLiquidity(
             INonfungiblePositionManager.DecreaseLiquidityParams({
                 tokenId: oldPosId,
                 liquidity: _oldLiquidity,
@@ -143,7 +143,7 @@ contract UniVaultSubmoduleChangeRangeV1 is ReentrancyGuardUpgradeable, Controlla
         token1().safeApprove(_NFT_POSITION_MANAGER, 0);
         token1().safeApprove(_NFT_POSITION_MANAGER, _amount1);
         // increase the liquidity
-        (uint128 _liquidity,,) = INonfungiblePositionManager(_NFT_POSITION_MANAGER).increaseLiquidity(
+        INonfungiblePositionManager(_NFT_POSITION_MANAGER).increaseLiquidity(
             INonfungiblePositionManager.IncreaseLiquidityParams({
                 tokenId: getStorage().posId(),
                 amount0Desired: _amount0,
