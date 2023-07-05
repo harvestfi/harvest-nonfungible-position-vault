@@ -1,6 +1,6 @@
 [profile.default]
 solc_version = '0.8.17'
-optimizer = false
+optimizer = true
 fs_permissions = [{ access = "read-write", path = "./"}]
 
 [profile.optimized]
