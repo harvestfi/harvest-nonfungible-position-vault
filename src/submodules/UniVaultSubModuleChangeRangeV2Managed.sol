@@ -11,7 +11,7 @@ import "../interface/uniswapV2/IUniswapV2Router02.sol";
 contract UniVaultSubmoduleChangeRangeV2Managed is UniVaultSubmoduleChangeRangeV1 {
     using SafeMathUpgradeable for uint256;
 
-    uint256 internal constant INDEX_NOT_FOUND = uint256(-1);
+    uint256 internal constant INDEX_NOT_FOUND = type(uint256).max;
     bytes32 internal constant _LOCAL_STORAGE_SLOT_V2_MANAGED = 0x06bc87915c202efffe30f9e888a1400ac812e3fce7b75d676c422e2b1ca89608;
 
     event RangeChanged(uint256 oldPosId, uint256 newPosId, uint256 original0, uint256 original1, uint256 final0, uint256 final1);

@@ -12,8 +12,8 @@ contract BoredSwapper {
     constructor() {}
 
     function accrueFees(address originToken, address intermediateToken, uint24 fee, uint256 originTokenAmountIn) public {
-        IERC20Upgradeable(originToken).approve(_SWAP_ROUTER, uint256(-1));
-        IERC20Upgradeable(intermediateToken).approve(_SWAP_ROUTER, uint256(-1));
+        IERC20Upgradeable(originToken).approve(_SWAP_ROUTER, type(uint256).max);
+        IERC20Upgradeable(intermediateToken).approve(_SWAP_ROUTER, type(uint256).max);
 
         uint256 intermediateBalanceBefore = IERC20Upgradeable(intermediateToken).balanceOf(address(this));
 

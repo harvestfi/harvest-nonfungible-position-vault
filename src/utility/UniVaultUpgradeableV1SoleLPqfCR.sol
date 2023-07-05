@@ -108,8 +108,8 @@ contract UniVaultUpgradeableV1SoleLPqfCR is
             INonfungiblePositionManager.CollectParams({
                 tokenId: getStorage().posId(),
                 recipient: address(this),
-                amount0Max: uint128(-1), // collect all token0 (since we are changing ranges)
-                amount1Max: uint128(-1) // collect all token1 (since we are changing ranges)
+                amount0Max: type(uint128).max, // collect all token0 (since we are changing ranges)
+                amount1Max: type(uint128).max // collect all token1 (since we are changing ranges)
             })
         );
 
