@@ -2,11 +2,9 @@
 pragma solidity 0.8.17;
 pragma experimental ABIEncoderV2;
 
-import "hardhat/console.sol";
-
 // ERC20
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/math/SafeMathUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 
 // Harvest
 import "./interface/IUniVaultV1.sol";
