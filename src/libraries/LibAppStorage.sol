@@ -7,6 +7,11 @@ struct AppStorage {
     bool systemInitialized;
     address governance;
     address controller;
+    // Fee Reward Shares
+    address feeRewardForwarder;
+    address platformTarget;
+    uint256 feeRatio;
+    uint256 platformRatio;
     /// Simple two phase upgrade scheme
     mapping(bytes32 => uint256) upgradeScheduled; // id of the upgrade => the time that the upgrade is valid until.
     uint256 upgradeExpiration;
@@ -14,6 +19,13 @@ struct AppStorage {
     address token0;
     address token1;
     uint24 fee;
+    int24 tickLower;
+    int24 tickUpper;
+    uint256 initialLiquidity;
+    uint256 tokenId;
+    // External
+    address nonFungibleTokenPositionManager;
+    address masterChef;
 }
 
 library LibAppStorage {
