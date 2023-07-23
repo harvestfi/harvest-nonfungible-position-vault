@@ -8,7 +8,7 @@ import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Factory.sol";
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 
 // Libraries
-import {AppStorage, LibAppStorage} from "../core/AppStorage.sol";
+import {AppStorage, LibAppStorage} from "../libraries/LibAppStorage.sol";
 import {LibHelpers} from "../libraries/LibHelpers.sol";
 import {LibErrors} from "../libraries/LibErrors.sol";
 import {LibConstants} from "../libraries/LibConstants.sol";

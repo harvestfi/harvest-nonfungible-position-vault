@@ -14,7 +14,7 @@ pragma solidity 0.8.17;
 import {ISubmoduleUpgrade} from "../interfaces/libraries/ISubmoduleUpgrade.sol";
 
 // Libraries
-import {AppStorage, LibAppStorage} from "../core/AppStorage.sol";
+import {AppStorage, LibAppStorage} from "./LibAppStorage.sol";
 import {LibHelpers} from "./LibHelpers.sol";
 import {LibDataTypes} from "./LibDataTypes.sol";
 import {LibErrors} from "./LibErrors.sol";
