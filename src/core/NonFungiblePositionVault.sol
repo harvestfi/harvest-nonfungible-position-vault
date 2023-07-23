@@ -4,7 +4,7 @@ pragma solidity 0.8.17;
 // Libraries
 import {LibFunctionRouter} from "../libraries/LibFunctionRouter.sol";
 
-contract NonFungiblePositionDiamondVault {
+contract NonFungiblePositionVault {
     constructor(address _contractOwner, address _governance, address _controller) payable {
         LibFunctionRouter.setContractOwner(_contractOwner);
         LibFunctionRouter.setGovernance(_governance);
