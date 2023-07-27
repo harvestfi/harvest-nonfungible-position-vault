@@ -14,7 +14,7 @@ import {LibDataTypes} from "../../libraries/LibDataTypes.sol";
 interface IFunctionInfoSubmodule {
     /// @notice Gets all submodule addresses and their four byte function selectors.
     /// @return submodules_ Submodule
-    function submodules() external view returns (LibDataTypes.Submodule[] memory submodules_);
+    function submodules() external view returns (LibDataTypes.SubmoduleUpgrade[] memory submodules_);
 
     /// @notice Gets all the function selectors supported by a specific submodule.
     /// @param _submodule The submodule address.
