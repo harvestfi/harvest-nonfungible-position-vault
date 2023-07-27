@@ -4,7 +4,7 @@ pragma solidity 0.8.17;
 // Helpers
 import {Modifiers} from "../core/Modifiers.sol";
 
-contract ConfigureSubmodule is Modifiers {
+contract VaultInfoSubmodule is Modifiers {
 /**
  * @dev Returns the total liquidity stored in the position
  * Dev Note: need to turn on the solc optimizer otherwise the compiler
