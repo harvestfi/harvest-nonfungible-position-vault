@@ -11,7 +11,7 @@ import {LibEvents} from "../libraries/LibEvents.sol";
 // Helpers
 import {Modifiers} from "../core/Modifiers.sol";
 
-contract GovernanceFacet is Modifiers, IGovernanceSubmodule {
+contract GovernanceSubmodule is Modifiers, IGovernanceSubmodule {
     AppStorage internal s;
     /**
      * @notice Check if the system has been initialized.
