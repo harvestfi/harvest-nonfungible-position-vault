@@ -11,7 +11,12 @@ pragma solidity 0.8.17;
  */
 
 // Interfaces
-import {ISubmoduleUpgrade} from "../interfaces/libraries/ISubmoduleUpgrade.sol";
+import {IERC165} from "../interfaces/shared/IERC165.sol";
+import {IERC173} from "../interfaces/shared/IERC173.sol";
+import {IUpgradeSubmodule} from "../interfaces/submodules/IUpgradeSubmodule.sol";
+import {IFunctionInfoSubmodule} from "../interfaces/submodules/IFunctionInfoSubmodule.sol";
+import {IConfigureSubmodule} from "../interfaces/submodules/IConfigureSubmodule.sol";
+import {IGovernanceSubmodule} from "../interfaces/submodules/IGovernanceSubmodule.sol";
 
 // Libraries
 import {AppStorage, LibAppStorage} from "./LibAppStorage.sol";
@@ -83,74 +88,53 @@ library LibFunctionRouter {
         s.upgradeExpiration = 1 weeks;
     }
 
-    // FIXME
-    /*
     function addSubmoduleFunctions(
-        address _diamondCutFacet,
-        address _diamondLoupeFacet,
-        address _ownershipFacet,
-        address _aclFacet,
-        address _governanceFacet
+        address _upgradeSubmodule,
+        address _functionInfoSubmodule,
+        address _configureSubmodule,
+        address _governanceSubmodule
     ) internal {
-        
-        LibDataTypes.SubmoduleUpgrade[] memory cut = new LibDataTypes.SubmoduleUpgrade[](5);
+        LibDataTypes.SubmoduleUpgrade[] memory upgrade = new LibDataTypes.SubmoduleUpgrade[](4);
         bytes4[] memory functionSelectors = new bytes4[](1);
-        functionSelectors[0] = ISubmoduleUpgrade.submoduleUpgrade.selector;
-        cut[0] = LibDataTypes.SubmoduleUpgrade({
-            facetAddress: _diamondCutFacet,
+        functionSelectors[0] = IUpgradeSubmodule.submoduleUpgrade.selector;
+        upgrade[0] = LibDataTypes.SubmoduleUpgrade({
+            submoduleAddress: _upgradeSubmodule,
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
             functionSelectors: functionSelectors
         });
         functionSelectors = new bytes4[](5);
-        functionSelectors[0] = IDiamondLoupe.facets.selector;
-        functionSelectors[1] = IDiamondLoupe.facetFunctionSelectors.selector;
-        functionSelectors[2] = IDiamondLoupe.facetAddresses.selector;
-        functionSelectors[3] = IDiamondLoupe.facetAddress.selector;
+        functionSelectors[0] = IFunctionInfoSubmodule.submodules.selector;
+        functionSelectors[1] = IFunctionInfoSubmodule.submoduleFunctionSelectors.selector;
+        functionSelectors[2] = IFunctionInfoSubmodule.submoduleAddresses.selector;
+        functionSelectors[3] = IFunctionInfoSubmodule.submoduleAddress.selector;
         functionSelectors[4] = IERC165.supportsInterface.selector;
-        cut[1] = LibDataTypes.SubmoduleUpgrade({
-            facetAddress: _diamondLoupeFacet,
+        upgrade[1] = LibDataTypes.SubmoduleUpgrade({
+            submoduleAddress: _functionInfoSubmodule,
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
             functionSelectors: functionSelectors
         });
         functionSelectors = new bytes4[](2);
-        functionSelectors[0] = IERC173.transferOwnership.selector;
-        functionSelectors[1] = IERC173.owner.selector;
-        cut[2] = LibDataTypes.SubmoduleUpgrade({
-            facetAddress: _ownershipFacet,
-            action: LibDataTypes.SubmoduleUpgradeAction.Add,
-            functionSelectors: functionSelectors
-        });
-        functionSelectors = new bytes4[](10);
-        functionSelectors[0] = IACLFacet.assignRole.selector;
-        functionSelectors[1] = IACLFacet.unassignRole.selector;
-        functionSelectors[2] = IACLFacet.isInGroup.selector;
-        functionSelectors[3] = IACLFacet.isParentInGroup.selector;
-        functionSelectors[4] = IACLFacet.canAssign.selector;
-        functionSelectors[5] = IACLFacet.getRoleInContext.selector;
-        functionSelectors[6] = IACLFacet.isRoleInGroup.selector;
-        functionSelectors[7] = IACLFacet.canGroupAssignRole.selector;
-        functionSelectors[8] = IACLFacet.updateRoleAssigner.selector;
-        functionSelectors[9] = IACLFacet.updateRoleGroup.selector;
-        cut[3] = LibDataTypes.SubmoduleUpgrade({
-            facetAddress: _aclFacet,
+        functionSelectors[0] = IConfigureSubmodule.configureFees.selector;
+        functionSelectors[1] = IConfigureSubmodule.setVaultPause.selector;
+        upgrade[2] = LibDataTypes.SubmoduleUpgrade({
+            submoduleAddress: _configureSubmodule,
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
             functionSelectors: functionSelectors
         });
         functionSelectors = new bytes4[](6);
-        functionSelectors[0] = IGovernanceFacet.isSystemInitialized.selector;
-        functionSelectors[1] = IGovernanceFacet.createUpgrade.selector;
-        functionSelectors[2] = IGovernanceFacet.updateUpgradeExpiration.selector;
-        functionSelectors[3] = IGovernanceFacet.cancelUpgrade.selector;
-        functionSelectors[4] = IGovernanceFacet.getUpgrade.selector;
-        functionSelectors[5] = IGovernanceFacet.getUpgradeExpiration.selector;
-        cut[4] = LibDataTypes.SubmoduleUpgrade({
-            facetAddress: _governanceFacet,
+        functionSelectors[0] = IGovernanceSubmodule.isSystemInitialized.selector;
+        functionSelectors[1] = IGovernanceSubmodule.createUpgrade.selector;
+        functionSelectors[2] = IGovernanceSubmodule.updateUpgradeExpiration.selector;
+        functionSelectors[3] = IGovernanceSubmodule.cancelUpgrade.selector;
+        functionSelectors[4] = IGovernanceSubmodule.getUpgrade.selector;
+        functionSelectors[5] = IGovernanceSubmodule.getUpgradeExpiration.selector;
+        upgrade[3] = LibDataTypes.SubmoduleUpgrade({
+            submoduleAddress: _governanceSubmodule,
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
             functionSelectors: functionSelectors
         });
-        diamondCut(cut, address(0), "");
+        submoduleUpgrade(upgrade, address(0), "");
     }
-    */
 
     bytes32 internal constant CLEAR_ADDRESS_MASK = bytes32(uint256(0xffffffffffffffffffffffff));
     bytes32 internal constant CLEAR_SELECTOR_MASK = bytes32(uint256(0xffffffff << 224));
@@ -175,7 +159,7 @@ library LibFunctionRouter {
             // "selectorSlot >> 3" is a gas efficient division by 8 "selectorSlot / 8"
             selectorSlot = frs.selectorSlots[selectorCount >> 3];
         }
-        // loop through diamond cut
+        // loop through submodule upgrade
         for (uint256 submoduleIndex; submoduleIndex < _submoduleUpgrade.length; submoduleIndex++) {
             (selectorCount, selectorSlot) = addReplaceRemoveSubmoduleSelectors(
                 selectorCount,
@@ -206,7 +190,7 @@ library LibFunctionRouter {
         bytes4[] memory _selectors
     ) internal returns (uint256, bytes32) {
         FunctionRouterStorage storage frs = functionRouterStorage();
-        require(_selectors.length > 0, "LibFunctionRouter: No selectors in submodule to cut");
+        require(_selectors.length > 0, "LibFunctionRouter: No selectors in submodule to upgrade");
         if (_action == LibDataTypes.SubmoduleUpgradeAction.Add) {
             enforceHasContractCode(_newSubmoduleAddress, "LibFunctionRouter: Add submodule has no code");
             for (uint256 selectorIndex; selectorIndex < _selectors.length; selectorIndex++) {
