@@ -11,7 +11,7 @@ pragma solidity 0.8.17;
 // Libraries
 import {LibDataTypes} from "../../libraries/LibDataTypes.sol";
 
-interface ISubmoduleUpgrade {
+interface IUpgradeSubmodule {
     /// @notice Add/replace/remove any number of functions and optionally execute
     ///         a function with delegatecall
     /// @param __submoduleUpgrade Contains the submodule addresses and function selectors
