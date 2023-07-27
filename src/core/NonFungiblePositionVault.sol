@@ -4,23 +4,24 @@ pragma solidity 0.8.17;
 // Libraries
 import {LibFunctionRouter} from "../libraries/LibFunctionRouter.sol";
 
+// Submodules
+import {ConfigureSubmodule} from "../submodules/ConfigureSubmodule.sol";
+import {UpgradeSubmodule} from "../submodules/UpgradeSubmodule.sol";
+import {GovernanceSubmodule} from "../submodules/GovernanceSubmodule.sol";
+import {FunctionInfoSubmodule} from "../submodules/FunctionInfoSubmodule.sol";
+
 contract NonFungiblePositionVault {
     constructor(address _contractOwner, address _governance, address _controller) payable {
         LibFunctionRouter.setContractOwner(_contractOwner);
         LibFunctionRouter.setGovernance(_governance);
         LibFunctionRouter.setController(_controller);
         LibFunctionRouter.setUpgradeExpiration();
-
-        // FIXME
-        /*
-        LibDiamond.addDiamondFunctions(
-            address(new PhasedDiamondCutFacet()),
-            address(new DiamondLoupeFacet()),
-            address(new NaymsOwnershipFacet()),
-            address(new ACLFacet()),
-            address(new GovernanceFacet())
+        LibFunctionRouter.addSubmoduleFunctions(
+            address(new UpgradeSubmodule()),
+            address(new FunctionInfoSubmodule()),
+            address(new ConfigureSubmodule()),
+            address(new GovernanceSubmodule())
         );
-        */
     }
 
     // Find submodule for function that is called and execute the
