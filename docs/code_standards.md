@@ -5,6 +5,7 @@
 - Packages
 - Interfaces
 - Libraries
+- Submodules
 - Helpers
 
 ## Library Order
