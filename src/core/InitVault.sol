@@ -15,6 +15,7 @@ contract InitVault is Initializable, ERC20Upgradeable {
         initializer
     {
         AppStorage storage s = LibAppStorage.systemStorage();
+        s.systemInitialized = true;
         s.tokenId = _tokenId;
         s.nonFungibleTokenPositionManager = _nftPositionManager;
         s.masterChef = _masterchef;
