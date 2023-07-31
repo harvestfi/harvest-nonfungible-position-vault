@@ -26,8 +26,6 @@ import {LibErrors} from "./LibErrors.sol";
 import {LibEvents} from "./LibEvents.sol";
 import {LibConstants} from "./LibConstants.sol";
 
-error InitializationFunctionReverted(address _initializationContractAddress, bytes _calldata);
-
 library LibFunctionRouter {
     bytes32 internal constant FUNCTION_ROUTER_STORAGE_POSITION = keccak256("diamond.standard.diamond.storage");
 
@@ -307,7 +305,7 @@ library LibFunctionRouter {
                     // bubble up the error
                     revert(string(error));
                 } else {
-                    revert InitializationFunctionReverted(_init, _calldata);
+                    revert LibErrors.InitializationFunctionReverted(_init, _calldata);
                 }
             }
         }
