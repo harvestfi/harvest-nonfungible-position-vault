@@ -13,4 +13,7 @@ line_length=130
 tab_width=4
 func_attrs_with_params_multiline=true
 
+[rpc_endpoints]
+mainnet = "https://eth-mainnet.g.alchemy.com/v2/${ALCHEMEY_KEY}"
+
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
