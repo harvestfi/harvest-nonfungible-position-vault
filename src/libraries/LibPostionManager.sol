@@ -11,9 +11,9 @@ import {AppStorage, LibAppStorage} from "./LibAppStorage.sol";
 library LibPostionManager {
     function mint() internal {}
 
-    function stake(uint256 _tokenId) internal {
+    function stake() internal {
         AppStorage storage s = LibAppStorage.systemStorage();
-        IERC721Upgradeable(s.nonFungibleTokenPositionManager).transferFrom(msg.sender, s.masterChef, _tokenId);
+        IERC721Upgradeable(s.nonFungibleTokenPositionManager).transferFrom(msg.sender, s.masterChef, s.tokenId);
     }
 
     function withdraw() internal {}
