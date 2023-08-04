@@ -1,6 +1,7 @@
-pragma solidity 0.7.6;
+//SPDX-License-Identifier: Unlicense
+pragma solidity 0.8.17;
 
-import "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "./Storage.sol";
 
 // A clone of Governable supporting the Initializable interface and pattern

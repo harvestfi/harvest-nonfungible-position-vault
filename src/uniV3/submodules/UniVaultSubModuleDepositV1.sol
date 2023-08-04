@@ -1,19 +1,19 @@
 //SPDX-License-Identifier: Unlicense
-pragma solidity 0.7.6;
+pragma solidity 0.8.17;
 pragma abicoder v2;
 
 // ERC20
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/SafeERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/math/SafeMathUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 
 // ERC721
-import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721HolderUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/utils/ERC721HolderUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
 
 // reentrancy guard
-import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 
 // UniswapV3 core
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Factory.sol";
@@ -194,7 +194,7 @@ contract UniVaultSubmoduleDepositV1 is
         return _deposit(msg.sender, _zapFunds, _amount0OutMinForZap, _amount1OutMinForZap, _zapSqrtPriceLimitX96);
     }
 
-    function deposit(uint256 _amount0, uint256 _amount1, bool _zapFunds, bool _sweep, uint256 _sqrtRatioX96, uint256 _tolerance)
+    function deposit(uint256 _amount0, uint256 _amount1, bool _zapFunds, uint256 _sqrtRatioX96, uint256 _tolerance)
         public
         virtual
         override
@@ -328,8 +328,8 @@ contract UniVaultSubmoduleDepositV1 is
             INonfungiblePositionManager.CollectParams({
                 tokenId: getStorage().posId(),
                 recipient: address(this),
-                amount0Max: uint128(-1), // collect all token0
-                amount1Max: uint128(-1) // collect all token1
+                amount0Max: type(uint128).max, // collect all token0
+                amount1Max: type(uint128).max // collect all token1
             })
         );
         emit SwapFeeClaimed(_collected0, _collected1, block.timestamp);

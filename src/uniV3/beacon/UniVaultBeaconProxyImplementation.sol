@@ -1,7 +1,7 @@
-pragma solidity 0.7.6;
+pragma solidity 0.8.17;
 
-import "@openzeppelin/contracts/proxy/BeaconProxy.sol";
-import "@openzeppelin/contracts-upgradeable/math/SafeMathUpgradeable.sol";
+import "@openzeppelin/contracts/proxy/beacon/BeaconProxy.sol";
+import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 import "../lib/BytesLib.sol";
 
 contract UniVaultBeaconProxyImplementation is BeaconProxy {
