@@ -20,8 +20,8 @@ import {LibConstants} from "../libraries/LibConstants.sol";
  */
 
 contract Modifiers {
-    modifier initialized() {
-        if (!LibAppStorage.systemStorage().systemInitialized) {
+    modifier uninitialized() {
+        if (LibAppStorage.systemStorage().systemInitialized) {
             revert LibErrors.Initialized();
         }
         _;
