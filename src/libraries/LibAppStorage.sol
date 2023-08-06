@@ -1,6 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.17;
 
+struct Position {
+    int24 tickLower;
+    int24 tickUpper;
+    uint256 initialLiquidity;
+    uint256 tokenId;
+}
+
 struct AppStorage {
     // System
     bool vaultPause;
@@ -19,10 +26,9 @@ struct AppStorage {
     address token0;
     address token1;
     uint24 fee;
-    int24 tickLower;
-    int24 tickUpper;
-    uint256 initialLiquidity;
-    uint256 tokenId;
+    string vaultName;
+    // Position
+    mapping(uint256 => Position) positions;
     // External
     address nonFungibleTokenPositionManager;
     address masterChef;

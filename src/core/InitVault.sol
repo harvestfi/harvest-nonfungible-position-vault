@@ -6,7 +6,7 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 // Libraries
-import {AppStorage, LibAppStorage} from "../libraries/LibAppStorage.sol";
+import {Position, AppStorage, LibAppStorage} from "../libraries/LibAppStorage.sol";
 import {LibPostionManager} from "../libraries/LibPostionManager.sol";
 
 contract InitVault is Initializable, ERC20Upgradeable {
@@ -16,12 +16,12 @@ contract InitVault is Initializable, ERC20Upgradeable {
     {
         AppStorage storage s = LibAppStorage.systemStorage();
         s.systemInitialized = true;
-        s.tokenId = _tokenId;
+        Position storage position = s.positions[_tokenId];
         s.nonFungibleTokenPositionManager = _nftPositionManager;
         s.masterChef = _masterchef;
 
         // stake position
-        LibPostionManager.stake();
+        LibPostionManager.stake(_tokenId);
 
         // fetch info from position manager
         (address _token0, address _token1, uint24 _fee, int24 _tickLower, int24 _tickUpper, uint256 _initialLiquidity) =
@@ -31,9 +31,9 @@ contract InitVault is Initializable, ERC20Upgradeable {
         s.token0 = _token0;
         s.token1 = _token1;
         s.fee = _fee;
-        s.tickLower = _tickLower;
-        s.tickUpper = _tickUpper;
-        s.initialLiquidity = _initialLiquidity;
+        position.tickLower = _tickLower;
+        position.tickUpper = _tickUpper;
+        position.initialLiquidity = _initialLiquidity;
 
         // initializing the vault token. By default, it has 18 decimals.
         __ERC20_init_unchained(
