@@ -1,10 +1,13 @@
 //SPDX-License-Identifier: MIT
 pragma solidity 0.8.17;
 
+// Interfaces
+import {IVaultInfoSubmodule} from "../interfaces/submodules/IVaultInfoSubmodule.sol";
+
 // Helpers
 import {Modifiers} from "../core/Modifiers.sol";
 
-contract VaultInfoSubmodule is Modifiers {
+contract VaultInfoSubmodule is Modifiers, IVaultInfoSubmodule {
 /**
  * @dev Returns the total liquidity stored in the position
  * Dev Note: need to turn on the solc optimizer otherwise the compiler
