@@ -9,11 +9,35 @@ import "@uniswap/v3-periphery/contracts/interfaces/INonfungiblePositionManager.s
 import {AppStorage, LibAppStorage} from "./LibAppStorage.sol";
 
 library LibPostionManager {
-    function mint() internal {}
-
-    function stake() internal {
+    function mint(
+        int24 _tickLower,
+        int24 _tickUpper,
+        uint256 _amount0Desired,
+        uint256 _amount1Desired,
+        uint256 _amount0Min,
+        uint256 _amount1Min
+    ) internal returns (uint256 _tokenId, uint128 _liquidity, uint256 _amount0, uint256 _amount1) {
         AppStorage storage s = LibAppStorage.systemStorage();
-        IERC721Upgradeable(s.nonFungibleTokenPositionManager).transferFrom(msg.sender, s.masterChef, s.tokenId);
+        return INonfungiblePositionManager(s.nonFungibleTokenPositionManager).mint(
+            INonfungiblePositionManager.MintParams({
+                token0: s.token0,
+                token1: s.token1,
+                fee: s.fee,
+                tickLower: _tickLower,
+                tickUpper: _tickUpper,
+                amount0Desired: _amount0Desired,
+                amount1Desired: _amount1Desired,
+                amount0Min: _amount0Min,
+                amount1Min: _amount1Min,
+                recipient: address(this),
+                deadline: block.timestamp
+            })
+        );
+    }
+
+    function stake(uint256 _tokenId) internal {
+        AppStorage storage s = LibAppStorage.systemStorage();
+        IERC721Upgradeable(s.nonFungibleTokenPositionManager).transferFrom(msg.sender, s.masterChef, _tokenId);
     }
 
     function withdraw() internal {}
