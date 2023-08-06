@@ -11,8 +11,11 @@ library LibEvents {
     event CreateUpgrade(bytes32 id, address indexed who);
     event UpdateUpgradeExpiration(uint256 duration);
     event UpgradeCancelled(bytes32 id, address indexed who);
+
     event VaultPauseUpdate(bool paused);
     event FeeConfigurationUpdate(address feeRewardForwarder, uint256 feeRatio, address platformTarget, uint256 platformRatio);
+    event ExternalFarmingContractUpdate(address indexed nftPositionManager, address indexed masterchef);
+    event PoolConfigurationUpdate(address indexed token0, address indexed token1, uint24 fee, string vaultName);
 
     event SwapFeeClaimed(uint256 token0Fee, uint256 token1Fee, uint256 timestamp);
     event Deposit(address indexed user, uint256 token0Amount, uint256 token1Amount);
