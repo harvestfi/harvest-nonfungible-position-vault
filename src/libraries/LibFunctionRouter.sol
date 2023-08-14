@@ -14,6 +14,7 @@ pragma solidity 0.8.17;
 import {IERC165} from "../interfaces/shared/IERC165.sol";
 import {IERC173} from "../interfaces/shared/IERC173.sol";
 import {IUpgradeSubmodule} from "../interfaces/submodules/IUpgradeSubmodule.sol";
+import {IInitializableSubmodule} from "../interfaces/submodules/IInitializableSubmodule.sol";
 import {IFunctionInfoSubmodule} from "../interfaces/submodules/IFunctionInfoSubmodule.sol";
 import {IConfigureSubmodule} from "../interfaces/submodules/IConfigureSubmodule.sol";
 import {IGovernanceSubmodule} from "../interfaces/submodules/IGovernanceSubmodule.sol";
@@ -42,8 +43,6 @@ library LibFunctionRouter {
         // Used to query if a contract implements an interface.
         // Used to implement ERC-165.
         mapping(bytes4 => bool) supportedInterfaces;
-        // owner of the contract
-        address contractOwner;
     }
 
     function functionRouterStorage() internal pure returns (FunctionRouterStorage storage frs) {
@@ -53,31 +52,16 @@ library LibFunctionRouter {
         }
     }
 
-    function setContractOwner(address _newOwner) internal {
-        FunctionRouterStorage storage frs = functionRouterStorage();
-        address previousOwner = frs.contractOwner;
-        frs.contractOwner = _newOwner;
-        emit LibEvents.OwnershipTransferred(previousOwner, _newOwner);
-    }
-
     function setGovernance(address _governance) internal {
         AppStorage storage s = LibAppStorage.systemStorage();
+        address previousGovernance = s.governance;
         s.governance = _governance;
+        emit LibEvents.OwnershipTransferred(previousGovernance, _governance);
     }
 
     function setController(address _controller) internal {
         AppStorage storage s = LibAppStorage.systemStorage();
         s.controller = _controller;
-    }
-
-    function contractOwner() internal view returns (address contractOwner_) {
-        contractOwner_ = functionRouterStorage().contractOwner;
-    }
-
-    function enforceIsContractOwner() internal view {
-        if (msg.sender != functionRouterStorage().contractOwner) {
-            revert LibErrors.NoPermission();
-        }
     }
 
     function setUpgradeExpiration() internal {
@@ -88,15 +72,25 @@ library LibFunctionRouter {
 
     function addSubmoduleFunctions(
         address _upgradeSubmodule,
+        address _initializableSubmodule,
         address _functionInfoSubmodule,
         address _configureSubmodule,
         address _governanceSubmodule
     ) internal {
-        LibDataTypes.SubmoduleUpgrade[] memory upgrade = new LibDataTypes.SubmoduleUpgrade[](4);
+        LibDataTypes.SubmoduleUpgrade[] memory upgrade = new LibDataTypes.SubmoduleUpgrade[](5);
         bytes4[] memory functionSelectors = new bytes4[](1);
         functionSelectors[0] = IUpgradeSubmodule.submoduleUpgrade.selector;
         upgrade[0] = LibDataTypes.SubmoduleUpgrade({
             submoduleAddress: _upgradeSubmodule,
+            action: LibDataTypes.SubmoduleUpgradeAction.Add,
+            functionSelectors: functionSelectors
+        });
+        functionSelectors = new bytes4[](3);
+        functionSelectors[0] = IInitializableSubmodule.disableInitializers.selector;
+        functionSelectors[1] = IInitializableSubmodule.getInitializedVersion.selector;
+        functionSelectors[2] = IInitializableSubmodule.isInitializing.selector;
+        upgrade[1] = LibDataTypes.SubmoduleUpgrade({
+            submoduleAddress: _initializableSubmodule,
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
             functionSelectors: functionSelectors
         });
@@ -106,27 +100,28 @@ library LibFunctionRouter {
         functionSelectors[2] = IFunctionInfoSubmodule.submoduleAddresses.selector;
         functionSelectors[3] = IFunctionInfoSubmodule.submoduleAddress.selector;
         functionSelectors[4] = IERC165.supportsInterface.selector;
-        upgrade[1] = LibDataTypes.SubmoduleUpgrade({
+        upgrade[2] = LibDataTypes.SubmoduleUpgrade({
             submoduleAddress: _functionInfoSubmodule,
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
             functionSelectors: functionSelectors
         });
-        functionSelectors = new bytes4[](2);
+        functionSelectors = new bytes4[](4);
         functionSelectors[0] = IConfigureSubmodule.configureFees.selector;
-        functionSelectors[1] = IConfigureSubmodule.setVaultPause.selector;
-        upgrade[2] = LibDataTypes.SubmoduleUpgrade({
+        functionSelectors[1] = IConfigureSubmodule.configureExternalProtocol.selector;
+        functionSelectors[2] = IConfigureSubmodule.configurePool.selector;
+        functionSelectors[3] = IConfigureSubmodule.setVaultPause.selector;
+        upgrade[3] = LibDataTypes.SubmoduleUpgrade({
             submoduleAddress: _configureSubmodule,
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
             functionSelectors: functionSelectors
         });
-        functionSelectors = new bytes4[](6);
-        functionSelectors[0] = IGovernanceSubmodule.isSystemInitialized.selector;
-        functionSelectors[1] = IGovernanceSubmodule.createUpgrade.selector;
-        functionSelectors[2] = IGovernanceSubmodule.updateUpgradeExpiration.selector;
-        functionSelectors[3] = IGovernanceSubmodule.cancelUpgrade.selector;
-        functionSelectors[4] = IGovernanceSubmodule.getUpgrade.selector;
-        functionSelectors[5] = IGovernanceSubmodule.getUpgradeExpiration.selector;
-        upgrade[3] = LibDataTypes.SubmoduleUpgrade({
+        functionSelectors = new bytes4[](5);
+        functionSelectors[0] = IGovernanceSubmodule.createUpgrade.selector;
+        functionSelectors[1] = IGovernanceSubmodule.updateUpgradeExpiration.selector;
+        functionSelectors[2] = IGovernanceSubmodule.cancelUpgrade.selector;
+        functionSelectors[3] = IGovernanceSubmodule.getUpgrade.selector;
+        functionSelectors[4] = IGovernanceSubmodule.getUpgradeExpiration.selector;
+        upgrade[4] = LibDataTypes.SubmoduleUpgrade({
             submoduleAddress: _governanceSubmodule,
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
             functionSelectors: functionSelectors
