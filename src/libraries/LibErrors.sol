@@ -9,5 +9,6 @@ library LibErrors {
     // Vault
     error Paused();
     error Initialized();
+    error NotInitializing();
     error InitializationFunctionReverted(address _initializationContractAddress, bytes _calldata);
 }
