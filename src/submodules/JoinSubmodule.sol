@@ -2,7 +2,6 @@
 pragma solidity 0.8.17;
 
 // External Packages
-import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
 // Interfaces
@@ -10,14 +9,13 @@ import {IJoinSubmodule} from "../interfaces/submodules/IJoinSubmodule.sol";
 
 // Libraries
 import {Position, AppStorage, LibAppStorage} from "../libraries/LibAppStorage.sol";
+import {LibTokenizedVault} from "../libraries/LibTokenizedVault.sol";
 import {LibPostionManager} from "../libraries/LibPostionManager.sol";
 
 // Helpers
 import {Modifiers} from "../core/Modifiers.sol";
 
-contract JoinSubmodule is Initializable, Modifiers, IJoinSubmodule, ERC20Upgradeable {
-    AppStorage internal s;
-
+contract JoinSubmodule is Modifiers, IJoinSubmodule {
     function createPosition(
         int24 _tickLower,
         int24 _tickUpper,
@@ -34,13 +32,14 @@ contract JoinSubmodule is Initializable, Modifiers, IJoinSubmodule, ERC20Upgrade
         (_tokenId, _liquidity, _amount0, _amount1) =
             LibPostionManager.mint(_tickLower, _tickUpper, _amount0Desired, _amount1Desired, _amount0Min, _amount1Min);
 
-        Position storage position = s.positions[_tokenId];
+        Position storage position = s.positions[++s.positionCount];
         position.tickLower = _tickLower;
         position.tickUpper = _tickUpper;
         position.initialLiquidity = _liquidity;
+        position.tokenId = _tokenId;
 
         // mint the initial shares and send them to the specified recipient, as well as overflow of the tokens
-        _mint(msg.sender, uint256(_liquidity));
+        LibTokenizedVault.mint(msg.sender, uint256(_liquidity));
     }
 
     function stakePosition(uint256 _tokenId) external override onlyGovernanceOrController {
