@@ -16,7 +16,10 @@ import {IERC165} from "../interfaces/shared/IERC165.sol";
 import {LibFunctionRouter} from "../libraries/LibFunctionRouter.sol";
 import {LibDataTypes} from "../libraries/LibDataTypes.sol";
 
-contract FunctionInfoSubmodule is IFunctionInfoSubmodule, IERC165 {
+// Helpers
+import {Modifiers} from "../core/Modifiers.sol";
+
+contract FunctionInfoSubmodule is Modifiers, IFunctionInfoSubmodule, IERC165 {
     // Diamond Loupe Functions
     ////////////////////////////////////////////////////////////////////
     /// These functions are expected to be called frequently by tools.
