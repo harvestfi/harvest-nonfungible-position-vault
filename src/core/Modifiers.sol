@@ -11,6 +11,7 @@ import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import {AppStorage, LibAppStorage} from "../libraries/LibAppStorage.sol";
 import {LibHelpers} from "../libraries/LibHelpers.sol";
 import {LibErrors} from "../libraries/LibErrors.sol";
+import {LibEvents} from "../libraries/LibEvents.sol";
 import {LibConstants} from "../libraries/LibConstants.sol";
 
 /**
@@ -20,31 +21,63 @@ import {LibConstants} from "../libraries/LibConstants.sol";
  */
 
 contract Modifiers {
-    modifier uninitialized() {
-        if (LibAppStorage.systemStorage().systemInitialized) {
+    AppStorage internal s;
+
+    modifier initializer() {
+        bool isTopLevelCall = !s.initializing;
+        if (!((isTopLevelCall && s.initialized < 1) || (!((address(this)).code.length > 0) && s.initialized == 1))) {
             revert LibErrors.Initialized();
+        }
+        s.initialized = 1;
+        if (isTopLevelCall) {
+            s.initializing = true;
+        }
+        _;
+        if (isTopLevelCall) {
+            s.initializing = false;
+            emit LibEvents.Initialized(1);
+        }
+    }
+
+    modifier reinitializer(uint8 version) {
+        if (!(!s.initializing && s.initialized < version)) {
+            revert LibErrors.Initialized();
+        }
+
+        s.initialized = version;
+        s.initializing = true;
+        _;
+        s.initializing = false;
+        emit LibEvents.Initialized(version);
+    }
+
+    /**
+     * @dev Modifier to protect an initialization function so that it can only be invoked by functions with the
+     * {initializer} and {reinitializer} modifiers, directly or indirectly.
+     */
+    modifier onlyInitializing() {
+        if (!s.initializing) {
+            revert LibErrors.NotInitializing();
         }
         _;
     }
 
     modifier onlyGovernance() {
-        if (LibAppStorage.systemStorage().governance != msg.sender) {
+        if (s.governance != msg.sender) {
             revert LibErrors.NotGovernance();
         }
         _;
     }
 
     modifier onlyGovernanceOrController() {
-        if (LibAppStorage.systemStorage().governance != msg.sender || LibAppStorage.systemStorage().controller != msg.sender) {
+        if (s.governance != msg.sender && s.controller != msg.sender) {
             revert LibErrors.NotGovernanceOrController();
         }
         _;
     }
 
     modifier checkSqrtPriceX96(uint256 offChainSqrtPriceX96, uint256 tolerance) {
-        address poolAddr = IUniswapV3Factory(LibConstants._UNI_POOL_FACTORY).getPool(
-            LibAppStorage.systemStorage().token0, LibAppStorage.systemStorage().token1, LibAppStorage.systemStorage().fee
-        );
+        address poolAddr = IUniswapV3Factory(LibConstants._UNI_POOL_FACTORY).getPool(s.token0, s.token1, s.fee);
         (uint160 sqrtPriceX96,,,,,,) = IUniswapV3Pool(poolAddr).slot0();
         uint256 current = uint256(sqrtPriceX96);
         uint256 step = offChainSqrtPriceX96 * tolerance / 1000;
@@ -54,7 +87,7 @@ contract Modifiers {
     }
 
     modifier checkVaultNotPaused() {
-        if (LibAppStorage.systemStorage().vaultPause) {
+        if (s.vaultPause) {
             revert LibErrors.Paused();
         }
         _;
