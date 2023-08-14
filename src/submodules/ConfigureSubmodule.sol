@@ -2,6 +2,7 @@
 pragma solidity 0.8.17;
 
 // Interfaces
+import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import {IConfigureSubmodule} from "../interfaces/submodules/IConfigureSubmodule.sol";
 
 // Libraries
@@ -13,8 +14,6 @@ import {LibEvents} from "../libraries/LibEvents.sol";
 import {Modifiers} from "../core/Modifiers.sol";
 
 contract ConfigureSubmodule is Modifiers, IConfigureSubmodule {
-    AppStorage internal s;
-
     function configureFees(address _feeRewardForwarder, uint256 _feeRatio, address _platformTarget, uint256 _platformRatio)
         external
         override
@@ -39,7 +38,7 @@ contract ConfigureSubmodule is Modifiers, IConfigureSubmodule {
         emit LibEvents.ExternalFarmingContractUpdate(_nftPositionManager, _masterchef);
     }
 
-    function configurePool(address _token0, address _token1, uint24 _fee, string calldata _vaultName)
+    function configurePool(address _token0, address _token1, uint24 _fee, string calldata _vaultNamePrefix)
         external
         override
         onlyGovernanceOrController
@@ -47,9 +46,10 @@ contract ConfigureSubmodule is Modifiers, IConfigureSubmodule {
         s.token0 = _token0;
         s.token1 = _token1;
         s.fee = _fee;
-        s.vaultName = _vaultName;
+        s.name =
+            string(abi.encodePacked(_vaultNamePrefix, IERC20Metadata(_token0).symbol(), "_", IERC20Metadata(_token1).symbol()));
 
-        emit LibEvents.PoolConfigurationUpdate(_token0, _token1, _fee, _vaultName);
+        emit LibEvents.PoolConfigurationUpdate(_token0, _token1, _fee, s.name);
     }
 
     function setVaultPause(bool _pause) public override onlyGovernanceOrController {
