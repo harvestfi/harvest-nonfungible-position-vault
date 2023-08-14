@@ -21,5 +21,8 @@ interface INonFungiblePositionVault is
     IUpgradeSubmodule,
     IGovernanceSubmodule,
     IFunctionInfoSubmodule,
-    IInvestSubmodule
+    IJoinSubmodule,
+    IInvestSubmodule,
+    IExitSubmodule,
+    IVaultInfoSubmodule
 {}
