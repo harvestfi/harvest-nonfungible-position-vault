@@ -2,6 +2,8 @@
 pragma solidity 0.8.17;
 
 // External Packages
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/INonfungiblePositionManager.sol";
 
@@ -9,6 +11,8 @@ import "@uniswap/v3-periphery/contracts/interfaces/INonfungiblePositionManager.s
 import {AppStorage, LibAppStorage} from "./LibAppStorage.sol";
 
 library LibPostionManager {
+    using SafeERC20 for IERC20;
+
     function mint(
         int24 _tickLower,
         int24 _tickUpper,
@@ -18,6 +22,11 @@ library LibPostionManager {
         uint256 _amount1Min
     ) internal returns (uint256 _tokenId, uint128 _liquidity, uint256 _amount0, uint256 _amount1) {
         AppStorage storage s = LibAppStorage.systemStorage();
+
+        // Approve the position manager to transfer the tokens
+        IERC20(s.token0).safeIncreaseAllowance(s.nonFungibleTokenPositionManager, _amount0Desired);
+        IERC20(s.token1).safeIncreaseAllowance(s.nonFungibleTokenPositionManager, _amount1Desired);
+
         return INonfungiblePositionManager(s.nonFungibleTokenPositionManager).mint(
             INonfungiblePositionManager.MintParams({
                 token0: s.token0,
