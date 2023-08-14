@@ -2,16 +2,15 @@
 pragma solidity 0.8.17;
 
 struct AppStorage {
+    address governance;
+    address controller;
     uint256 checkOne;
 }
 
 library LibAppStorage {
-    bytes32 internal constant SYSTEM_STORAGE_POSITION = keccak256("system.standard.storage");
-
     function systemStorage() internal pure returns (AppStorage storage ds) {
-        bytes32 position = SYSTEM_STORAGE_POSITION;
         assembly {
-            ds.slot := position
+            ds.slot := 0
         }
     }
 }

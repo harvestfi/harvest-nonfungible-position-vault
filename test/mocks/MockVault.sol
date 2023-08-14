@@ -5,8 +5,7 @@ pragma solidity 0.8.17;
 import {LibFunctionRouter} from "../../src/libraries/LibFunctionRouter.sol";
 
 contract MockVault {
-    constructor(address _contractOwner, address _governance, address _controller) payable {
-        LibFunctionRouter.setContractOwner(_contractOwner);
+    constructor(address _governance, address _controller) payable {
         LibFunctionRouter.setGovernance(_governance);
         LibFunctionRouter.setController(_controller);
         LibFunctionRouter.setUpgradeExpiration();
