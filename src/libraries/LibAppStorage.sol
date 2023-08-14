@@ -10,8 +10,9 @@ struct Position {
 
 struct AppStorage {
     // System
+    uint8 initialized;
+    bool initializing;
     bool vaultPause;
-    bool systemInitialized;
     address governance;
     address controller;
     // Fee Reward Shares
@@ -26,8 +27,15 @@ struct AppStorage {
     address token0;
     address token1;
     uint24 fee;
-    string vaultName;
+    // Token
+    mapping(address => uint256) balances;
+    mapping(address => mapping(address => uint256)) allowances;
+    uint256 totalSupply;
+    string name;
+    string symbol;
     // Position
+    uint256 positionCount;
+    uint256 latestPositionId;
     mapping(uint256 => Position) positions;
     // External
     address nonFungibleTokenPositionManager;
@@ -35,12 +43,9 @@ struct AppStorage {
 }
 
 library LibAppStorage {
-    bytes32 internal constant SYSTEM_STORAGE_POSITION = keccak256("system.standard.storage");
-
     function systemStorage() internal pure returns (AppStorage storage ds) {
-        bytes32 position = SYSTEM_STORAGE_POSITION;
         assembly {
-            ds.slot := position
+            ds.slot := 0
         }
     }
 }
