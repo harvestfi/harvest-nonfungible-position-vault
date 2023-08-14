@@ -16,7 +16,10 @@ import {LibFunctionRouter} from "../libraries/LibFunctionRouter.sol";
 import {LibDataTypes} from "../libraries/LibDataTypes.sol";
 import {LibEvents} from "../libraries/LibEvents.sol";
 
-contract UpgradeSubmodule is IUpgradeSubmodule {
+// Helpers
+import {Modifiers} from "../core/Modifiers.sol";
+
+contract UpgradeSubmodule is Modifiers, IUpgradeSubmodule {
     /// @notice Add/replace/remove any number of functions and optionally execute
     ///         a function with delegatecall
     /// @param _submoduleUpgrade Contains the submodule addresses and function selectors
@@ -26,8 +29,8 @@ contract UpgradeSubmodule is IUpgradeSubmodule {
     function submoduleUpgrade(LibDataTypes.SubmoduleUpgrade[] calldata _submoduleUpgrade, address _init, bytes calldata _calldata)
         external
         override
+        onlyGovernanceOrController
     {
-        LibFunctionRouter.enforceIsContractOwner();
         LibFunctionRouter.FunctionRouterStorage storage frs = LibFunctionRouter.functionRouterStorage();
         uint256 originalSelectorCount = frs.selectorCount;
         uint256 selectorCount = originalSelectorCount;
