@@ -3,12 +3,6 @@ pragma solidity 0.8.17;
 
 interface IGovernanceSubmodule {
     /**
-     * @notice Check if the diamond has been initialized.
-     * @dev This will get the value from AppStorage.diamondInitialized.
-     */
-    function isSystemInitialized() external view returns (bool);
-
-    /**
      * @notice Approve the following upgrade hash: `id`
      * @dev The diamondCut() has been modified to check if the upgrade has been scheduled. This method needs to be called in order
      *      for an upgrade to be executed.

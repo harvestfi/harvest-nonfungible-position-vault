@@ -12,16 +12,6 @@ import {LibEvents} from "../libraries/LibEvents.sol";
 import {Modifiers} from "../core/Modifiers.sol";
 
 contract GovernanceSubmodule is Modifiers, IGovernanceSubmodule {
-    AppStorage internal s;
-    /**
-     * @notice Check if the system has been initialized.
-     * @dev This will get the value from AppStorage.systemInitialized.
-     */
-
-    function isSystemInitialized() external view returns (bool) {
-        return s.systemInitialized;
-    }
-
     function createUpgrade(bytes32 id) external onlyGovernance {
         if (s.upgradeScheduled[id] > block.timestamp) {
             revert("Upgrade has already been scheduled");
