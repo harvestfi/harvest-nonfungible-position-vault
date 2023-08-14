@@ -15,7 +15,14 @@ library LibEvents {
     event VaultPauseUpdate(bool paused);
     event FeeConfigurationUpdate(address feeRewardForwarder, uint256 feeRatio, address platformTarget, uint256 platformRatio);
     event ExternalFarmingContractUpdate(address indexed nftPositionManager, address indexed masterchef);
-    event PoolConfigurationUpdate(address indexed token0, address indexed token1, uint24 fee, string vaultName);
+    event PoolConfigurationUpdate(address indexed token0, address indexed token1, uint24 fee, string name);
+
+    // Initializable
+    event Initialized(uint8 version);
+
+    // TokenizedVault
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    event Approval(address indexed owner, address indexed spender, uint256 value);
 
     event SwapFeeClaimed(uint256 token0Fee, uint256 token1Fee, uint256 timestamp);
     event Deposit(address indexed user, uint256 token0Amount, uint256 token1Amount);
