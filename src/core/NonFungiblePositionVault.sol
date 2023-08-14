@@ -5,19 +5,20 @@ pragma solidity 0.8.17;
 import {LibFunctionRouter} from "../libraries/LibFunctionRouter.sol";
 
 // Submodules
-import {ConfigureSubmodule} from "../submodules/ConfigureSubmodule.sol";
 import {UpgradeSubmodule} from "../submodules/UpgradeSubmodule.sol";
-import {GovernanceSubmodule} from "../submodules/GovernanceSubmodule.sol";
 import {FunctionInfoSubmodule} from "../submodules/FunctionInfoSubmodule.sol";
+import {InitializableSubmodule} from "../submodules/InitializableSubmodule.sol";
+import {ConfigureSubmodule} from "../submodules/ConfigureSubmodule.sol";
+import {GovernanceSubmodule} from "../submodules/GovernanceSubmodule.sol";
 
 contract NonFungiblePositionVault {
-    constructor(address _contractOwner, address _governance, address _controller) payable {
-        LibFunctionRouter.setContractOwner(_contractOwner);
+    constructor(address _governance, address _controller) payable {
         LibFunctionRouter.setGovernance(_governance);
         LibFunctionRouter.setController(_controller);
         LibFunctionRouter.setUpgradeExpiration();
         LibFunctionRouter.addSubmoduleFunctions(
             address(new UpgradeSubmodule()),
+            address(new InitializableSubmodule()),
             address(new FunctionInfoSubmodule()),
             address(new ConfigureSubmodule()),
             address(new GovernanceSubmodule())
