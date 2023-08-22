@@ -8,10 +8,19 @@ import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol"
 import "@uniswap/v3-periphery/contracts/interfaces/INonfungiblePositionManager.sol";
 
 // Libraries
-import {AppStorage, LibAppStorage} from "./LibAppStorage.sol";
+import {Position, AppStorage, LibAppStorage} from "./LibAppStorage.sol";
+import {LibErrors} from "./LibErrors.sol";
 
 library LibPostionManager {
     using SafeERC20 for IERC20;
+
+    modifier addressConfiguration() {
+        AppStorage storage s = LibAppStorage.systemStorage();
+        if (s.nonFungibleTokenPositionManager == address(0) || s.masterChef == address(0)) {
+            revert LibErrors.AddressUnconfigured();
+        }
+        _;
+    }
 
     function mint(
         int24 _tickLower,
@@ -20,14 +29,18 @@ library LibPostionManager {
         uint256 _amount1Desired,
         uint256 _amount0Min,
         uint256 _amount1Min
-    ) internal returns (uint256 _tokenId, uint128 _liquidity, uint256 _amount0, uint256 _amount1) {
+    ) internal addressConfiguration returns (uint256 _tokenId, uint128 _liquidity, uint256 _amount0, uint256 _amount1) {
         AppStorage storage s = LibAppStorage.systemStorage();
+
+        if (s.token0 == address(0) || s.token1 == address(0) || s.fee == 0) {
+            revert LibErrors.AddressUnconfigured();
+        }
 
         // Approve the position manager to transfer the tokens
         IERC20(s.token0).safeIncreaseAllowance(s.nonFungibleTokenPositionManager, _amount0Desired);
         IERC20(s.token1).safeIncreaseAllowance(s.nonFungibleTokenPositionManager, _amount1Desired);
 
-        return INonfungiblePositionManager(s.nonFungibleTokenPositionManager).mint(
+        (_tokenId, _liquidity, _amount0, _amount1) = INonfungiblePositionManager(s.nonFungibleTokenPositionManager).mint(
             INonfungiblePositionManager.MintParams({
                 token0: s.token0,
                 token1: s.token1,
@@ -42,11 +55,27 @@ library LibPostionManager {
                 deadline: block.timestamp
             })
         );
+
+        Position storage position = s.positions[s.positionCount++];
+        position.tickLower = _tickLower;
+        position.tickUpper = _tickUpper;
+        position.initialLiquidity = _liquidity;
+        position.tokenId = _tokenId;
+
+        // Approve the position manager to transfer the tokens
+        IERC20(s.token0).safeApprove(s.nonFungibleTokenPositionManager, 0);
+        IERC20(s.token1).safeApprove(s.nonFungibleTokenPositionManager, 0);
     }
 
-    function stake(uint256 _tokenId) internal {
+    function stake(uint256 _positionId) internal addressConfiguration {
         AppStorage storage s = LibAppStorage.systemStorage();
-        IERC721Upgradeable(s.nonFungibleTokenPositionManager).transferFrom(msg.sender, s.masterChef, _tokenId);
+        if (s.positions[_positionId].staked) {
+            revert LibErrors.PositionStaked(_positionId);
+        }
+        IERC721Upgradeable(s.nonFungibleTokenPositionManager).transferFrom(
+            address(this), s.masterChef, s.positions[_positionId].tokenId
+        );
+        s.positions[_positionId].staked = true;
     }
 
     function withdraw() internal {}
@@ -66,4 +95,8 @@ library LibPostionManager {
         AppStorage storage s = LibAppStorage.systemStorage();
         s.nonFungibleTokenPositionManager = _address;
     }
+
+    function addPosition() internal {}
+
+    function updatePosition() internal {}
 }
