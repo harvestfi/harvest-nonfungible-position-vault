@@ -2,6 +2,8 @@
 pragma solidity 0.8.17;
 
 library LibErrors {
+    // Library Checkers
+    error AddressUnconfigured();
     // Access Control List
     error NoPermission();
     error NotGovernance();
