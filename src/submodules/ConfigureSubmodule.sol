@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import {IConfigureSubmodule} from "../interfaces/submodules/IConfigureSubmodule.sol";
 
 // Libraries
-import {AppStorage, LibAppStorage} from "../libraries/LibAppStorage.sol";
+import {Position, AppStorage, LibAppStorage} from "../libraries/LibAppStorage.sol";
 import {LibPostionManager} from "../libraries/LibPostionManager.sol";
 import {LibEvents} from "../libraries/LibEvents.sol";
 
@@ -50,6 +50,34 @@ contract ConfigureSubmodule is Modifiers, IConfigureSubmodule {
             string(abi.encodePacked(_vaultNamePrefix, IERC20Metadata(_token0).symbol(), "_", IERC20Metadata(_token1).symbol()));
 
         emit LibEvents.PoolConfigurationUpdate(_token0, _token1, _fee, s.name);
+    }
+
+    function addPosition(uint256 _tokenId, uint256 _liquidity, int24 _tickLower, int24 _tickUpper)
+        external
+        override
+        onlyGovernanceOrController
+    {
+        Position storage position = s.positions[s.positionCount++];
+        position.tokenId = _tokenId;
+        position.initialLiquidity = _liquidity;
+        position.tickLower = _tickLower;
+        position.tickUpper = _tickUpper;
+
+        emit LibEvents.PositionAdd(s.positionCount, _tokenId, _liquidity, _tickLower, _tickUpper);
+    }
+
+    function updatePosition(uint256 _positionId, uint256 _tokenId, uint256 _liquidity, int24 _tickLower, int24 _tickUpper)
+        external
+        override
+        onlyGovernanceOrController
+    {
+        Position storage position = s.positions[_positionId];
+        position.tokenId = _tokenId;
+        position.initialLiquidity = _liquidity;
+        position.tickLower = _tickLower;
+        position.tickUpper = _tickUpper;
+
+        emit LibEvents.PositionUpdate(_positionId, _tokenId, _liquidity, _tickLower, _tickUpper);
     }
 
     function setVaultPause(bool _pause) public override onlyGovernanceOrController {
