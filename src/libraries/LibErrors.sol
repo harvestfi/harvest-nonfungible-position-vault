@@ -8,6 +8,8 @@ library LibErrors {
     error NoPermission();
     error NotGovernance();
     error NotGovernanceOrController();
+    // Position
+    error PositionStaked(uint256 _positionId);
     // Vault
     error Paused();
     error Initialized();
