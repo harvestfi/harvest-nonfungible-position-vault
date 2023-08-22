@@ -1,17 +1,15 @@
 //SPDX-License-Identifier: Unlicense
-pragma solidity 0.7.6;
+pragma solidity 0.8.17;
 pragma abicoder v2;
-
-import "hardhat/console.sol";
 
 // ERC20
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/SafeERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/math/SafeMathUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 
 // ERC721
-import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721HolderUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/utils/ERC721HolderUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
 
 // UniswapV3 core
@@ -19,7 +17,7 @@ import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Factory.sol";
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 
 // reentrancy guard
-import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 
 // UniswapV3 periphery contracts
 import "@uniswap/v3-periphery/contracts/interfaces/INonfungiblePositionManager.sol";
@@ -76,7 +74,7 @@ contract UniVaultUpgradeableV1SoleLPqfCR is
         token1().safeApprove(_NFT_POSITION_MANAGER, 0);
         token1().safeApprove(_NFT_POSITION_MANAGER, _initAmount1);
 
-        (uint256 _tokenId, uint128 _initialLiquidity,,) = INonfungiblePositionManager(_NFT_POSITION_MANAGER).mint(
+        INonfungiblePositionManager(_NFT_POSITION_MANAGER).mint(
             INonfungiblePositionManager.MintParams({
                 token0: address(token0()),
                 token1: address(token1()),
@@ -95,7 +93,7 @@ contract UniVaultUpgradeableV1SoleLPqfCR is
 
     function _migrateLiquidity(uint128 liquidityAmount, uint256 newPosId, uint24 swapInPoolwithFee) internal {
         // remove liquidity from old
-        (uint256 _receivedToken0, uint256 _receivedToken1) = INonfungiblePositionManager(_NFT_POSITION_MANAGER).decreaseLiquidity(
+        INonfungiblePositionManager(_NFT_POSITION_MANAGER).decreaseLiquidity(
             INonfungiblePositionManager.DecreaseLiquidityParams({
                 tokenId: getStorage().posId(),
                 liquidity: liquidityAmount,
@@ -110,12 +108,11 @@ contract UniVaultUpgradeableV1SoleLPqfCR is
             INonfungiblePositionManager.CollectParams({
                 tokenId: getStorage().posId(),
                 recipient: address(this),
-                amount0Max: uint128(-1), // collect all token0 (since we are changing ranges)
-                amount1Max: uint128(-1) // collect all token1 (since we are changing ranges)
+                amount0Max: type(uint128).max, // collect all token0 (since we are changing ranges)
+                amount1Max: type(uint128).max // collect all token1 (since we are changing ranges)
             })
         );
 
-        console.logInt(int256(getTick()));
         // Zap will balance it to the new range
         uint24 originalFee = getStorage().fee();
         if (swapInPoolwithFee != 0) {
@@ -125,7 +122,6 @@ contract UniVaultUpgradeableV1SoleLPqfCR is
         if (swapInPoolwithFee != 0) {
             getStorage().setFee(originalFee);
         }
-        console.logInt(int256(getTick()));
 
         // we should now put them all into the new position.
 
@@ -138,7 +134,7 @@ contract UniVaultUpgradeableV1SoleLPqfCR is
         token1().safeApprove(_NFT_POSITION_MANAGER, _amount1);
 
         // increase the liquidity
-        (uint128 _liquidity,,) = INonfungiblePositionManager(_NFT_POSITION_MANAGER).increaseLiquidity(
+        INonfungiblePositionManager(_NFT_POSITION_MANAGER).increaseLiquidity(
             INonfungiblePositionManager.IncreaseLiquidityParams({
                 tokenId: newPosId,
                 amount0Desired: _amount0,
@@ -168,7 +164,7 @@ contract UniVaultUpgradeableV1SoleLPqfCR is
         token1().safeApprove(_NFT_POSITION_MANAGER, _amount1);
 
         // increase the liquidity
-        (uint128 _liquidity,,) = INonfungiblePositionManager(_NFT_POSITION_MANAGER).increaseLiquidity(
+        INonfungiblePositionManager(_NFT_POSITION_MANAGER).increaseLiquidity(
             INonfungiblePositionManager.IncreaseLiquidityParams({
                 tokenId: getStorage().posId(),
                 amount0Desired: _amount0,
@@ -204,7 +200,6 @@ contract UniVaultUpgradeableV1SoleLPqfCR is
         getStorage().setTickUpper(_newTickUpper);
 
         for (uint256 i = 0; i < loopNum; i++) {
-            console.log("i: ", loopNum);
             _migrateLiquidity(_oldLiquidity / loopNum, newPosId, swapInPoolWithFee);
         }
 
