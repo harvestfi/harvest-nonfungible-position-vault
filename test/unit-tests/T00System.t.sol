@@ -63,13 +63,10 @@ contract System is D00Defaults {
         changePrank(_whale);
         (uint256 tokenId,,,) = INonfungiblePositionManager(nonFungibleManagerPancake).mint(
             INonfungiblePositionManager.MintParams(
-                _token0, _token1, 100, -276365, -276326, 29090960153366438287622, 29792654029, 0, 0, governance, 1690795199
+                _token0, _token1, 100, -276365, -276326, 29090960153366438287622, 29792654029, 0, 0, address(vault), 1690795199
             )
         );
         changePrank(governance);
-
-        // approve the token position
-        INonfungiblePositionManager(nonFungibleManagerPancake).approve(address(vault), tokenId);
 
         // initialize the vault
         vault.submoduleUpgrade(
