@@ -8,7 +8,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import {IJoinSubmodule} from "../interfaces/submodules/IJoinSubmodule.sol";
 
 // Libraries
-import {Position, AppStorage, LibAppStorage} from "../libraries/LibAppStorage.sol";
+import {AppStorage, LibAppStorage} from "../libraries/LibAppStorage.sol";
 import {LibTokenizedVault} from "../libraries/LibTokenizedVault.sol";
 import {LibPostionManager} from "../libraries/LibPostionManager.sol";
 
@@ -32,17 +32,11 @@ contract JoinSubmodule is Modifiers, IJoinSubmodule {
         (_tokenId, _liquidity, _amount0, _amount1) =
             LibPostionManager.mint(_tickLower, _tickUpper, _amount0Desired, _amount1Desired, _amount0Min, _amount1Min);
 
-        Position storage position = s.positions[++s.positionCount];
-        position.tickLower = _tickLower;
-        position.tickUpper = _tickUpper;
-        position.initialLiquidity = _liquidity;
-        position.tokenId = _tokenId;
-
         // mint the initial shares and send them to the specified recipient, as well as overflow of the tokens
         LibTokenizedVault.mint(msg.sender, uint256(_liquidity));
     }
 
-    function stakePosition(uint256 _tokenId) external override onlyGovernanceOrController {
-        LibPostionManager.stake(_tokenId);
+    function stakePosition(uint256 _positionId) external override onlyGovernanceOrController {
+        LibPostionManager.stake(_positionId);
     }
 }
