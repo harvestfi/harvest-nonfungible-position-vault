@@ -17,6 +17,10 @@ library LibEvents {
     event ExternalFarmingContractUpdate(address indexed nftPositionManager, address indexed masterchef);
     event PoolConfigurationUpdate(address indexed token0, address indexed token1, uint24 fee, string name);
 
+    // Configuration
+    event PositionAdd(uint256 positionId, uint256 tokenId, uint256 liquidity, int24 tickLower, int24 tickUpper);
+    event PositionUpdate(uint256 positionId, uint256 tokenId, uint256 liquidity, int24 tickLower, int24 tickUpper);
+
     // Initializable
     event Initialized(uint8 version);
 
