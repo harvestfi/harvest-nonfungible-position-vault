@@ -67,42 +67,24 @@ contract VaultInfoSubmodule is Modifiers, IVaultInfoSubmodule {
         return s.fee;
     }
 
-    function balances(address _account) external view override returns (uint256 _balances) {
-        return s.balances[_account];
-    }
-
-    function allowances(address _owner, address _spender) external view override returns (uint256 _allowances) {
-        return s.allowances[_owner][_spender];
-    }
-
-    function totalSupply() external view override returns (uint256 _totalSupply) {
-        return s.totalSupply;
-    }
-
-    function name() external view override returns (string memory _name) {
-        return s.name;
-    }
-
-    function symbol() external view override returns (string memory _symbol) {
-        return s.symbol;
-    }
-
     function positionCount() external view override returns (uint256 _count) {
         return s.positionCount;
     }
 
-    function latestTokenId() external view override returns (uint256 _tokenId) {
-        return s.latestPositionId;
+    function latestPositionId() external view override returns (uint256 _positionId) {
+        return s.positionCount - 1;
     }
 
-    function positions(uint256 _tokenId) external view override returns (Position memory _position) {
-        return s.positions[_tokenId];
+    function positions(uint256 _positionId) external view override returns (Position memory _position) {
+        return s.positions[_positionId];
     }
 
-    function allPosition() external view override returns (Position[] memory _positions) {
+    function allPosition() external view override returns (Position[] memory) {
+        Position[] memory _positions = new Position[](s.positionCount);
         for (uint256 i; i < s.positionCount; i++) {
             _positions[i] = s.positions[i];
         }
+        return _positions;
     }
 
     function nonFungibleTokenPositionManager() external view override returns (address _nonFungibleTokenPositionManager) {
