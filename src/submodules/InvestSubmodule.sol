@@ -8,5 +8,11 @@ import {IInvestSubmodule} from "../interfaces/submodules/IInvestSubmodule.sol";
 import {Modifiers} from "../core/Modifiers.sol";
 
 contract InvestSubmodule is Modifiers, IInvestSubmodule {
-    function doHardWork() external override onlyGovernanceOrController {}
+    function doHardWork() external override onlyGovernanceOrController {
+        // claim rewards
+        // - harvest (LibPositionManager)
+        // - collect (LibPositionManager)
+        // liquidate through universal liquidators
+        // increase liquidity (LibPositionManager)
+    }
 }
