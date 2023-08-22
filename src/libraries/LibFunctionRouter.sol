@@ -105,11 +105,13 @@ library LibFunctionRouter {
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
             functionSelectors: functionSelectors
         });
-        functionSelectors = new bytes4[](4);
+        functionSelectors = new bytes4[](6);
         functionSelectors[0] = IConfigureSubmodule.configureFees.selector;
         functionSelectors[1] = IConfigureSubmodule.configureExternalProtocol.selector;
         functionSelectors[2] = IConfigureSubmodule.configurePool.selector;
-        functionSelectors[3] = IConfigureSubmodule.setVaultPause.selector;
+        functionSelectors[3] = IConfigureSubmodule.addPosition.selector;
+        functionSelectors[4] = IConfigureSubmodule.updatePosition.selector;
+        functionSelectors[5] = IConfigureSubmodule.setVaultPause.selector;
         upgrade[3] = LibDataTypes.SubmoduleUpgrade({
             submoduleAddress: _configureSubmodule,
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
