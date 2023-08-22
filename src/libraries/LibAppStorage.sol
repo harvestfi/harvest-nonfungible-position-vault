@@ -2,10 +2,11 @@
 pragma solidity 0.8.17;
 
 struct Position {
+    uint256 tokenId;
+    uint256 initialLiquidity;
     int24 tickLower;
     int24 tickUpper;
-    uint256 initialLiquidity;
-    uint256 tokenId;
+    bool staked;
 }
 
 struct AppStorage {
@@ -35,7 +36,6 @@ struct AppStorage {
     string symbol;
     // Position
     uint256 positionCount;
-    uint256 latestPositionId;
     mapping(uint256 => Position) positions;
     // External
     address nonFungibleTokenPositionManager;
