@@ -5,7 +5,6 @@ pragma solidity 0.8.17;
 import {ITokenizedVaultSubmodule} from "../interfaces/submodules/ITokenizedVaultSubmodule.sol";
 
 // Libraries
-import {AppStorage, LibAppStorage} from "../libraries/LibAppStorage.sol";
 import {LibTokenizedVault} from "../libraries/LibTokenizedVault.sol";
 
 // Helpers

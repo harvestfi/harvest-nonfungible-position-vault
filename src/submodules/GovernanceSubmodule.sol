@@ -5,7 +5,6 @@ pragma solidity 0.8.17;
 import {IGovernanceSubmodule} from "../interfaces/submodules/IGovernanceSubmodule.sol";
 
 // Libraries
-import {AppStorage, LibAppStorage} from "../libraries/LibAppStorage.sol";
 import {LibEvents} from "../libraries/LibEvents.sol";
 
 // Helpers
