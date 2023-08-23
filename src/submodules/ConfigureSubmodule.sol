@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import {IConfigureSubmodule} from "../interfaces/submodules/IConfigureSubmodule.sol";
 
 // Libraries
-import {Position, AppStorage, LibAppStorage} from "../libraries/LibAppStorage.sol";
+import {Position} from "../libraries/LibAppStorage.sol";
 import {LibPostionManager} from "../libraries/LibPostionManager.sol";
 import {LibEvents} from "../libraries/LibEvents.sol";
 
@@ -36,6 +36,17 @@ contract ConfigureSubmodule is Modifiers, IConfigureSubmodule {
         s.masterChef = _masterchef;
 
         emit LibEvents.ExternalFarmingContractUpdate(_nftPositionManager, _masterchef);
+    }
+
+    function configureInfrastructure(address _universalLiquidator, address _universalLiquidatorRegistry)
+        external
+        override
+        onlyGovernanceOrController
+    {
+        s.universalLiquidator = _universalLiquidator;
+        s.universalLiquidatorRegistry = _universalLiquidatorRegistry;
+
+        emit LibEvents.InfrastructureUpdate(_universalLiquidator, _universalLiquidatorRegistry);
     }
 
     function configurePool(address _token0, address _token1, uint24 _fee, string calldata _vaultNamePrefix)
