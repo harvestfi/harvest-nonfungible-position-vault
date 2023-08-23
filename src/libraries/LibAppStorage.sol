@@ -14,6 +14,7 @@ struct AppStorage {
     uint8 initialized;
     bool initializing;
     bool vaultPause;
+    bool liquidationRewardPause;
     address governance;
     address controller;
     // Fee Reward Shares
@@ -28,6 +29,9 @@ struct AppStorage {
     address token0;
     address token1;
     uint24 fee;
+    address unifiedRewardToken;
+    address unifiedDepositToken;
+    address[] rewardTokens;
     // Token
     mapping(address => uint256) balances;
     mapping(address => mapping(address => uint256)) allowances;
@@ -40,6 +44,9 @@ struct AppStorage {
     // External
     address nonFungibleTokenPositionManager;
     address masterChef;
+    // Infrastructure
+    address universalLiquidator;
+    address universalLiquidatorRegistry;
 }
 
 library LibAppStorage {
