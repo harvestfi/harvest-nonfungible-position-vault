@@ -8,7 +8,6 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import {IJoinSubmodule} from "../interfaces/submodules/IJoinSubmodule.sol";
 
 // Libraries
-import {AppStorage, LibAppStorage} from "../libraries/LibAppStorage.sol";
 import {LibTokenizedVault} from "../libraries/LibTokenizedVault.sol";
 import {LibPostionManager} from "../libraries/LibPostionManager.sol";
 
