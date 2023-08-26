@@ -27,6 +27,14 @@ library LibEvents {
     event Approval(address indexed owner, address indexed spender, uint256 value);
     // Position Operations
     event RewardLiquidationPaused(bool paused);
+    // Invest Operations
+    event ProfitLogInReward(address indexed rewardToken, uint256 profitAmount, uint256 feeAmount, uint256 timestamp);
+    event PlatformFeeLogInReward(
+        address indexed treasury, address indexed rewardToken, uint256 profitAmount, uint256 feeAmount, uint256 timestamp
+    );
+    event StrategistFeeLogInReward(
+        address indexed strategist, address indexed rewardToken, uint256 profitAmount, uint256 feeAmount, uint256 timestamp
+    );
     //
     event SwapFeeClaimed(uint256 token0Fee, uint256 token1Fee, uint256 timestamp);
     event Deposit(address indexed user, uint256 token0Amount, uint256 token1Amount);
