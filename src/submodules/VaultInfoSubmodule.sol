@@ -31,20 +31,24 @@ contract VaultInfoSubmodule is Modifiers, IVaultInfoSubmodule {
         return s.controller;
     }
 
-    function feeRewardForwarder() external view override returns (address _feeRewardForwarder) {
-        return s.feeRewardForwarder;
+    function feeDenominator() external view override returns (uint256 _feeDenominator) {
+        return s.FEE_DENOMINATOR;
     }
 
-    function platformTarget() external view override returns (address _platformTarget) {
-        return s.platformTarget;
+    function strategist() external view override returns (address _strategist) {
+        return s.strategist;
     }
 
-    function feeRatio() external view override returns (uint256 _feeRatio) {
-        return s.feeRatio;
+    function strategistFeeNumerator() external view override returns (uint256 _strategistFeeNumerator) {
+        return s.strategistFeeNumerator;
     }
 
-    function platformRatio() external view override returns (uint256 _platformRatio) {
-        return s.platformRatio;
+    function platformFeeNumerator() external view override returns (uint256 _platformFeeNumerator) {
+        return s.platformFeeNumerator;
+    }
+
+    function profitSharingNumerator() external view override returns (uint256 _profitSharingNumerator) {
+        return s.profitSharingNumerator;
     }
 
     function upgradeScheduled(bytes32 _id) external view override returns (uint256 _upgradeScheduled) {
