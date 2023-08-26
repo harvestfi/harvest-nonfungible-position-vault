@@ -14,7 +14,9 @@ library LibEvents {
     event UpgradeCancelled(bytes32 id, address indexed who);
     // Configuration
     event VaultPauseUpdate(bool paused);
-    event FeeConfigurationUpdate(address feeRewardForwarder, uint256 feeRatio, address platformTarget, uint256 platformRatio);
+    event FeeConfigurationUpdate(
+        address indexed strategist, uint256 strategistFeeNumerator, uint256 platformFeeNumerator, uint256 profitSharingNumerator
+    );
     event ExternalFarmingContractUpdate(address indexed nftPositionManager, address indexed masterchef);
     event InfrastructureUpdate(address indexed universalLiquidator, address indexed universalLiquidatorRegistry);
     event PoolConfigurationUpdate(address indexed token0, address indexed token1, uint24 fee, string name);
