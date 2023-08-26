@@ -14,17 +14,20 @@ import {LibEvents} from "../libraries/LibEvents.sol";
 import {Modifiers} from "../core/Modifiers.sol";
 
 contract ConfigureSubmodule is Modifiers, IConfigureSubmodule {
-    function configureFees(address _feeRewardForwarder, uint256 _feeRatio, address _platformTarget, uint256 _platformRatio)
-        external
-        override
-        onlyGovernance
-    {
-        s.feeRewardForwarder = _feeRewardForwarder;
-        s.platformTarget = _platformTarget;
-        s.feeRatio = _feeRatio;
-        s.platformRatio = _platformRatio;
+    function configureFees(
+        address _strategist,
+        uint256 _strategistFeeNumerator,
+        uint256 _platformFeeNumerator,
+        uint256 _profitSharingNumerator
+    ) external override onlyGovernance {
+        s.strategist = _strategist;
+        s.strategistFeeNumerator = _strategistFeeNumerator;
+        s.platformFeeNumerator = _platformFeeNumerator;
+        s.profitSharingNumerator = _profitSharingNumerator;
 
-        emit LibEvents.FeeConfigurationUpdate(_feeRewardForwarder, _feeRatio, _platformTarget, _platformRatio);
+        emit LibEvents.FeeConfigurationUpdate(
+            _strategist, _strategistFeeNumerator, _platformFeeNumerator, _profitSharingNumerator
+        );
     }
 
     function configureExternalProtocol(address _nftPositionManager, address _masterchef)
