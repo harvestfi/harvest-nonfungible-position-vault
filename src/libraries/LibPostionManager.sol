@@ -71,6 +71,17 @@ library LibPostionManager {
         IERC20(s.token1).safeApprove(s.nonFungibleTokenPositionManager, 0);
     }
 
+    function stake(uint256 _positionId) internal addressConfiguration {
+        AppStorage storage s = LibAppStorage.systemStorage();
+        if (s.positions[_positionId].staked) {
+            revert LibErrors.PositionStaked(_positionId);
+        }
+        IERC721Upgradeable(s.nonFungibleTokenPositionManager).transferFrom(
+            address(this), s.masterChef, s.positions[_positionId].tokenId
+        );
+        s.positions[_positionId].staked = true;
+    }
+
     function withdraw(uint256 _positionId) internal {
         AppStorage storage s = LibAppStorage.systemStorage();
         IMasterChefV3(s.masterChef).withdraw(_positionId, address(this));
