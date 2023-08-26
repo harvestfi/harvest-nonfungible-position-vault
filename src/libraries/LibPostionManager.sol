@@ -7,8 +7,12 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/INonfungiblePositionManager.sol";
 
+// Interfaces
+import {IMasterChefV3} from "../interfaces/protocols/pancake/IMasterChefV3.sol";
+
 // Libraries
 import {Position, AppStorage, LibAppStorage} from "./LibAppStorage.sol";
+import {LibDataTypes} from "./LibDataTypes.sol";
 import {LibErrors} from "./LibErrors.sol";
 
 library LibPostionManager {
@@ -67,22 +71,54 @@ library LibPostionManager {
         IERC20(s.token1).safeApprove(s.nonFungibleTokenPositionManager, 0);
     }
 
-    function stake(uint256 _positionId) internal addressConfiguration {
+    function withdraw(uint256 _positionId) internal {
         AppStorage storage s = LibAppStorage.systemStorage();
-        if (s.positions[_positionId].staked) {
-            revert LibErrors.PositionStaked(_positionId);
-        }
-        IERC721Upgradeable(s.nonFungibleTokenPositionManager).transferFrom(
-            address(this), s.masterChef, s.positions[_positionId].tokenId
-        );
-        s.positions[_positionId].staked = true;
+        IMasterChefV3(s.masterChef).withdraw(_positionId, address(this));
     }
 
-    function withdraw() internal {}
-    function increaseLiquidity() internal {}
-    function decreaseLiquidity() internal {}
-    function collect() internal {}
-    function harvest() internal {}
+    function increaseLiquidity(uint256 _positionId) internal {
+        AppStorage storage s = LibAppStorage.systemStorage();
+        LibDataTypes.IncreaseLiquidityParams memory params = LibDataTypes.IncreaseLiquidityParams({
+            tokenId: s.positions[_positionId].tokenId,
+            amount0Desired: IERC20(s.token0).balanceOf(address(this)),
+            amount1Desired: IERC20(s.token1).balanceOf(address(this)),
+            amount0Min: 0,
+            amount1Min: 0,
+            deadline: block.timestamp
+        });
+
+        IMasterChefV3(s.masterChef).increaseLiquidity(params);
+    }
+
+    function decreaseLiquidity(uint256 _positionId, uint128 _rmLiquidity) internal {
+        AppStorage storage s = LibAppStorage.systemStorage();
+        LibDataTypes.DecreaseLiquidityParams memory params = LibDataTypes.DecreaseLiquidityParams({
+            tokenId: s.positions[_positionId].tokenId,
+            liquidity: _rmLiquidity,
+            amount0Min: 0,
+            amount1Min: 0,
+            deadline: block.timestamp
+        });
+
+        IMasterChefV3(s.masterChef).decreaseLiquidity(params);
+    }
+
+    function collect(uint256 _positionId) internal returns (uint256 amount0, uint256 amount1) {
+        AppStorage storage s = LibAppStorage.systemStorage();
+        LibDataTypes.CollectParams memory params = LibDataTypes.CollectParams({
+            tokenId: s.positions[_positionId].tokenId,
+            recipient: address(this),
+            amount0Max: type(uint128).max,
+            amount1Max: type(uint128).max
+        });
+
+        return IMasterChefV3(s.masterChef).collect(params);
+    }
+
+    function harvest(uint256 _positionId) internal returns (uint256 reward) {
+        AppStorage storage s = LibAppStorage.systemStorage();
+        return IMasterChefV3(s.masterChef).harvest(s.positions[_positionId].tokenId, address(this));
+    }
 
     function positionInfo(uint256 _tokenId) internal view returns (address, address, uint24, int24, int24, uint256) {
         AppStorage storage s = LibAppStorage.systemStorage();
@@ -90,13 +126,4 @@ library LibPostionManager {
             INonfungiblePositionManager(s.nonFungibleTokenPositionManager).positions(_tokenId);
         return (_token0, _token1, _fee, _tickLower, _tickUpper, _initialLiquidity);
     }
-
-    function setNonFungiPositionManager(address _address) internal {
-        AppStorage storage s = LibAppStorage.systemStorage();
-        s.nonFungibleTokenPositionManager = _address;
-    }
-
-    function addPosition() internal {}
-
-    function updatePosition() internal {}
 }
