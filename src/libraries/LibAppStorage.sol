@@ -19,10 +19,10 @@ struct AppStorage {
     address controller;
     // Fee Reward Shares
     uint256 FEE_DENOMINATOR; // default: 10000
+    address strategist;
     uint256 strategistFeeNumerator; // default: 0
     uint256 platformFeeNumerator; // default: 300
     uint256 profitSharingNumerator; // default: 700
-    address strategist;
     /// Simple two phase upgrade scheme
     mapping(bytes32 => uint256) upgradeScheduled; // id of the upgrade => the time that the upgrade is valid until.
     uint256 upgradeExpiration;
