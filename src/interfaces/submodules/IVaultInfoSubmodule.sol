@@ -12,10 +12,11 @@ interface IVaultInfoSubmodule {
     function governance() external view returns (address _governance);
     function controller() external view returns (address _controller);
     // Fee Reward Shares
-    function feeRewardForwarder() external view returns (address _feeRewardForwarder);
-    function platformTarget() external view returns (address _platformTarget);
-    function feeRatio() external view returns (uint256 _feeRatio);
-    function platformRatio() external view returns (uint256 _platformRatio);
+    function feeDenominator() external view returns (uint256 _feeDenominator);
+    function strategist() external view returns (address _strategist);
+    function strategistFeeNumerator() external view returns (uint256 _strategistFeeNumerator);
+    function platformFeeNumerator() external view returns (uint256 _platformFeeNumerator);
+    function profitSharingNumerator() external view returns (uint256 _profitSharingNumerator);
     /// Simple two phase upgrade scheme
     function upgradeScheduled(bytes32 _id) external view returns (uint256 _upgradeScheduled);
     function upgradeExpiration() external view returns (uint256 _upgradeExpiration);
