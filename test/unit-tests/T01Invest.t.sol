@@ -21,6 +21,7 @@ contract Invest is D01Deployment {
     }
 
     function testDoHardWork() public virtual {
+        addInvestSubmodule();
         // init addresses
         address _whale = 0x350d0815Ac821769ea8DcF7bbb943eEE20ba23a8;
         address _usdtWhale = 0x5041ed759Dd4aFc3a72b8192C143F72f4724081A;
@@ -44,7 +45,7 @@ contract Invest is D01Deployment {
         // stake position
         vault.stakePosition(vault.positionCount() - 1);
         // time elapse
-        vm.rollFork(MAINNET_FORK_BLOCK_NUMBER + 100);
+        vm.roll(MAINNET_FORK_BLOCK_NUMBER + 100);
         // do hard work
         vault.doHardWork(vault.positionCount() - 1);
     }
