@@ -76,7 +76,7 @@ library LibPostionManager {
         if (s.positions[_positionId].staked) {
             revert LibErrors.PositionStaked(_positionId);
         }
-        IERC721Upgradeable(s.nonFungibleTokenPositionManager).transferFrom(
+        IERC721Upgradeable(s.nonFungibleTokenPositionManager).safeTransferFrom(
             address(this), s.masterChef, s.positions[_positionId].tokenId
         );
         s.positions[_positionId].staked = true;
