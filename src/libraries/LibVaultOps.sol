@@ -21,6 +21,10 @@ library LibVaultOps {
     function beforeProfitShareLiquidation() internal {
         AppStorage storage s = LibAppStorage.systemStorage();
 
+        if (s.unifiedRewardToken == address(0) || s.unifiedDepositToken == address(0) || s.rewardTokens.length == 0) {
+            revert LibErrors.LiquidationInfoUnconfigured();
+        }
+
         address universalRewardToken = s.unifiedRewardToken;
         address universalLiquidator = s.universalLiquidator;
         // liquidate all reward token to unifiedRewardToken
