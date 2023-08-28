@@ -45,7 +45,11 @@ contract Invest is D01Deployment {
         // stake position
         vault.stakePosition(vault.positionCount() - 1);
         // time elapse
-        vm.roll(MAINNET_FORK_BLOCK_NUMBER + 100);
+        vm.roll(MAINNET_FORK_BLOCK_NUMBER + 10000);
+        // set reward token
+        address _rewardToken0 = 0x152649eA73beAb28c5b49B26eb48f7EAD6d4c898; // CAKE
+        address _rewardToken1 = 0x0000000000085d4780B73119b644AE5ecd22b376; // TUSD
+        address _rewardToken2 = 0xdAC17F958D2ee523a2206206994597C13D831ec7; // USDT
         // do hard work
         vault.doHardWork(vault.positionCount() - 1);
     }

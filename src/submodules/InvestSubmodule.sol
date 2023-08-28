@@ -1,6 +1,8 @@
 //SPDX-License-Identifier: MIT
 pragma solidity 0.8.17;
 
+import "forge-std/Test.sol";
+
 // External Packages
 import "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 import "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -21,6 +23,10 @@ contract InvestSubmodule is Modifiers, IInvestSubmodule {
     using SafeERC20 for IERC20;
 
     function doHardWork(uint256 _positionId) external override onlyGovernanceOrController {
+        console2.log("CAKE: ", IERC20(0x152649eA73beAb28c5b49B26eb48f7EAD6d4c898).balanceOf(address(this)));
+        console2.log("TUSD: ", IERC20(0x0000000000085d4780B73119b644AE5ecd22b376).balanceOf(address(this)));
+        console2.log("USDT: ", IERC20(0xdAC17F958D2ee523a2206206994597C13D831ec7).balanceOf(address(this)));
+
         // claim rewards: harvest + collect
         LibPostionManager.harvest(_positionId);
         LibPostionManager.collect(_positionId);
@@ -30,6 +36,10 @@ contract InvestSubmodule is Modifiers, IInvestSubmodule {
             emit LibEvents.RewardLiquidationPaused(s.liquidationRewardPause);
             return;
         }
+
+        console2.log("CAKE: ", IERC20(0x152649eA73beAb28c5b49B26eb48f7EAD6d4c898).balanceOf(address(this)));
+        console2.log("TUSD: ", IERC20(0x0000000000085d4780B73119b644AE5ecd22b376).balanceOf(address(this)));
+        console2.log("USDT: ", IERC20(0xdAC17F958D2ee523a2206206994597C13D831ec7).balanceOf(address(this)));
 
         LibVaultOps.beforeProfitShareLiquidation();
         LibVaultOps.notifyProfitInRewardToken();
