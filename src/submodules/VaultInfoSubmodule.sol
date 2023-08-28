@@ -98,6 +98,15 @@ contract VaultInfoSubmodule is Modifiers, IVaultInfoSubmodule {
     function masterChef() external view override returns (address _masterChef) {
         return s.masterChef;
     }
+
+    function totalRewardToken() public view override returns (uint256 _totalCount) {
+        return s.rewardTokens.length;
+    }
+
+    function rewardToken(uint256 _index) public view override returns (address _token) {
+        return s.rewardTokens[_index];
+    }
+
     /**
      * @dev Returns the total liquidity stored in the position
      * Dev Note: need to turn on the solc optimizer otherwise the compiler

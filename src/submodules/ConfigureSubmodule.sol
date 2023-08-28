@@ -8,6 +8,7 @@ import {IConfigureSubmodule} from "../interfaces/submodules/IConfigureSubmodule.
 // Libraries
 import {Position} from "../libraries/LibAppStorage.sol";
 import {LibPostionManager} from "../libraries/LibPostionManager.sol";
+import {LibErrors} from "../libraries/LibErrors.sol";
 import {LibEvents} from "../libraries/LibEvents.sol";
 
 // Helpers
@@ -64,6 +65,24 @@ contract ConfigureSubmodule is Modifiers, IConfigureSubmodule {
             string(abi.encodePacked(_vaultNamePrefix, IERC20Metadata(_token0).symbol(), "_", IERC20Metadata(_token1).symbol()));
 
         emit LibEvents.PoolConfigurationUpdate(_token0, _token1, _fee, s.name);
+    }
+
+    function addRewardTokens(address[] memory _rewardTokens) public onlyGovernance {
+        for (uint256 i = 0; i < _rewardTokens.length; i++) {
+            if (s.rewardTokenRegistered[_rewardTokens[i]]) {
+                revert LibErrors.TokenAlreadyRegistered(_rewardTokens[i]);
+            }
+
+            s.rewardTokens.push(_rewardTokens[i]);
+            s.rewardTokenRegistered[_rewardTokens[i]] = true;
+        }
+    }
+
+    function removeRewardToken(uint256 i) public onlyGovernance {
+        address removedToken = s.rewardTokens[i];
+        s.rewardTokens[i] = s.rewardTokens[s.rewardTokens.length - 1];
+        s.rewardTokens.pop();
+        s.rewardTokenRegistered[removedToken] = false;
     }
 
     function addPosition(uint256 _tokenId, uint256 _liquidity, int24 _tickLower, int24 _tickUpper)

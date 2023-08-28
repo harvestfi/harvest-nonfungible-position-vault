@@ -24,6 +24,8 @@ interface IVaultInfoSubmodule {
     function token0() external view returns (address _token0);
     function token1() external view returns (address _token1);
     function fee() external view returns (uint24 _fee);
+    function totalRewardToken() external view returns (uint256 _totalCount);
+    function rewardToken(uint256 _index) external view returns (address _rewardToken);
     // Position
     function positionCount() external view returns (uint256 _count);
     function latestPositionId() external view returns (uint256 _positionId);

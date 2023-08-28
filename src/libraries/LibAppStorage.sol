@@ -33,6 +33,7 @@ struct AppStorage {
     address unifiedRewardToken;
     address unifiedDepositToken;
     address[] rewardTokens;
+    mapping(address => bool) rewardTokenRegistered;
     // Token
     mapping(address => uint256) balances;
     mapping(address => mapping(address => uint256)) allowances;
