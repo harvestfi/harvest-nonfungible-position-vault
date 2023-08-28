@@ -11,6 +11,7 @@ import {LibErrors} from "../../src/libraries/LibErrors.sol";
 // Interfaces
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../interfaces/IUSDT.sol";
+import "../../src/interfaces/protocols/pancake/IMasterChefV3.sol";
 import {INonfungiblePositionManager} from "../../src/interfaces/protocols/pancake/INonfungiblePositionManager.sol";
 
 contract Invest is D01Deployment {
@@ -45,11 +46,14 @@ contract Invest is D01Deployment {
         // stake position
         vault.stakePosition(vault.positionCount() - 1);
         // time elapse
-        vm.roll(MAINNET_FORK_BLOCK_NUMBER + 10000);
+        vm.roll(MAINNET_FORK_BLOCK_NUMBER + 5049);
         // set reward token
         address _rewardToken0 = 0x152649eA73beAb28c5b49B26eb48f7EAD6d4c898; // CAKE
         address _rewardToken1 = 0x0000000000085d4780B73119b644AE5ecd22b376; // TUSD
         address _rewardToken2 = 0xdAC17F958D2ee523a2206206994597C13D831ec7; // USDT
+        console2.log(
+            "Pending Cake: ", IMasterChefV3(masterchefV3Pancake).pendingCake(vault.positions(vault.positionCount() - 1).tokenId)
+        );
         // do hard work
         vault.doHardWork(vault.positionCount() - 1);
     }
