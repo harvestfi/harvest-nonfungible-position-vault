@@ -21,29 +21,23 @@ contract Join is D01Deployment {
 
     function testJoin() public virtual {
         addJoinSubmodule();
-        // init addresses
-        address _whale = 0x350d0815Ac821769ea8DcF7bbb943eEE20ba23a8;
-        address _usdtWhale = 0x5041ed759Dd4aFc3a72b8192C143F72f4724081A;
-        address _token0 = 0x0000000000085d4780B73119b644AE5ecd22b376; // TUSD
-        address _token1 = 0xdAC17F958D2ee523a2206206994597C13D831ec7; // USDT
         // transfer tokens to the vault
-        changePrank(_whale);
-        uint256 _amount0 = IERC20(_token0).balanceOf(_whale);
-        uint256 _amount1 = IERC20(_token1).balanceOf(_whale);
-        IERC20(_token0).transfer(address(vault), _amount0);
-        changePrank(_usdtWhale);
-        IUSDT(_token1).transfer(address(vault), _amount1);
+        changePrank(whale);
+        uint256 _amount0 = IERC20(token0).balanceOf(whale);
+        uint256 _amount1 = IERC20(token1).balanceOf(whale);
+        IERC20(token0).transfer(address(vault), _amount0);
+        IUSDT(token1).transfer(address(vault), _amount1);
 
         changePrank(governance);
         // stake position should fail before configure external protocol
         vm.expectRevert(LibErrors.AddressUnconfigured.selector);
-        vault.createPosition(-276365, -276326, 29090960153366438287622, 29792654029, 0, 0);
+        vault.createPosition(tickLower, tickUpper, amount0Desired, amount1Desired, amount0Min, amount1Min);
         // configure external protocol
         vault.configureExternalProtocol(nonFungibleManagerPancake, masterchefV3Pancake);
         // configure the pool
-        vault.configurePool(_token0, _token1, 100, "fPancakeV3");
+        vault.configurePool(token0, token1, fee, vaultName);
         // join position
-        vault.createPosition(-276365, -276326, 29090960153366438287622, 29792654029, 0, 0);
+        vault.createPosition(tickLower, tickUpper, amount0Desired, amount1Desired, amount0Min, amount1Min);
         uint256 positionCount = vault.positionCount();
         Position[] memory position = vault.allPosition();
         assertEq(position.length, 1);
@@ -52,20 +46,26 @@ contract Join is D01Deployment {
 
     function testStake() public virtual {
         addJoinSubmodule();
-        // create new position without module
-        address _whale = 0x350d0815Ac821769ea8DcF7bbb943eEE20ba23a8;
-        address _token0 = 0x0000000000085d4780B73119b644AE5ecd22b376; // TUSD
-        address _token1 = 0xdAC17F958D2ee523a2206206994597C13D831ec7; // USDT
-        changePrank(_whale);
+        changePrank(whale);
         // mint position
         (uint256 tokenId, uint128 liquidity,,) = INonfungiblePositionManager(nonFungibleManagerPancake).mint(
             INonfungiblePositionManager.MintParams(
-                _token0, _token1, 100, -276365, -276326, 29090960153366438287622, 29792654029, 0, 0, address(vault), 1690795199
+                token0,
+                token1,
+                fee,
+                tickLower,
+                tickUpper,
+                amount0Desired,
+                amount1Desired,
+                amount0Min,
+                amount1Min,
+                address(vault),
+                block.timestamp
             )
         );
 
         changePrank(governance);
-        vault.addPosition(tokenId, liquidity, -276365, -276326);
+        vault.addPosition(tokenId, liquidity, tickLower, tickUpper);
         // stake position should fail before configure external protocol
         uint256 positionId = vault.positionCount() - 1;
         vm.expectRevert(LibErrors.AddressUnconfigured.selector);
@@ -79,26 +79,20 @@ contract Join is D01Deployment {
     function testJoinAndStake() public virtual {
         addJoinSubmodule();
         // TODO: Modularize token transfer settings
-        // init addresses
-        address _whale = 0x350d0815Ac821769ea8DcF7bbb943eEE20ba23a8;
-        address _usdtWhale = 0x5041ed759Dd4aFc3a72b8192C143F72f4724081A;
-        address _token0 = 0x0000000000085d4780B73119b644AE5ecd22b376; // TUSD
-        address _token1 = 0xdAC17F958D2ee523a2206206994597C13D831ec7; // USDT
         // transfer tokens to the vault
-        changePrank(_whale);
-        uint256 _amount0 = IERC20(_token0).balanceOf(_whale);
-        uint256 _amount1 = IERC20(_token1).balanceOf(_whale);
-        IERC20(_token0).transfer(address(vault), _amount0);
-        changePrank(_usdtWhale);
-        IUSDT(_token1).transfer(address(vault), _amount1);
+        changePrank(whale);
+        uint256 _amount0 = IERC20(token0).balanceOf(whale);
+        uint256 _amount1 = IERC20(token1).balanceOf(whale);
+        IERC20(token0).transfer(address(vault), _amount0);
+        IUSDT(token1).transfer(address(vault), _amount1);
 
         changePrank(governance);
         // configure external protocol
         vault.configureExternalProtocol(nonFungibleManagerPancake, masterchefV3Pancake);
         // configure the pool
-        vault.configurePool(_token0, _token1, 100, "fPancakeV3");
+        vault.configurePool(token0, token1, fee, vaultName);
         // join position
-        vault.createPosition(-276365, -276326, 29090960153366438287622, 29792654029, 0, 0);
+        vault.createPosition(tickLower, tickUpper, amount0Desired, amount1Desired, amount0Min, amount1Min);
         // stake position
         vault.stakePosition(vault.positionCount() - 1);
     }

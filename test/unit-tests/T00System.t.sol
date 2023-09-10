@@ -26,11 +26,6 @@ contract System is D00Defaults {
     InitVault public initVault;
     INonFungiblePositionVault public vault;
 
-    address public nonFungibleManagerPancake = 0x46A15B0b27311cedF172AB29E4f4766fbE7F4364;
-    address public masterchefV3Pancake = 0x556B9306565093C855AEA9AE92A594704c2Cd59e;
-
-    string public vaultName = "fPancakeV3";
-
     function setUp() public virtual override {
         super.setUp();
     }
@@ -55,15 +50,20 @@ contract System is D00Defaults {
             functionSelectors: functionSelectors
         });
 
-        // create the token position
-        address _whale = 0x350d0815Ac821769ea8DcF7bbb943eEE20ba23a8;
-        address _token0 = 0x0000000000085d4780B73119b644AE5ecd22b376; // TUSD
-        address _token1 = 0xdAC17F958D2ee523a2206206994597C13D831ec7; // USDT
-
-        changePrank(_whale);
+        changePrank(whale);
         (uint256 tokenId,,,) = INonfungiblePositionManager(nonFungibleManagerPancake).mint(
             INonfungiblePositionManager.MintParams(
-                _token0, _token1, 100, -276365, -276326, 29090960153366438287622, 29792654029, 0, 0, address(vault), 1690795199
+                token0,
+                token1,
+                fee,
+                tickLower,
+                tickUpper,
+                amount0Desired,
+                amount1Desired,
+                amount0Min,
+                amount1Min,
+                address(vault),
+                block.timestamp
             )
         );
         changePrank(governance);

@@ -34,19 +34,18 @@ contract D01Deployment is D00Defaults {
     address public exitSubmodule;
     address public vaultInfoSubmodule;
 
-    address public nonFungibleManagerPancake = 0x46A15B0b27311cedF172AB29E4f4766fbE7F4364;
-    address public masterchefV3Pancake = 0x556B9306565093C855AEA9AE92A594704c2Cd59e;
-
     function setUp() public virtual override {
         super.setUp();
 
         // deploy the vault
         vault = INonFungiblePositionVault(address(new NonFungiblePositionVault(governance, controller)));
+        vm.makePersistent(address(vault));
     }
 
     function addJoinSubmodule() public virtual {
         // deploy join submodule
         joinSubmodule = address(new JoinSubmodule());
+        vm.makePersistent(joinSubmodule);
 
         // create the upgrade
         LibDataTypes.SubmoduleUpgrade[] memory upgrade = new LibDataTypes.SubmoduleUpgrade[](1);
@@ -65,6 +64,7 @@ contract D01Deployment is D00Defaults {
     function addInvestSubmodule() public virtual {
         // deploy invest submodule
         investSubmodule = address(new InvestSubmodule());
+        vm.makePersistent(investSubmodule);
 
         // create the upgrade
         LibDataTypes.SubmoduleUpgrade[] memory upgrade = new LibDataTypes.SubmoduleUpgrade[](1);
@@ -81,6 +81,7 @@ contract D01Deployment is D00Defaults {
     function addExitSubmodule() public virtual {
         // deploy exit submodule
         exitSubmodule = address(new ExitSubmodule());
+        vm.makePersistent(exitSubmodule);
 
         // create the upgrade
         LibDataTypes.SubmoduleUpgrade[] memory upgrade = new LibDataTypes.SubmoduleUpgrade[](1);
@@ -97,6 +98,7 @@ contract D01Deployment is D00Defaults {
     function addVaultInfoSubmodule() public virtual {
         // deploy vault info submodule
         vaultInfoSubmodule = address(new VaultInfoSubmodule());
+        vm.makePersistent(vaultInfoSubmodule);
 
         // create the upgrade
         LibDataTypes.SubmoduleUpgrade[] memory upgrade = new LibDataTypes.SubmoduleUpgrade[](1);
@@ -108,6 +110,12 @@ contract D01Deployment is D00Defaults {
         });
 
         vault.submoduleUpgrade(upgrade, address(0), "");
+    }
+
+    function addUniversalLiquidator() public virtual {
+        // deploy universal liquidator
+        address universalLiquidator = address(new UniversalLiquidator());
+        vm.makePersistent(universalLiquidator);
     }
 
     // return array of function selectors for given facet name
