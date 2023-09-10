@@ -23,6 +23,10 @@ contract VaultInfoSubmodule is Modifiers, IVaultInfoSubmodule {
         return s.vaultPause;
     }
 
+    function liquidationRewardPause() external view override returns (bool _liquidationRewardPause) {
+        return s.liquidationRewardPause;
+    }
+
     function governance() external view override returns (address _governance) {
         return s.governance;
     }
@@ -71,6 +75,26 @@ contract VaultInfoSubmodule is Modifiers, IVaultInfoSubmodule {
         return s.fee;
     }
 
+    function unifiedRewardToken() external view override returns (address _unifiedRewardToken) {
+        return s.unifiedRewardToken;
+    }
+
+    function unifiedDepositToken() external view override returns (address _unifiedDepositToken) {
+        return s.unifiedDepositToken;
+    }
+
+    function totalRewardToken() public view override returns (uint256 _totalCount) {
+        return s.rewardTokens.length;
+    }
+
+    function rewardToken(uint256 _index) public view override returns (address _token) {
+        return s.rewardTokens[_index];
+    }
+
+    function rewardTokenRegistered(address _rewardToken) external view override returns (bool _registered) {
+        return s.rewardTokenRegistered[_rewardToken];
+    }
+
     function positionCount() external view override returns (uint256 _count) {
         return s.positionCount;
     }
@@ -99,12 +123,12 @@ contract VaultInfoSubmodule is Modifiers, IVaultInfoSubmodule {
         return s.masterChef;
     }
 
-    function totalRewardToken() public view override returns (uint256 _totalCount) {
-        return s.rewardTokens.length;
+    function universalLiquidator() external view override returns (address _universalLiquidator) {
+        return s.universalLiquidator;
     }
 
-    function rewardToken(uint256 _index) public view override returns (address _token) {
-        return s.rewardTokens[_index];
+    function universalLiquidatorRegistry() external view override returns (address _universalLiquidatorRegistry) {
+        return s.universalLiquidatorRegistry;
     }
 
     /**
@@ -130,15 +154,6 @@ contract VaultInfoSubmodule is Modifiers, IVaultInfoSubmodule {
     *?
 
     /**
-     * @dev Convenience getter for the data contract.
-     */
-    /*
-    function getStorage() public view returns (IUniVaultStorageV1) {
-        return IUniVaultStorageV1(getAddress(_DATA_CONTRACT_SLOT));
-    }
-    */
-
-    /**
      * @dev Convenience getter for the current sqrtPriceX96 of the Uniswap pool.
      */
     /*
@@ -147,14 +162,6 @@ contract VaultInfoSubmodule is Modifiers, IVaultInfoSubmodule {
             IUniswapV3Factory(_UNI_POOL_FACTORY).getPool(getStorage().token0(), getStorage().token1(), getStorage().fee());
         (uint160 sqrtPriceX96,,,,,,) = IUniswapV3Pool(poolAddr).slot0();
         return sqrtPriceX96;
-    }
-    */
-
-    /*
-    function submoduleAddress(bytes32 submoduleHash) public view returns (address) {
-        GlobalStorage storage globalStorage = getGlobalStorage();
-        address currentSubmodule = globalStorage.submoduleAddress[submoduleHash];
-        return currentSubmodule;
     }
     */
 }
