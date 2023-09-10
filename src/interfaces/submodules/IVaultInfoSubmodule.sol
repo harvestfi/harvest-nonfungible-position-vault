@@ -9,6 +9,7 @@ interface IVaultInfoSubmodule {
     function initialized() external view returns (uint8 _initialized);
     function initializing() external view returns (bool _initializing);
     function vaultPause() external view returns (bool _vaultPause);
+    function liquidationRewardPause() external view returns (bool _liquidationRewardPause);
     function governance() external view returns (address _governance);
     function controller() external view returns (address _controller);
     // Fee Reward Shares
@@ -24,8 +25,11 @@ interface IVaultInfoSubmodule {
     function token0() external view returns (address _token0);
     function token1() external view returns (address _token1);
     function fee() external view returns (uint24 _fee);
+    function unifiedRewardToken() external view returns (address _unifiedRewardToken);
+    function unifiedDepositToken() external view returns (address _unifiedDepositToken);
     function totalRewardToken() external view returns (uint256 _totalCount);
     function rewardToken(uint256 _index) external view returns (address _rewardToken);
+    function rewardTokenRegistered(address _rewardToken) external view returns (bool _registered);
     // Position
     function positionCount() external view returns (uint256 _count);
     function latestPositionId() external view returns (uint256 _positionId);
@@ -34,4 +38,7 @@ interface IVaultInfoSubmodule {
     // External
     function nonFungibleTokenPositionManager() external view returns (address _nonFungibleTokenPositionManager);
     function masterChef() external view returns (address _masterChef);
+    // Infrastructure
+    function universalLiquidator() external view returns (address _universalLiquidator);
+    function universalLiquidatorRegistry() external view returns (address _universalLiquidatorRegistry);
 }
