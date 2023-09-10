@@ -67,7 +67,7 @@ contract ConfigureSubmodule is Modifiers, IConfigureSubmodule {
         emit LibEvents.PoolConfigurationUpdate(_token0, _token1, _fee, s.name);
     }
 
-    function addRewardTokens(address[] memory _rewardTokens) public onlyGovernance {
+    function addRewardTokens(address[] calldata _rewardTokens) external override onlyGovernance {
         for (uint256 i = 0; i < _rewardTokens.length; i++) {
             if (s.rewardTokenRegistered[_rewardTokens[i]]) {
                 revert LibErrors.TokenAlreadyRegistered(_rewardTokens[i]);
@@ -76,13 +76,29 @@ contract ConfigureSubmodule is Modifiers, IConfigureSubmodule {
             s.rewardTokens.push(_rewardTokens[i]);
             s.rewardTokenRegistered[_rewardTokens[i]] = true;
         }
+
+        emit LibEvents.RewardTokenAdded(s.rewardTokens.length - _rewardTokens.length - 1, s.rewardTokens.length - 1);
     }
 
-    function removeRewardToken(uint256 i) public onlyGovernance {
-        address removedToken = s.rewardTokens[i];
-        s.rewardTokens[i] = s.rewardTokens[s.rewardTokens.length - 1];
+    function removeRewardToken(uint256 _index) external override onlyGovernance {
+        address removedToken = s.rewardTokens[_index];
+        s.rewardTokens[_index] = s.rewardTokens[s.rewardTokens.length - 1];
         s.rewardTokens.pop();
         s.rewardTokenRegistered[removedToken] = false;
+
+        emit LibEvents.RewardTokenRemoved(removedToken);
+    }
+
+    function setUnifiedRewardToken(address _rewardToken) external override onlyGovernance {
+        s.unifiedRewardToken = _rewardToken;
+
+        emit LibEvents.UnifiedRewardTokenUpdate(_rewardToken);
+    }
+
+    function setUnifiedDepositToken(address _depositToken) external override onlyGovernance {
+        s.unifiedDepositToken = _depositToken;
+
+        emit LibEvents.UnifiedDepositTokenUpdate(_depositToken);
     }
 
     function addPosition(uint256 _tokenId, uint256 _liquidity, int24 _tickLower, int24 _tickUpper)
@@ -117,5 +133,11 @@ contract ConfigureSubmodule is Modifiers, IConfigureSubmodule {
         s.vaultPause = _pause;
 
         emit LibEvents.VaultPauseUpdate(_pause);
+    }
+
+    function setLiquidationRewardPause(bool _pause) public override onlyGovernanceOrController {
+        s.liquidationRewardPause = _pause;
+
+        emit LibEvents.LiquidationRewardPauseUpdate(_pause);
     }
 }
