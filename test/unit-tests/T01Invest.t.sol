@@ -12,7 +12,6 @@ import {LibErrors} from "../../src/libraries/LibErrors.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../interfaces/IUSDT.sol";
 import "../../src/interfaces/protocols/pancake/IMasterChefV3.sol";
-import "../../src/interfaces/protocols/pancake/ILMPool.sol";
 
 contract Invest is D01Deployment {
     function setUp() public virtual override {
