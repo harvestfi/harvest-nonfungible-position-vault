@@ -6,6 +6,7 @@ import {IVaultInfoSubmodule} from "../interfaces/submodules/IVaultInfoSubmodule.
 
 // Libraries
 import {Position} from "../libraries/LibAppStorage.sol";
+import {LibPositionManager} from "../libraries/LibPositionManager.sol";
 
 // Helpers
 import {Modifiers} from "../core/Modifiers.sol";
@@ -95,6 +96,36 @@ contract VaultInfoSubmodule is Modifiers, IVaultInfoSubmodule {
         return s.rewardTokenRegistered[_rewardToken];
     }
 
+    /*
+    * Returns the cash balance across all users in this contract.
+    */
+    // TODO: Check if this is needed
+    function underlyingBalanceInVault() public view returns (uint256) {
+        return 0; //IERC20Upgradeable(underlying()).balanceOf(address(this));
+    }
+
+    /**
+     * @dev Returns the current amount of underlying assets owned by the vault.
+     */
+    function underlyingBalanceWithInvestment() public view returns (uint256) {
+        uint256 totalLiquidity;
+        for (uint256 index; index < s.positionCount;) {
+            (,,,,, uint256 liquidity) = LibPositionManager.positionInfo(s.positions[index].tokenId);
+            totalLiquidity += liquidity;
+            unchecked {
+                index++;
+            }
+        }
+        return underlyingBalanceInVault() + totalLiquidity;
+    }
+
+    /**
+     * @dev Returns the price per full share, scaled to 1e18
+     */
+    function getPricePerFullShare() public view override returns (uint256) {
+        return s.totalSupply == 0 ? s.UNDERLYING_UNIT : s.UNDERLYING_UNIT * underlyingBalanceWithInvestment() / s.totalSupply;
+    }
+
     function positionCount() external view override returns (uint256 _count) {
         return s.positionCount;
     }
@@ -109,8 +140,11 @@ contract VaultInfoSubmodule is Modifiers, IVaultInfoSubmodule {
 
     function allPosition() external view override returns (Position[] memory) {
         Position[] memory _positions = new Position[](s.positionCount);
-        for (uint256 i; i < s.positionCount; i++) {
-            _positions[i] = s.positions[i];
+        for (uint256 index; index < s.positionCount;) {
+            _positions[index] = s.positions[index];
+            unchecked {
+                index++;
+            }
         }
         return _positions;
     }
@@ -130,38 +164,4 @@ contract VaultInfoSubmodule is Modifiers, IVaultInfoSubmodule {
     function universalLiquidatorRegistry() external view override returns (address _universalLiquidatorRegistry) {
         return s.universalLiquidatorRegistry;
     }
-
-    /**
-     * @dev Returns the total liquidity stored in the position
-     * Dev Note: need to turn on the solc optimizer otherwise the compiler
-     * will throw stack too deep on this function
-     */
-    /*
-    function underlyingBalanceWithInvestment() public view returns (uint256) {
-        // note that the liquidity is not a token, so there is no local balance added
-        (,,,,,,, uint128 liquidity,,,,) = INonfungiblePositionManager(_NFT_POSITION_MANAGER).positions(getStorage().posId());
-        return liquidity;
-    }
-    */
-
-    /**
-     * @dev Returns the price per full share, scaled to 1e18
-     */
-    /*
-    function getPricePerFullShare() public view returns (uint256) {
-        return totalSupply() == 0 ? _UNDERLYING_UNIT : _UNDERLYING_UNIT.mul(underlyingBalanceWithInvestment()).div(totalSupply());
-    }
-    *?
-
-    /**
-     * @dev Convenience getter for the current sqrtPriceX96 of the Uniswap pool.
-     */
-    /*
-    function getSqrtPriceX96() public view returns (uint160) {
-        address poolAddr =
-            IUniswapV3Factory(_UNI_POOL_FACTORY).getPool(getStorage().token0(), getStorage().token1(), getStorage().fee());
-        (uint160 sqrtPriceX96,,,,,,) = IUniswapV3Pool(poolAddr).slot0();
-        return sqrtPriceX96;
-    }
-    */
 }

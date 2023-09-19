@@ -30,6 +30,8 @@ interface IVaultInfoSubmodule {
     function totalRewardToken() external view returns (uint256 _totalCount);
     function rewardToken(uint256 _index) external view returns (address _rewardToken);
     function rewardTokenRegistered(address _rewardToken) external view returns (bool _registered);
+    function underlyingBalanceWithInvestment() external view returns (uint256 _balance);
+    function getPricePerFullShare() external view returns (uint256 _price);
     // Position
     function positionCount() external view returns (uint256 _count);
     function latestPositionId() external view returns (uint256 _positionId);
