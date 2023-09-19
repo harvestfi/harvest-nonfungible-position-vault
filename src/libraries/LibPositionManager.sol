@@ -5,7 +5,9 @@ pragma solidity 0.8.17;
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
+import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Factory.sol";
 import "@uniswap/v3-periphery/contracts/interfaces/INonfungiblePositionManager.sol";
+import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 
 // Interfaces
 import {IMasterChefV3} from "../interfaces/protocols/pancake/IMasterChefV3.sol";
@@ -15,7 +17,7 @@ import {Position, AppStorage, LibAppStorage} from "./LibAppStorage.sol";
 import {LibDataTypes} from "./LibDataTypes.sol";
 import {LibErrors} from "./LibErrors.sol";
 
-library LibPostionManager {
+library LibPositionManager {
     using SafeERC20 for IERC20;
 
     modifier addressConfiguration() {
@@ -133,8 +135,18 @@ library LibPostionManager {
 
     function positionInfo(uint256 _tokenId) internal view returns (address, address, uint24, int24, int24, uint256) {
         AppStorage storage s = LibAppStorage.systemStorage();
-        (,, address _token0, address _token1, uint24 _fee, int24 _tickLower, int24 _tickUpper, uint256 _initialLiquidity,,,,) =
+        (,, address _token0, address _token1, uint24 _fee, int24 _tickLower, int24 _tickUpper, uint256 _liquidity,,,,) =
             INonfungiblePositionManager(s.nonFungibleTokenPositionManager).positions(_tokenId);
-        return (_token0, _token1, _fee, _tickLower, _tickUpper, _initialLiquidity);
+        return (_token0, _token1, _fee, _tickLower, _tickUpper, _liquidity);
+    }
+
+    /**
+     * @dev Getter for the current sqrtPriceX96 of the Uniswap pool.
+     */
+    function _getSqrtPriceX96() internal view returns (uint160 _sqrtPriceX96) {
+        AppStorage storage s = LibAppStorage.systemStorage();
+        address factory = INonfungiblePositionManager(s.nonFungibleTokenPositionManager).factory();
+        address poolAddr = IUniswapV3Factory(factory).getPool(s.token0, s.token1, s.fee);
+        (_sqrtPriceX96,,,,,,) = IUniswapV3Pool(poolAddr).slot0();
     }
 }

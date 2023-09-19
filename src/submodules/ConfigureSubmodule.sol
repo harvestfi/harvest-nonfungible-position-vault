@@ -7,7 +7,7 @@ import {IConfigureSubmodule} from "../interfaces/submodules/IConfigureSubmodule.
 
 // Libraries
 import {Position} from "../libraries/LibAppStorage.sol";
-import {LibPostionManager} from "../libraries/LibPostionManager.sol";
+import {LibPositionManager} from "../libraries/LibPositionManager.sol";
 import {LibErrors} from "../libraries/LibErrors.sol";
 import {LibEvents} from "../libraries/LibEvents.sol";
 

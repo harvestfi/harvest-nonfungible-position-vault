@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 // Libraries
 import {Position, AppStorage, LibAppStorage} from "../libraries/LibAppStorage.sol";
 import {LibTokenizedVault} from "../libraries/LibTokenizedVault.sol";
-import {LibPostionManager} from "../libraries/LibPostionManager.sol";
+import {LibPositionManager} from "../libraries/LibPositionManager.sol";
 
 // Helpers
 import {Modifiers} from "./Modifiers.sol";
@@ -23,7 +23,7 @@ contract InitVault is Modifiers {
 
         // fetch info from position manager
         (address _token0, address _token1, uint24 _fee, int24 _tickLower, int24 _tickUpper, uint256 _initialLiquidity) =
-            LibPostionManager.positionInfo(_tokenId);
+            LibPositionManager.positionInfo(_tokenId);
 
         // initialize the state variables
         s.token0 = _token0;
@@ -35,7 +35,7 @@ contract InitVault is Modifiers {
         position.tokenId = _tokenId;
 
         // stake position
-        LibPostionManager.stake(s.positionCount - 1);
+        LibPositionManager.stake(s.positionCount - 1);
 
         // initializing the vault token. By default, it has 18 decimals.
         LibTokenizedVault.__ERC20_init_unchained(
