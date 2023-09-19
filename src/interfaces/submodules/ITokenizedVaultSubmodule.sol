@@ -2,7 +2,6 @@
 pragma solidity 0.8.17;
 
 // External Packages
-import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/interfaces/IERC4626Upgradeable.sol";
 
-interface ITokenizedVaultSubmodule is IERC20Upgradeable, IERC20MetadataUpgradeable {}
+interface ITokenizedVaultSubmodule is IERC4626Upgradeable {}
