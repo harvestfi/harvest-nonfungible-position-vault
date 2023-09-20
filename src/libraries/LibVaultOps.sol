@@ -12,6 +12,7 @@ import {IUniversalLiquidator} from "../interfaces/utils/IUniversalLiquidator.sol
 
 // Libraries
 import {AppStorage, LibAppStorage} from "./LibAppStorage.sol";
+import {LibPositionManager} from "./LibPositionManager.sol";
 import {LibErrors} from "./LibErrors.sol";
 import {LibEvents} from "./LibEvents.sol";
 
@@ -96,6 +97,17 @@ library LibVaultOps {
             emit LibEvents.ProfitLogInReward(rewardToken, 0, 0, block.timestamp);
             emit LibEvents.PlatformFeeLogInReward(s.governance, rewardToken, 0, 0, block.timestamp);
             emit LibEvents.StrategistFeeLogInReward(s.strategist, rewardToken, 0, 0, block.timestamp);
+        }
+    }
+
+    function _getAllPositionLiquidity() internal view returns (uint256 totalLiquidity) {
+        AppStorage storage s = LibAppStorage.systemStorage();
+        for (uint256 index; index < s.positionCount;) {
+            (,,,,, uint256 liquidity) = LibPositionManager.positionInfo(s.positions[index].tokenId);
+            totalLiquidity += liquidity;
+            unchecked {
+                index++;
+            }
         }
     }
 }
