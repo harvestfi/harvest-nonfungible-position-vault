@@ -21,6 +21,9 @@ import {IVaultInfoSubmodule} from "../../src/interfaces/submodules/IVaultInfoSub
 
 // Libraries
 import {LibDataTypes} from "../../src/libraries/LibDataTypes.sol";
+import {UniversalLiquidator} from "universal-liquidator/src/core/UniversalLiquidator.sol";
+import {UniversalLiquidatorRegistry} from "universal-liquidator/src/core/UniversalLiquidatorRegistry.sol";
+import {PancakeV3Dex} from "universal-liquidator/src/core/dexes/PancakeV3Dex.sol";
 import {strings} from "lib/solidity-stringutils/src/strings.sol";
 
 contract D01Deployment is D00Defaults {
@@ -116,6 +119,12 @@ contract D01Deployment is D00Defaults {
         // deploy universal liquidator
         address universalLiquidator = address(new UniversalLiquidator());
         vm.makePersistent(universalLiquidator);
+        // deploy universal liquidator registry
+        address universalLiquidatorRegistry = address(new UniversalLiquidatorRegistry());
+        vm.makePersistent(universalLiquidatorRegistry);
+        // deploy dexes
+        address pancakeSwap = address(new PancakeV3Dex());
+        vm.makePersistent(pancakeSwap);
     }
 
     // return array of function selectors for given facet name
