@@ -14,6 +14,7 @@ import {
 
 // Libraries
 import {LibTokenizedVault} from "../libraries/LibTokenizedVault.sol";
+import {LibVaultOps} from "../libraries/LibVaultOps.sol";
 
 // Helpers
 import {Modifiers} from "../core/Modifiers.sol";
@@ -71,7 +72,7 @@ contract TokenizedVaultSubmodule is Modifiers, ITokenizedVaultSubmodule {
      * @dev See {IERC4626-totalAssets}.
      */
     function totalAssets() public view virtual override returns (uint256) {
-        return IERC20Upgradeable(s.underlyingToken).balanceOf(address(this));
+        return LibVaultOps._getAllPositionLiquidity();
     }
 
     /**
@@ -509,17 +510,4 @@ contract TokenizedVaultSubmodule is Modifiers, ITokenizedVaultSubmodule {
      * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
      */
     function _afterTokenTransfer(address from, address to, uint256 amount) internal virtual {}
-
-    /**
-     * @dev Returns the total liquidity stored in the position
-     * Dev Note: need to turn on the solc optimizer otherwise the compiler
-     * will throw stack too deep on this function
-     */
-    /*
-    function underlyingBalanceWithInvestment() public view override returns (uint256) {
-        // note that the liquidity is not a token, so there is no local balance added
-        (,,,,,,, uint128 liquidity,,,,) = INonfungiblePositionManager(_NFT_POSITION_MANAGER).positions(getStorage().posId());
-        return liquidity;
-    }
-    */
 }

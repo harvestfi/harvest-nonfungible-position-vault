@@ -7,6 +7,7 @@ import {IVaultInfoSubmodule} from "../interfaces/submodules/IVaultInfoSubmodule.
 // Libraries
 import {Position} from "../libraries/LibAppStorage.sol";
 import {LibPositionManager} from "../libraries/LibPositionManager.sol";
+import {LibVaultOps} from "../libraries/LibVaultOps.sol";
 
 // Helpers
 import {Modifiers} from "../core/Modifiers.sol";
@@ -96,27 +97,11 @@ contract VaultInfoSubmodule is Modifiers, IVaultInfoSubmodule {
         return s.rewardTokenRegistered[_rewardToken];
     }
 
-    /*
-    * Returns the cash balance across all users in this contract.
-    */
-    // TODO: Check if this is needed
-    function underlyingBalanceInVault() public view returns (uint256) {
-        return 0; //IERC20Upgradeable(underlying()).balanceOf(address(this));
-    }
-
     /**
      * @dev Returns the current amount of underlying assets owned by the vault.
      */
     function underlyingBalanceWithInvestment() public view returns (uint256) {
-        uint256 totalLiquidity;
-        for (uint256 index; index < s.positionCount;) {
-            (,,,,, uint256 liquidity) = LibPositionManager.positionInfo(s.positions[index].tokenId);
-            totalLiquidity += liquidity;
-            unchecked {
-                index++;
-            }
-        }
-        return underlyingBalanceInVault() + totalLiquidity;
+        return LibVaultOps._getAllPositionLiquidity();
     }
 
     /**
