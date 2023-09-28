@@ -19,10 +19,12 @@ library LibEvents {
     event ExternalFarmingContractUpdate(address indexed nftPositionManager, address indexed masterchef);
     event InfrastructureUpdate(address indexed universalLiquidator, address indexed universalLiquidatorRegistry);
     event PoolConfigurationUpdate(address indexed token0, address indexed token1, uint24 fee, string name);
+    event UnitsUpdate(uint8 underlyingDecimals, uint256 underlyingUnit);
     event RewardTokenAdded(uint256 fromIndex, uint256 toIndex);
     event RewardTokenRemoved(address indexed removedToken);
     event UnifiedRewardTokenUpdate(address indexed rewardToken);
     event UnifiedDepositTokenUpdate(address indexed depositToken);
+    event UnderlyingTokenUpdate(address indexed underlyingToken);
     event PositionAdd(uint256 positionId, uint256 tokenId, uint256 liquidity, int24 tickLower, int24 tickUpper);
     event PositionUpdate(uint256 positionId, uint256 tokenId, uint256 liquidity, int24 tickLower, int24 tickUpper);
     event VaultPauseUpdate(bool paused);

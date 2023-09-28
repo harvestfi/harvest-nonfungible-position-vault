@@ -67,17 +67,35 @@ contract ConfigureSubmodule is Modifiers, IConfigureSubmodule {
         emit LibEvents.PoolConfigurationUpdate(_token0, _token1, _fee, s.name);
     }
 
+    function configureUnits() external override onlyGovernanceOrController {
+        address token0 = s.token0;
+        address token1 = s.token1;
+        uint8 decimals0 = IERC20Metadata(token0).decimals();
+        uint8 decimals1 = IERC20Metadata(token1).decimals();
+        if (decimals0 != decimals1) {
+            revert LibErrors.DecimalsMismatch(token0, decimals0, token1, decimals1);
+        }
+        s.underlyingDecimals = uint8(decimals0);
+        s.underlyingUnit = 10 ** decimals0;
+
+        emit LibEvents.UnitsUpdate(s.underlyingDecimals, s.underlyingUnit);
+    }
+
     function addRewardTokens(address[] calldata _rewardTokens) external override onlyGovernance {
-        for (uint256 i = 0; i < _rewardTokens.length; i++) {
-            if (s.rewardTokenRegistered[_rewardTokens[i]]) {
-                revert LibErrors.TokenAlreadyRegistered(_rewardTokens[i]);
+        for (uint256 index = 0; index < _rewardTokens.length;) {
+            address rewardToken = _rewardTokens[index];
+            if (s.rewardTokenRegistered[rewardToken]) {
+                revert LibErrors.TokenAlreadyRegistered(rewardToken);
             }
 
-            s.rewardTokens.push(_rewardTokens[i]);
-            s.rewardTokenRegistered[_rewardTokens[i]] = true;
+            s.rewardTokens.push(rewardToken);
+            s.rewardTokenRegistered[rewardToken] = true;
+            unchecked {
+                index++;
+            }
         }
 
-        emit LibEvents.RewardTokenAdded(s.rewardTokens.length - _rewardTokens.length - 1, s.rewardTokens.length - 1);
+        emit LibEvents.RewardTokenAdded(s.rewardTokens.length - _rewardTokens.length, s.rewardTokens.length - 1);
     }
 
     function removeRewardToken(uint256 _index) external override onlyGovernance {
@@ -99,6 +117,12 @@ contract ConfigureSubmodule is Modifiers, IConfigureSubmodule {
         s.unifiedDepositToken = _depositToken;
 
         emit LibEvents.UnifiedDepositTokenUpdate(_depositToken);
+    }
+
+    function setUnderlyingToken(address _underlyingToken) external override onlyGovernance {
+        s.underlyingToken = _underlyingToken;
+
+        emit LibEvents.UnderlyingTokenUpdate(_underlyingToken);
     }
 
     function addPosition(uint256 _tokenId, uint256 _liquidity, int24 _tickLower, int24 _tickUpper)
