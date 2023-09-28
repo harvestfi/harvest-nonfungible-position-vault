@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import {Position, AppStorage, LibAppStorage} from "../libraries/LibAppStorage.sol";
 import {LibTokenizedVault} from "../libraries/LibTokenizedVault.sol";
 import {LibPositionManager} from "../libraries/LibPositionManager.sol";
+import {LibErrors} from "../libraries/LibErrors.sol";
 
 // Helpers
 import {Modifiers} from "./Modifiers.sol";
@@ -33,6 +34,15 @@ contract InitVault is Modifiers {
         position.tickUpper = _tickUpper;
         position.initialLiquidity = _initialLiquidity;
         position.tokenId = _tokenId;
+
+        // set the decimals and underlying unit
+        uint8 decimals0 = IERC20Metadata(_token0).decimals();
+        uint8 decimals1 = IERC20Metadata(_token1).decimals();
+        if (decimals0 != decimals1) {
+            revert LibErrors.DecimalsMismatch(_token0, decimals0, _token1, decimals1);
+        }
+        s.underlyingDecimals = uint8(decimals0);
+        s.underlyingUnit = 10 ** decimals0;
 
         // stake position
         LibPositionManager.stake(s.positionCount - 1);
