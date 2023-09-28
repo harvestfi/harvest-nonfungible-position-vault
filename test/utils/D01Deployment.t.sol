@@ -36,6 +36,9 @@ contract D01Deployment is D00Defaults {
     address public investSubmodule;
     address public exitSubmodule;
     address public vaultInfoSubmodule;
+    UniversalLiquidator public universalLiquidator;
+    UniversalLiquidatorRegistry public universalLiquidatorRegistry;
+    PancakeV3Dex public pancakeV3;
 
     function setUp() public virtual override {
         super.setUp();
@@ -117,14 +120,16 @@ contract D01Deployment is D00Defaults {
 
     function addUniversalLiquidator() public virtual {
         // deploy universal liquidator
-        address universalLiquidator = address(new UniversalLiquidator());
-        vm.makePersistent(universalLiquidator);
+        universalLiquidator = new UniversalLiquidator();
+        vm.makePersistent(address(universalLiquidator));
         // deploy universal liquidator registry
-        address universalLiquidatorRegistry = address(new UniversalLiquidatorRegistry());
-        vm.makePersistent(universalLiquidatorRegistry);
+        universalLiquidatorRegistry = new UniversalLiquidatorRegistry();
+        vm.makePersistent(address(universalLiquidatorRegistry));
+        universalLiquidator.setPathRegistry(address(universalLiquidatorRegistry));
         // deploy dexes
-        address pancakeSwap = address(new PancakeV3Dex());
-        vm.makePersistent(pancakeSwap);
+        pancakeV3 = new PancakeV3Dex();
+        vm.makePersistent(address(pancakeV3));
+        universalLiquidatorRegistry.addDex(bytes32(bytes("pancakeV3")), address(pancakeV3));
     }
 
     // return array of function selectors for given facet name

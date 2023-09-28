@@ -18,6 +18,7 @@ contract Invest is D01Deployment {
         super.setUp();
         addVaultInfoSubmodule();
         addJoinSubmodule();
+        addUniversalLiquidator();
     }
 
     function testDoHardWork() public virtual {
@@ -33,6 +34,21 @@ contract Invest is D01Deployment {
         changePrank(governance);
         // configure external protocol
         vault.configureExternalProtocol(nonFungibleManagerPancake, masterchefV3Pancake);
+        vault.configureInfrastructure(address(universalLiquidator), address(universalLiquidatorRegistry));
+        // configure liquidation path
+        address[] memory _path = new address[](2);
+        // CAKE -> WETH
+        _path[0] = 0x152649eA73beAb28c5b49B26eb48f7EAD6d4c898;
+        _path[1] = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+        universalLiquidatorRegistry.setPath(bytes32(bytes("pancakeV3")), _path);
+        // TUSD -> WETH
+        _path[0] = 0x0000000000085d4780B73119b644AE5ecd22b376;
+        _path[1] = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+        universalLiquidatorRegistry.setPath(bytes32(bytes("pancakeV3")), _path);
+        // USDT -> WETH
+        _path[0] = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
+        _path[1] = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+        universalLiquidatorRegistry.setPath(bytes32(bytes("pancakeV3")), _path);
         // configure the pool
         vault.configurePool(token0, token1, fee, vaultName);
         // set reward token
@@ -54,7 +70,6 @@ contract Invest is D01Deployment {
         // simulate swap transaction that happened in the pool
         bytes32 _hash = 0xc63ca44c870c098ef79c0c15c25006c8a586256dea53803bbb7f13e910626483;
         vm.rollFork(forkNetwork, _hash);
-
         tokenId = vault.positions(vault.positionCount() - 1).tokenId;
 
         // do hard work
