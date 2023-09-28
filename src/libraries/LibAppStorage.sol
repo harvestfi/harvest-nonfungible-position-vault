@@ -32,11 +32,11 @@ struct AppStorage {
     uint24 fee;
     address unifiedRewardToken;
     address unifiedDepositToken;
-    address underlyingToken; //TODO: Add configuration and info getter
+    address underlyingToken;
     address[] rewardTokens;
     mapping(address => bool) rewardTokenRegistered;
-    uint8 underlyingDecimals; //TODO: Add configuration and info getter
-    uint256 UNDERLYING_UNIT; //TODO: Add configuration and info getter
+    uint8 underlyingDecimals;
+    uint256 underlyingUnit;
     // Token
     mapping(address => uint256) balances;
     mapping(address => mapping(address => uint256)) allowances;

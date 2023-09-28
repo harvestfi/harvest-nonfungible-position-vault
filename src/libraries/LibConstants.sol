@@ -5,9 +5,6 @@ pragma solidity 0.8.17;
  * @dev Settings keys.
  */
 library LibConstants {
-    // FIXME
-    uint256 internal constant _UNDERLYING_UNIT = 1e18;
-
     address internal constant _NFT_POSITION_MANAGER = 0xC36442b4a4522E871399CD717aBDD847Ab11FE88;
     address internal constant _UNI_POOL_FACTORY = 0x1F98431c8aD98523631AE4a59f267346ea31F984;
 
