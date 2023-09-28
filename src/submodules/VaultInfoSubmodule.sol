@@ -85,6 +85,10 @@ contract VaultInfoSubmodule is Modifiers, IVaultInfoSubmodule {
         return s.unifiedDepositToken;
     }
 
+    function underlyingToken() external view override returns (address _underlyingToken) {
+        return s.underlyingToken;
+    }
+
     function totalRewardToken() public view override returns (uint256 _totalCount) {
         return s.rewardTokens.length;
     }
@@ -95,6 +99,14 @@ contract VaultInfoSubmodule is Modifiers, IVaultInfoSubmodule {
 
     function rewardTokenRegistered(address _rewardToken) external view override returns (bool _registered) {
         return s.rewardTokenRegistered[_rewardToken];
+    }
+
+    function underlyingDecimals() external view override returns (uint8 _underlyingDecimals) {
+        return s.underlyingDecimals;
+    }
+
+    function underlyingUnit() external view override returns (uint256 _underlyingUnit) {
+        return s.underlyingUnit;
     }
 
     /**
@@ -108,7 +120,7 @@ contract VaultInfoSubmodule is Modifiers, IVaultInfoSubmodule {
      * @dev Returns the price per full share, scaled to 1e18
      */
     function getPricePerFullShare() public view override returns (uint256) {
-        return s.totalSupply == 0 ? s.UNDERLYING_UNIT : s.UNDERLYING_UNIT * underlyingBalanceWithInvestment() / s.totalSupply;
+        return s.totalSupply == 0 ? s.underlyingUnit : s.underlyingUnit * underlyingBalanceWithInvestment() / s.totalSupply;
     }
 
     function positionCount() external view override returns (uint256 _count) {

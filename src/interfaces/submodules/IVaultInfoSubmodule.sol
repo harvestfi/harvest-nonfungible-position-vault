@@ -27,9 +27,12 @@ interface IVaultInfoSubmodule {
     function fee() external view returns (uint24 _fee);
     function unifiedRewardToken() external view returns (address _unifiedRewardToken);
     function unifiedDepositToken() external view returns (address _unifiedDepositToken);
+    function underlyingToken() external view returns (address _underlyingToken);
     function totalRewardToken() external view returns (uint256 _totalCount);
     function rewardToken(uint256 _index) external view returns (address _rewardToken);
     function rewardTokenRegistered(address _rewardToken) external view returns (bool _registered);
+    function underlyingDecimals() external view returns (uint8 _underlyingDecimals);
+    function underlyingUnit() external view returns (uint256 _underlyingUnit);
     function underlyingBalanceWithInvestment() external view returns (uint256 _balance);
     function getPricePerFullShare() external view returns (uint256 _price);
     // Position
