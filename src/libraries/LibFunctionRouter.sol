@@ -105,7 +105,7 @@ library LibFunctionRouter {
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
             functionSelectors: functionSelectors
         });
-        functionSelectors = new bytes4[](12);
+        functionSelectors = new bytes4[](14);
         functionSelectors[0] = IConfigureSubmodule.configureFees.selector;
         functionSelectors[1] = IConfigureSubmodule.configureExternalProtocol.selector;
         functionSelectors[2] = IConfigureSubmodule.configureInfrastructure.selector;
