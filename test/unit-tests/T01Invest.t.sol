@@ -41,14 +41,23 @@ contract Invest is D01Deployment {
         _path[0] = 0x152649eA73beAb28c5b49B26eb48f7EAD6d4c898;
         _path[1] = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
         universalLiquidatorRegistry.setPath(bytes32(bytes("pancakeV3")), _path);
-        // TUSD -> WETH
-        _path[0] = 0x0000000000085d4780B73119b644AE5ecd22b376;
-        _path[1] = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-        universalLiquidatorRegistry.setPath(bytes32(bytes("pancakeV3")), _path);
         // USDT -> WETH
         _path[0] = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
         _path[1] = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
         universalLiquidatorRegistry.setPath(bytes32(bytes("pancakeV3")), _path);
+        // TUSD -> USDT -> WETH
+        _path = new address[](3);
+        _path[0] = 0x0000000000085d4780B73119b644AE5ecd22b376;
+        _path[1] = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
+        _path[2] = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+        universalLiquidatorRegistry.setPath(bytes32(bytes("pancakeV3")), _path);
+        // configure liquidation fee
+        // CAKE -> WETH
+        pancakeV3.setFee(0x152649eA73beAb28c5b49B26eb48f7EAD6d4c898, 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2, 2500);
+        // TUSD -> USDT
+        pancakeV3.setFee(0x0000000000085d4780B73119b644AE5ecd22b376, 0xdAC17F958D2ee523a2206206994597C13D831ec7, 100);
+        // USDT -> WETH
+        pancakeV3.setFee(0xdAC17F958D2ee523a2206206994597C13D831ec7, 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2, 500);
         // configure the pool
         vault.configurePool(token0, token1, fee, vaultName);
         // set reward token
