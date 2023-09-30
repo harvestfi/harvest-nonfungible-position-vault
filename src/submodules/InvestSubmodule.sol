@@ -23,9 +23,15 @@ contract InvestSubmodule is Modifiers, IInvestSubmodule {
     using SafeERC20 for IERC20;
 
     function doHardWork(uint256 _positionId) external override onlyGovernanceOrController {
+        console2.log("Before Claim (CAKE): ", IERC20(0x152649eA73beAb28c5b49B26eb48f7EAD6d4c898).balanceOf(address(this)));
+        console2.log("Before Claim (TUSD): ", IERC20(0x0000000000085d4780B73119b644AE5ecd22b376).balanceOf(address(this)));
+        console2.log("Before Claim (USDT): ", IERC20(0xdAC17F958D2ee523a2206206994597C13D831ec7).balanceOf(address(this)));
         // claim rewards: harvest + collect
         LibPositionManager.harvest(_positionId);
         LibPositionManager.collect(_positionId);
+        console2.log("After Claim (CAKE): ", IERC20(0x152649eA73beAb28c5b49B26eb48f7EAD6d4c898).balanceOf(address(this)));
+        console2.log("After Claim (TUSD): ", IERC20(0x0000000000085d4780B73119b644AE5ecd22b376).balanceOf(address(this)));
+        console2.log("After Claim (USDT): ", IERC20(0xdAC17F958D2ee523a2206206994597C13D831ec7).balanceOf(address(this)));
         // liquidate to universal reward token through universal liquidators
         if (s.liquidationRewardPause) {
             // profits can be disabled for possible simplified and rapoolId exit
