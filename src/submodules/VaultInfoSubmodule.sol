@@ -8,6 +8,7 @@ import {IVaultInfoSubmodule} from "../interfaces/submodules/IVaultInfoSubmodule.
 import {Position} from "../libraries/LibAppStorage.sol";
 import {LibPositionManager} from "../libraries/LibPositionManager.sol";
 import {LibVaultOps} from "../libraries/LibVaultOps.sol";
+import {LibConstants} from "../libraries/LibConstants.sol";
 
 // Helpers
 import {Modifiers} from "../core/Modifiers.sol";
@@ -37,8 +38,8 @@ contract VaultInfoSubmodule is Modifiers, IVaultInfoSubmodule {
         return s.controller;
     }
 
-    function feeDenominator() external view override returns (uint256 _feeDenominator) {
-        return s.FEE_DENOMINATOR;
+    function feeDenominator() external pure override returns (uint256 _feeDenominator) {
+        return LibConstants._FEE_DENOMINATOR;
     }
 
     function strategist() external view override returns (address _strategist) {
