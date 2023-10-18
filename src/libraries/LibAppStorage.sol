@@ -18,11 +18,19 @@ struct AppStorage {
     address governance;
     address controller;
     // Fee Reward Shares
-    uint256 FEE_DENOMINATOR; // default: 10000
     address strategist;
-    uint256 strategistFeeNumerator; // default: 0
-    uint256 platformFeeNumerator; // default: 300
-    uint256 profitSharingNumerator; // default: 700
+    /// 7% of fees captured go to iFARM stakers
+    uint256 profitSharingNumerator; // default: 700;
+    uint256 nextProfitSharingNumerator;
+    uint256 nextProfitSharingNumeratorTimestamp;
+    /// 0% of fees captured go to strategists
+    uint256 strategistFeeNumerator;
+    uint256 nextStrategistFeeNumerator;
+    uint256 nextStrategistFeeNumeratorTimestamp;
+    /// 3% of fees captured go to the devs of the platform
+    uint256 platformFeeNumerator; // default: 300;
+    uint256 nextPlatformFeeNumerator;
+    uint256 nextPlatformFeeNumeratorTimestamp;
     /// Simple two phase upgrade scheme
     mapping(bytes32 => uint256) upgradeScheduled; // id of the upgrade => the time that the upgrade is valid until.
     uint256 upgradeExpiration;
