@@ -13,6 +13,7 @@ import {IUniversalLiquidator} from "../interfaces/utils/IUniversalLiquidator.sol
 // Libraries
 import {AppStorage, LibAppStorage} from "./LibAppStorage.sol";
 import {LibPositionManager} from "./LibPositionManager.sol";
+import {LibConstants} from "./LibConstants.sol";
 import {LibErrors} from "./LibErrors.sol";
 import {LibEvents} from "./LibEvents.sol";
 
@@ -72,8 +73,7 @@ library LibVaultOps {
         address rewardToken = s.unifiedRewardToken;
         uint256 rewardBalance = IERC20(s.unifiedRewardToken).balanceOf(address(this));
         if (rewardBalance > 100) {
-            //TODO: initiate constant somewhere
-            uint256 feeDenominator = s.FEE_DENOMINATOR;
+            uint256 feeDenominator = LibConstants._FEE_DENOMINATOR;
             uint256 strategistFee = rewardBalance * s.strategistFeeNumerator / feeDenominator;
             uint256 platformFee = rewardBalance * s.platformFeeNumerator / feeDenominator;
             uint256 profitSharingFee = rewardBalance * s.profitSharingNumerator / feeDenominator;
