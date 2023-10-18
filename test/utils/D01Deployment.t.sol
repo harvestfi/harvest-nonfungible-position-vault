@@ -3,6 +3,7 @@ pragma solidity 0.8.17;
 
 // Utilities
 import {D00Defaults, console2} from "./D00Defaults.t.sol";
+import {PoolHelper} from "./PoolHelper.t.sol";
 
 // Core
 import {InitVault} from "../../src/core/InitVault.sol";
@@ -26,7 +27,7 @@ import {UniversalLiquidatorRegistry} from "universal-liquidator/src/core/Univers
 import {PancakeV3Dex} from "universal-liquidator/src/core/dexes/PancakeV3Dex.sol";
 import {strings} from "lib/solidity-stringutils/src/strings.sol";
 
-contract D01Deployment is D00Defaults {
+contract D01Deployment is D00Defaults, PoolHelper {
     using strings for *;
 
     InitVault public initVault;
