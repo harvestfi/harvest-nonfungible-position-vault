@@ -8,6 +8,7 @@ import {IConfigureSubmodule} from "../interfaces/submodules/IConfigureSubmodule.
 // Libraries
 import {Position} from "../libraries/LibAppStorage.sol";
 import {LibPositionManager} from "../libraries/LibPositionManager.sol";
+import {LibConstants} from "../libraries/LibConstants.sol";
 import {LibErrors} from "../libraries/LibErrors.sol";
 import {LibEvents} from "../libraries/LibEvents.sol";
 
@@ -29,6 +30,90 @@ contract ConfigureSubmodule is Modifiers, IConfigureSubmodule {
         emit LibEvents.FeeConfigurationUpdate(
             _strategist, _strategistFeeNumerator, _platformFeeNumerator, _profitSharingNumerator
         );
+    }
+
+    function setProfitSharingNumerator(uint256 _profitSharingNumerator) public onlyGovernance {
+        require(
+            _profitSharingNumerator + s.strategistFeeNumerator + s.platformFeeNumerator <= LibConstants._MAX_TOTAL_FEE,
+            "total fee too high"
+        );
+
+        s.nextProfitSharingNumerator = _profitSharingNumerator;
+        s.nextProfitSharingNumeratorTimestamp = block.timestamp + nextImplementationDelay;
+        emit QueueProfitSharingChange(s.nextProfitSharingNumerator, s.nextProfitSharingNumeratorTimestamp);
+    }
+
+    function confirmSetProfitSharingNumerator() public onlyGovernance {
+        require(
+            s.nextProfitSharingNumerator != 0 && s.nextProfitSharingNumeratorTimestamp != 0
+                && block.timestamp >= s.nextProfitSharingNumeratorTimestamp,
+            "invalid timestamp or no new profit sharing numerator confirmed"
+        );
+        require(
+            s.nextProfitSharingNumerator + s.strategistFeeNumerator + s.platformFeeNumerator <= LibConstants._MAX_TOTAL_FEE,
+            "total fee too high"
+        );
+
+        s.profitSharingNumerator = s.nextProfitSharingNumerator;
+        s.nextProfitSharingNumerator = 0;
+        s.nextProfitSharingNumeratorTimestamp = 0;
+        emit ConfirmProfitSharingChange(s.profitSharingNumerator);
+    }
+
+    function setStrategistFeeNumerator(uint256 _strategistFeeNumerator) public onlyGovernance {
+        require(
+            _strategistFeeNumerator + s.platformFeeNumerator + s.profitSharingNumerator <= LibConstants._MAX_TOTAL_FEE,
+            "total fee too high"
+        );
+
+        s.nextStrategistFeeNumerator = _strategistFeeNumerator;
+        s.nextStrategistFeeNumeratorTimestamp = block.timestamp + nextImplementationDelay;
+        emit QueueStrategistFeeChange(s.nextStrategistFeeNumerator, s.nextStrategistFeeNumeratorTimestamp);
+    }
+
+    function confirmSetStrategistFeeNumerator() public onlyGovernance {
+        require(
+            s.nextStrategistFeeNumerator != 0 && s.nextStrategistFeeNumeratorTimestamp != 0
+                && block.timestamp >= s.nextStrategistFeeNumeratorTimestamp,
+            "invalid timestamp or no new strategist fee numerator confirmed"
+        );
+        require(
+            s.nextStrategistFeeNumerator + s.platformFeeNumerator + s.profitSharingNumerator <= LibConstants._MAX_TOTAL_FEE,
+            "total fee too high"
+        );
+
+        s.strategistFeeNumerator = s.nextStrategistFeeNumerator;
+        s.nextStrategistFeeNumerator = 0;
+        s.nextStrategistFeeNumeratorTimestamp = 0;
+        emit ConfirmStrategistFeeChange(s.strategistFeeNumerator);
+    }
+
+    function setPlatformFeeNumerator(uint256 _platformFeeNumerator) public onlyGovernance {
+        require(
+            _platformFeeNumerator + s.strategistFeeNumerator + s.profitSharingNumerator <= LibConstants._MAX_TOTAL_FEE,
+            "total fee too high"
+        );
+
+        s.nextPlatformFeeNumerator = _platformFeeNumerator;
+        s.nextPlatformFeeNumeratorTimestamp = block.timestamp + nextImplementationDelay;
+        emit QueuePlatformFeeChange(s.nextPlatformFeeNumerator, s.nextPlatformFeeNumeratorTimestamp);
+    }
+
+    function confirmSetPlatformFeeNumerator() public onlyGovernance {
+        require(
+            nextPlatformFeeNumerator != 0 && nextPlatformFeeNumeratorTimestamp != 0
+                && block.timestamp >= nextPlatformFeeNumeratorTimestamp,
+            "invalid timestamp or no new platform fee numerator confirmed"
+        );
+        require(
+            nextPlatformFeeNumerator + strategistFeeNumerator + profitSharingNumerator <= LibConstants._MAX_TOTAL_FEE,
+            "total fee too high"
+        );
+
+        platformFeeNumerator = nextPlatformFeeNumerator;
+        nextPlatformFeeNumerator = 0;
+        nextPlatformFeeNumeratorTimestamp = 0;
+        emit ConfirmPlatformFeeChange(platformFeeNumerator);
     }
 
     function configureExternalProtocol(address _nftPositionManager, address _masterchef)
