@@ -10,7 +10,25 @@ import {LibEvents} from "../libraries/LibEvents.sol";
 // Helpers
 import {Modifiers} from "../core/Modifiers.sol";
 
+// TODO: Require to confirm implementation here
 contract GovernanceSubmodule is Modifiers, IGovernanceSubmodule {
+    function scheduleUpgrade() external onlyGovernance {
+        s.nextImplementationTimestamp = block.timestamp + s.nextImplementationDelay;
+
+        emit LibEvents.ScheduleUpgrade(s.nextImplementationTimestamp);
+    }
+
+    function finalizeUpgrade() external onlyGovernance {
+        s.nextImplementationTimestamp = 0;
+
+        emit LibEvents.ScheduleUpgrade(s.nextImplementationTimestamp);
+    }
+
+    function shouldUpgrade() external view returns (bool _upgradeStatus) {
+        return (s.nextImplementationTimestamp != 0 && block.timestamp > s.nextImplementationTimestamp);
+    }
+
+    /*
     function createUpgrade(bytes32 id) external onlyGovernance {
         if (s.upgradeScheduled[id] > block.timestamp) {
             revert("Upgrade has already been scheduled");
@@ -44,4 +62,5 @@ contract GovernanceSubmodule is Modifiers, IGovernanceSubmodule {
     function getUpgradeExpiration() external view returns (uint256 upgradeExpiration) {
         upgradeExpiration = s.upgradeExpiration;
     }
+    */
 }
