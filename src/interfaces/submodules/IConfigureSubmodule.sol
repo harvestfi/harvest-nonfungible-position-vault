@@ -2,12 +2,12 @@
 pragma solidity 0.8.17;
 
 interface IConfigureSubmodule {
-    function configureFees(
-        address _strategist,
-        uint256 _strategistFeeNumerator,
-        uint256 _platformFeeNumerator,
-        uint256 _profitSharingNumerator
-    ) external;
+    function setProfitSharingNumerator(uint256 _profitSharingNumerator) external;
+    function confirmSetProfitSharingNumerator() external;
+    function setStrategistFeeNumerator(uint256 _strategistFeeNumerator) external;
+    function confirmSetStrategistFeeNumerator() external;
+    function setPlatformFeeNumerator(uint256 _platformFeeNumerator) external;
+    function confirmSetPlatformFeeNumerator() external;
     function configureExternalProtocol(address _nftPositionManager, address _masterchef) external;
     function configureInfrastructure(address _universalLiquidator, address _universalLiquidatorRegistry) external;
     function configurePool(address _token0, address _token1, uint24 _fee, string calldata _vaultName) external;

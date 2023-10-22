@@ -16,104 +16,106 @@ import {LibEvents} from "../libraries/LibEvents.sol";
 import {Modifiers} from "../core/Modifiers.sol";
 
 contract ConfigureSubmodule is Modifiers, IConfigureSubmodule {
-    function configureFees(
-        address _strategist,
-        uint256 _strategistFeeNumerator,
-        uint256 _platformFeeNumerator,
-        uint256 _profitSharingNumerator
-    ) external override onlyGovernance {
-        s.strategist = _strategist;
-        s.strategistFeeNumerator = _strategistFeeNumerator;
-        s.platformFeeNumerator = _platformFeeNumerator;
-        s.profitSharingNumerator = _profitSharingNumerator;
-
-        emit LibEvents.FeeConfigurationUpdate(
-            _strategist, _strategistFeeNumerator, _platformFeeNumerator, _profitSharingNumerator
-        );
-    }
-
     function setProfitSharingNumerator(uint256 _profitSharingNumerator) public onlyGovernance {
-        require(
-            _profitSharingNumerator + s.strategistFeeNumerator + s.platformFeeNumerator <= LibConstants._MAX_TOTAL_FEE,
-            "total fee too high"
-        );
+        if (_profitSharingNumerator + s.strategistFeeNumerator + s.platformFeeNumerator > LibConstants._MAX_TOTAL_FEE) {
+            revert LibErrors.FeeTooHigh(
+                LibConstants._MAX_TOTAL_FEE, _profitSharingNumerator + s.strategistFeeNumerator + s.platformFeeNumerator
+            );
+        }
 
         s.nextProfitSharingNumerator = _profitSharingNumerator;
-        s.nextProfitSharingNumeratorTimestamp = block.timestamp + nextImplementationDelay;
-        emit QueueProfitSharingChange(s.nextProfitSharingNumerator, s.nextProfitSharingNumeratorTimestamp);
+        s.nextProfitSharingNumeratorTimestamp = block.timestamp + s.nextImplementationDelay;
+        emit LibEvents.QueueProfitSharingChange(s.nextProfitSharingNumerator, s.nextProfitSharingNumeratorTimestamp);
     }
 
     function confirmSetProfitSharingNumerator() public onlyGovernance {
-        require(
-            s.nextProfitSharingNumerator != 0 && s.nextProfitSharingNumeratorTimestamp != 0
-                && block.timestamp >= s.nextProfitSharingNumeratorTimestamp,
-            "invalid timestamp or no new profit sharing numerator confirmed"
-        );
-        require(
-            s.nextProfitSharingNumerator + s.strategistFeeNumerator + s.platformFeeNumerator <= LibConstants._MAX_TOTAL_FEE,
-            "total fee too high"
-        );
+        if (s.nextProfitSharingNumerator == 0 || s.nextProfitSharingNumeratorTimestamp == 0) {
+            revert LibErrors.FeeParametersUnconfigured(s.nextProfitSharingNumerator, s.nextProfitSharingNumeratorTimestamp);
+        }
+
+        if (block.timestamp < s.nextProfitSharingNumeratorTimestamp) {
+            revert LibErrors.FeeUpdateExpired(s.nextProfitSharingNumeratorTimestamp);
+        }
 
         s.profitSharingNumerator = s.nextProfitSharingNumerator;
         s.nextProfitSharingNumerator = 0;
         s.nextProfitSharingNumeratorTimestamp = 0;
-        emit ConfirmProfitSharingChange(s.profitSharingNumerator);
+        emit LibEvents.ConfirmProfitSharingChange(s.profitSharingNumerator);
     }
 
     function setStrategistFeeNumerator(uint256 _strategistFeeNumerator) public onlyGovernance {
-        require(
-            _strategistFeeNumerator + s.platformFeeNumerator + s.profitSharingNumerator <= LibConstants._MAX_TOTAL_FEE,
-            "total fee too high"
-        );
+        if (_strategistFeeNumerator + s.platformFeeNumerator + s.profitSharingNumerator > LibConstants._MAX_TOTAL_FEE) {
+            revert LibErrors.FeeTooHigh(
+                LibConstants._MAX_TOTAL_FEE, _strategistFeeNumerator + s.platformFeeNumerator + s.profitSharingNumerator
+            );
+        }
 
         s.nextStrategistFeeNumerator = _strategistFeeNumerator;
-        s.nextStrategistFeeNumeratorTimestamp = block.timestamp + nextImplementationDelay;
-        emit QueueStrategistFeeChange(s.nextStrategistFeeNumerator, s.nextStrategistFeeNumeratorTimestamp);
+        s.nextStrategistFeeNumeratorTimestamp = block.timestamp + s.nextImplementationDelay;
+        emit LibEvents.QueueStrategistFeeChange(s.nextStrategistFeeNumerator, s.nextStrategistFeeNumeratorTimestamp);
     }
 
     function confirmSetStrategistFeeNumerator() public onlyGovernance {
-        require(
-            s.nextStrategistFeeNumerator != 0 && s.nextStrategistFeeNumeratorTimestamp != 0
-                && block.timestamp >= s.nextStrategistFeeNumeratorTimestamp,
-            "invalid timestamp or no new strategist fee numerator confirmed"
-        );
-        require(
-            s.nextStrategistFeeNumerator + s.platformFeeNumerator + s.profitSharingNumerator <= LibConstants._MAX_TOTAL_FEE,
-            "total fee too high"
-        );
+        if (s.nextStrategistFeeNumerator == 0 || s.nextStrategistFeeNumeratorTimestamp == 0) {
+            revert LibErrors.FeeParametersUnconfigured(s.nextStrategistFeeNumerator, s.nextStrategistFeeNumeratorTimestamp);
+        }
+
+        if (block.timestamp < s.nextStrategistFeeNumeratorTimestamp) {
+            revert LibErrors.FeeUpdateExpired(s.nextStrategistFeeNumeratorTimestamp);
+        }
 
         s.strategistFeeNumerator = s.nextStrategistFeeNumerator;
         s.nextStrategistFeeNumerator = 0;
         s.nextStrategistFeeNumeratorTimestamp = 0;
-        emit ConfirmStrategistFeeChange(s.strategistFeeNumerator);
+        emit LibEvents.ConfirmStrategistFeeChange(s.strategistFeeNumerator);
     }
 
     function setPlatformFeeNumerator(uint256 _platformFeeNumerator) public onlyGovernance {
-        require(
-            _platformFeeNumerator + s.strategistFeeNumerator + s.profitSharingNumerator <= LibConstants._MAX_TOTAL_FEE,
-            "total fee too high"
-        );
+        if (_platformFeeNumerator + s.strategistFeeNumerator + s.profitSharingNumerator > LibConstants._MAX_TOTAL_FEE) {
+            revert LibErrors.FeeTooHigh(
+                LibConstants._MAX_TOTAL_FEE, _platformFeeNumerator + s.strategistFeeNumerator + s.profitSharingNumerator
+            );
+        }
 
         s.nextPlatformFeeNumerator = _platformFeeNumerator;
-        s.nextPlatformFeeNumeratorTimestamp = block.timestamp + nextImplementationDelay;
-        emit QueuePlatformFeeChange(s.nextPlatformFeeNumerator, s.nextPlatformFeeNumeratorTimestamp);
+        s.nextPlatformFeeNumeratorTimestamp = block.timestamp + s.nextImplementationDelay;
+        emit LibEvents.QueuePlatformFeeChange(s.nextPlatformFeeNumerator, s.nextPlatformFeeNumeratorTimestamp);
     }
 
     function confirmSetPlatformFeeNumerator() public onlyGovernance {
-        require(
-            nextPlatformFeeNumerator != 0 && nextPlatformFeeNumeratorTimestamp != 0
-                && block.timestamp >= nextPlatformFeeNumeratorTimestamp,
-            "invalid timestamp or no new platform fee numerator confirmed"
-        );
-        require(
-            nextPlatformFeeNumerator + strategistFeeNumerator + profitSharingNumerator <= LibConstants._MAX_TOTAL_FEE,
-            "total fee too high"
-        );
+        if (s.nextPlatformFeeNumerator == 0 || s.nextPlatformFeeNumeratorTimestamp == 0) {
+            revert LibErrors.FeeParametersUnconfigured(s.nextPlatformFeeNumerator, s.nextPlatformFeeNumeratorTimestamp);
+        }
 
-        platformFeeNumerator = nextPlatformFeeNumerator;
-        nextPlatformFeeNumerator = 0;
-        nextPlatformFeeNumeratorTimestamp = 0;
-        emit ConfirmPlatformFeeChange(platformFeeNumerator);
+        if (block.timestamp < s.nextPlatformFeeNumeratorTimestamp) {
+            revert LibErrors.FeeUpdateExpired(s.nextPlatformFeeNumeratorTimestamp);
+        }
+
+        s.platformFeeNumerator = s.nextPlatformFeeNumerator;
+        s.nextPlatformFeeNumerator = 0;
+        s.nextPlatformFeeNumeratorTimestamp = 0;
+        emit LibEvents.ConfirmPlatformFeeChange(s.platformFeeNumerator);
+    }
+
+    function setNextImplementationDelay(uint256 _nextImplementationDelay) public onlyGovernance {
+        if (_nextImplementationDelay == 0) {
+            revert LibErrors.InvalidTimestamp(LibErrors.TimestampErrorCodes.CannotBeZero, _nextImplementationDelay);
+        }
+
+        s.tempNextImplementationDelay = _nextImplementationDelay;
+        s.tempNextImplementationDelayTimestamp = block.timestamp + s.nextImplementationDelay;
+        emit LibEvents.QueueNextImplementationDelay(s.tempNextImplementationDelay, s.tempNextImplementationDelayTimestamp);
+    }
+
+    function confirmNextImplementationDelay() public onlyGovernance {
+        if (s.tempNextImplementationDelayTimestamp != 0 && block.timestamp < s.tempNextImplementationDelayTimestamp) {
+            revert LibErrors.InvalidTimestamp(LibErrors.TimestampErrorCodes.TooEarly, s.tempNextImplementationDelayTimestamp);
+        }
+
+        s.nextImplementationDelay = s.tempNextImplementationDelay;
+        s.tempNextImplementationDelay = 0;
+        s.tempNextImplementationDelayTimestamp = 0;
+        emit LibEvents.ConfirmNextImplementationDelay(s.nextImplementationDelay);
     }
 
     function configureExternalProtocol(address _nftPositionManager, address _masterchef)
