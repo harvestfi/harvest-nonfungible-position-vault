@@ -8,14 +8,24 @@ library LibEvents {
     // Ownership
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
     // Upgrade
+    event ScheduleUpgrade(uint256 nextImplementationTimestamp);
     event SubmoduleUpgrade(LibDataTypes.SubmoduleUpgrade[] _submoduleUpgrade, address _init, bytes _calldata);
-    event CreateUpgrade(bytes32 id, address indexed who);
-    event UpdateUpgradeExpiration(uint256 duration);
-    event UpgradeCancelled(bytes32 id, address indexed who);
+    // TODO: Require to confirm implementation here
+    //event CreateUpgrade(bytes32 id, address indexed who);
+    //event UpdateUpgradeExpiration(uint256 duration);
+    //event UpgradeCancelled(bytes32 id, address indexed who);
     // Configuration
     event FeeConfigurationUpdate(
         address indexed strategist, uint256 strategistFeeNumerator, uint256 platformFeeNumerator, uint256 profitSharingNumerator
     );
+    event QueueProfitSharingChange(uint256 nextProfitSharingNumerator, uint256 nextProfitSharingNumeratorTimestamp);
+    event ConfirmProfitSharingChange(uint256 profitSharingNumerator);
+    event QueueStrategistFeeChange(uint256 nextStrategistFeeNumerator, uint256 nextStrategistFeeNumeratorTimestamp);
+    event ConfirmStrategistFeeChange(uint256 strategistFeeNumerator);
+    event QueuePlatformFeeChange(uint256 nextPlatformFeeNumerator, uint256 nextPlatformFeeNumeratorTimestamp);
+    event ConfirmPlatformFeeChange(uint256 platformFeeNumerator);
+    event QueueNextImplementationDelay(uint256 nextImplementationDelay, uint256 nextImplementationDelayTimestamp);
+    event ConfirmNextImplementationDelay(uint256 nextImplementationDelay);
     event ExternalFarmingContractUpdate(address indexed nftPositionManager, address indexed masterchef);
     event InfrastructureUpdate(address indexed universalLiquidator, address indexed universalLiquidatorRegistry);
     event PoolConfigurationUpdate(address indexed token0, address indexed token1, uint24 fee, string name);
