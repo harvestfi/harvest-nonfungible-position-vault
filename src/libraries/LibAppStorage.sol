@@ -32,8 +32,12 @@ struct AppStorage {
     uint256 nextPlatformFeeNumerator;
     uint256 nextPlatformFeeNumeratorTimestamp;
     /// Simple two phase upgrade scheme
-    mapping(bytes32 => uint256) upgradeScheduled; // id of the upgrade => the time that the upgrade is valid until.
-    uint256 upgradeExpiration;
+    uint256 nextImplementationTimestamp;
+    uint256 nextImplementationDelay;
+    uint256 tempNextImplementationDelay;
+    uint256 tempNextImplementationDelayTimestamp;
+    //mapping(bytes32 => uint256) upgradeScheduled; // id of the upgrade => the time that the upgrade is valid until.
+    //uint256 upgradeExpiration;
     // Vault
     address token0;
     address token1;

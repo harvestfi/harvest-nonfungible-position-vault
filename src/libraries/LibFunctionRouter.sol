@@ -64,11 +64,14 @@ library LibFunctionRouter {
         s.controller = _controller;
     }
 
+    //FIXME
+    /*
     function setUpgradeExpiration() internal {
         AppStorage storage s = LibAppStorage.systemStorage();
         /// @dev We set the upgrade expiration to 7 days from now (604800 seconds)
         s.upgradeExpiration = 1 weeks;
     }
+    */
 
     function addSubmoduleFunctions(
         address _upgradeSubmodule,
@@ -105,32 +108,43 @@ library LibFunctionRouter {
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
             functionSelectors: functionSelectors
         });
-        functionSelectors = new bytes4[](14);
-        functionSelectors[0] = IConfigureSubmodule.configureFees.selector;
-        functionSelectors[1] = IConfigureSubmodule.configureExternalProtocol.selector;
-        functionSelectors[2] = IConfigureSubmodule.configureInfrastructure.selector;
-        functionSelectors[3] = IConfigureSubmodule.configurePool.selector;
-        functionSelectors[4] = IConfigureSubmodule.configureUnits.selector;
-        functionSelectors[5] = IConfigureSubmodule.addRewardTokens.selector;
-        functionSelectors[6] = IConfigureSubmodule.removeRewardToken.selector;
-        functionSelectors[7] = IConfigureSubmodule.setUnifiedRewardToken.selector;
-        functionSelectors[8] = IConfigureSubmodule.setUnifiedDepositToken.selector;
-        functionSelectors[9] = IConfigureSubmodule.setUnderlyingToken.selector;
-        functionSelectors[10] = IConfigureSubmodule.addPosition.selector;
-        functionSelectors[11] = IConfigureSubmodule.updatePosition.selector;
-        functionSelectors[12] = IConfigureSubmodule.setVaultPause.selector;
-        functionSelectors[13] = IConfigureSubmodule.setLiquidationRewardPause.selector;
+        functionSelectors = new bytes4[](19);
+        functionSelectors[0] = IConfigureSubmodule.setProfitSharingNumerator.selector;
+        functionSelectors[1] = IConfigureSubmodule.confirmSetProfitSharingNumerator.selector;
+        functionSelectors[2] = IConfigureSubmodule.setStrategistFeeNumerator.selector;
+        functionSelectors[3] = IConfigureSubmodule.confirmSetStrategistFeeNumerator.selector;
+        functionSelectors[4] = IConfigureSubmodule.setPlatformFeeNumerator.selector;
+        functionSelectors[5] = IConfigureSubmodule.confirmSetPlatformFeeNumerator.selector;
+        functionSelectors[6] = IConfigureSubmodule.configureExternalProtocol.selector;
+        functionSelectors[7] = IConfigureSubmodule.configureInfrastructure.selector;
+        functionSelectors[8] = IConfigureSubmodule.configurePool.selector;
+        functionSelectors[9] = IConfigureSubmodule.configureUnits.selector;
+        functionSelectors[10] = IConfigureSubmodule.addRewardTokens.selector;
+        functionSelectors[11] = IConfigureSubmodule.removeRewardToken.selector;
+        functionSelectors[12] = IConfigureSubmodule.setUnifiedRewardToken.selector;
+        functionSelectors[13] = IConfigureSubmodule.setUnifiedDepositToken.selector;
+        functionSelectors[14] = IConfigureSubmodule.setUnderlyingToken.selector;
+        functionSelectors[15] = IConfigureSubmodule.addPosition.selector;
+        functionSelectors[16] = IConfigureSubmodule.updatePosition.selector;
+        functionSelectors[17] = IConfigureSubmodule.setVaultPause.selector;
+        functionSelectors[18] = IConfigureSubmodule.setLiquidationRewardPause.selector;
         upgrade[3] = LibDataTypes.SubmoduleUpgrade({
             submoduleAddress: _configureSubmodule,
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
             functionSelectors: functionSelectors
         });
-        functionSelectors = new bytes4[](5);
+        functionSelectors = new bytes4[](3);
+        functionSelectors[0] = IGovernanceSubmodule.scheduleUpgrade.selector;
+        functionSelectors[1] = IGovernanceSubmodule.finalizeUpgrade.selector;
+        functionSelectors[2] = IGovernanceSubmodule.shouldUpgrade.selector;
+        /*
+        // FIXME
         functionSelectors[0] = IGovernanceSubmodule.createUpgrade.selector;
         functionSelectors[1] = IGovernanceSubmodule.updateUpgradeExpiration.selector;
         functionSelectors[2] = IGovernanceSubmodule.cancelUpgrade.selector;
         functionSelectors[3] = IGovernanceSubmodule.getUpgrade.selector;
         functionSelectors[4] = IGovernanceSubmodule.getUpgradeExpiration.selector;
+        */
         upgrade[4] = LibDataTypes.SubmoduleUpgrade({
             submoduleAddress: _governanceSubmodule,
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
