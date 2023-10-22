@@ -58,6 +58,8 @@ contract VaultInfoSubmodule is Modifiers, IVaultInfoSubmodule {
         return s.profitSharingNumerator;
     }
 
+    // FIXME
+    /*
     function upgradeScheduled(bytes32 _id) external view override returns (uint256 _upgradeScheduled) {
         return s.upgradeScheduled[_id];
     }
@@ -65,6 +67,7 @@ contract VaultInfoSubmodule is Modifiers, IVaultInfoSubmodule {
     function upgradeExpiration() external view override returns (uint256 _upgradeExpiration) {
         return s.upgradeExpiration;
     }
+    */
 
     function token0() external view override returns (address _token0) {
         return s.token0;

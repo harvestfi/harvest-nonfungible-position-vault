@@ -15,7 +15,8 @@ contract NonFungiblePositionVault {
     constructor(address _governance, address _controller) payable {
         LibFunctionRouter.setGovernance(_governance);
         LibFunctionRouter.setController(_controller);
-        LibFunctionRouter.setUpgradeExpiration();
+        // FIXME
+        //LibFunctionRouter.setUpgradeExpiration();
         LibFunctionRouter.addSubmoduleFunctions(
             address(new UpgradeSubmodule()),
             address(new InitializableSubmodule()),

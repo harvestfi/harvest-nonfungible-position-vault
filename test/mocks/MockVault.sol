@@ -8,7 +8,8 @@ contract MockVault {
     constructor(address _governance, address _controller) payable {
         LibFunctionRouter.setGovernance(_governance);
         LibFunctionRouter.setController(_controller);
-        LibFunctionRouter.setUpgradeExpiration();
+        // FIXME
+        //LibFunctionRouter.setUpgradeExpiration();
     }
 
     // Find submodule for function that is called and execute the
