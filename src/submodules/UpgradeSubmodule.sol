@@ -19,6 +19,7 @@ import {LibEvents} from "../libraries/LibEvents.sol";
 // Helpers
 import {Modifiers} from "../core/Modifiers.sol";
 
+// TODO: Require to make this part gated the upgrade time
 contract UpgradeSubmodule is Modifiers, IUpgradeSubmodule {
     /// @notice Add/replace/remove any number of functions and optionally execute
     ///         a function with delegatecall
