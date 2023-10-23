@@ -15,6 +15,7 @@ import {IUpgradeSubmodule} from "../interfaces/submodules/IUpgradeSubmodule.sol"
 import {LibFunctionRouter} from "../libraries/LibFunctionRouter.sol";
 import {LibDataTypes} from "../libraries/LibDataTypes.sol";
 import {LibEvents} from "../libraries/LibEvents.sol";
+import {LibErrors} from "../libraries/LibErrors.sol";
 
 // Helpers
 import {Modifiers} from "../core/Modifiers.sol";
@@ -32,6 +33,14 @@ contract UpgradeSubmodule is Modifiers, IUpgradeSubmodule {
         override
         onlyGovernanceOrController
     {
+        if (_init != s.nextInitContract) {
+            revert LibErrors.InvalidAddress(LibErrors.AddressErrorCodes.DoesNotMatch, s.nextInitContract);
+        }
+
+        if (s.nextImplementationTimestamp < block.timestamp) {
+            revert LibErrors.InvalidTimestamp(LibErrors.TimestampErrorCodes.TooEarly, s.nextImplementationTimestamp);
+        }
+
         LibFunctionRouter.FunctionRouterStorage storage frs = LibFunctionRouter.functionRouterStorage();
         uint256 originalSelectorCount = frs.selectorCount;
         uint256 selectorCount = originalSelectorCount;
