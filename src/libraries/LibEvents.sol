@@ -8,7 +8,7 @@ library LibEvents {
     // Ownership
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
     // Upgrade
-    event ScheduleUpgrade(uint256 nextImplementationTimestamp);
+    event ScheduleUpgrade(uint256 nextImplementationTimestamp, address nextInitContract);
     event SubmoduleUpgrade(LibDataTypes.SubmoduleUpgrade[] _submoduleUpgrade, address _init, bytes _calldata);
     // TODO: Require to confirm implementation here
     //event CreateUpgrade(bytes32 id, address indexed who);
