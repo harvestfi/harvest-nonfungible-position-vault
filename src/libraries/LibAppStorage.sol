@@ -32,6 +32,7 @@ struct AppStorage {
     uint256 nextPlatformFeeNumerator;
     uint256 nextPlatformFeeNumeratorTimestamp;
     /// Simple two phase upgrade scheme
+    address nextInitContract;
     uint256 nextImplementationTimestamp;
     uint256 nextImplementationDelay;
     uint256 tempNextImplementationDelay;
