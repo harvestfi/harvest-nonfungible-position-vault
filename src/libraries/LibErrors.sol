@@ -7,6 +7,8 @@ library LibErrors {
         TooEarly
     }
 
+    enum AddressErrorCodes {DoesNotMatch}
+
     // Library Checkers
     error AddressUnconfigured();
     // Access Control List
@@ -20,6 +22,7 @@ library LibErrors {
     error TokenAlreadyRegistered(address _token);
     error InvalidToken(address _token);
     error InvalidTimestamp(TimestampErrorCodes _errorCode, uint256 _timestamp);
+    error InvalidAddress(AddressErrorCodes _errorCode, address _address);
     error DecimalsMismatch(address _token0, uint8 _decimals0, address _token1, uint8 _decimals1);
     // Position
     error PositionStaked(uint256 _positionId);
