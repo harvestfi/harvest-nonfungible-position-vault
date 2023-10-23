@@ -3,11 +3,11 @@ pragma solidity 0.8.17;
 
 // TODO: Require to confirm implementation here
 interface IGovernanceSubmodule {
-    function scheduleUpgrade() external;
+    function scheduleUpgrade(address _initContract) external;
 
     function finalizeUpgrade() external;
 
-    function shouldUpgrade() external view returns (bool _upgradeStatus);
+    function shouldUpgrade() external view returns (bool _upgradeStatus, address _nextInitContract);
     /**
      * @notice Approve the following upgrade hash: `id`
      * @dev The diamondCut() has been modified to check if the upgrade has been scheduled. This method needs to be called in order

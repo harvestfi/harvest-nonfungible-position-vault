@@ -12,20 +12,22 @@ import {Modifiers} from "../core/Modifiers.sol";
 
 // TODO: Require to confirm implementation here
 contract GovernanceSubmodule is Modifiers, IGovernanceSubmodule {
-    function scheduleUpgrade() external onlyGovernance {
+    function scheduleUpgrade(address _init) external onlyGovernance {
         s.nextImplementationTimestamp = block.timestamp + s.nextImplementationDelay;
+        s.nextInitContract = _init;
 
-        emit LibEvents.ScheduleUpgrade(s.nextImplementationTimestamp);
+        emit LibEvents.ScheduleUpgrade(s.nextImplementationTimestamp, s.nextInitContract);
     }
 
     function finalizeUpgrade() external onlyGovernance {
         s.nextImplementationTimestamp = 0;
+        s.nextInitContract = address(0);
 
-        emit LibEvents.ScheduleUpgrade(s.nextImplementationTimestamp);
+        emit LibEvents.ScheduleUpgrade(s.nextImplementationTimestamp, s.nextInitContract);
     }
 
-    function shouldUpgrade() external view returns (bool _upgradeStatus) {
-        return (s.nextImplementationTimestamp != 0 && block.timestamp > s.nextImplementationTimestamp);
+    function shouldUpgrade() external view returns (bool _upgradeStatus, address _nextImplementation) {
+        return (s.nextImplementationTimestamp != 0 && block.timestamp > s.nextImplementationTimestamp, s.nextInitContract);
     }
 
     /*
