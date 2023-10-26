@@ -64,7 +64,13 @@ contract D01Deployment is D00Defaults, PoolHelper {
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
             functionSelectors: functionSelectors
         });
+        // TODO: implement this
+        // schedule upgrade
+        vault.scheduleUpgrade(address(0));
 
+        // fast forward to upgrade time
+
+        // execute upgrade
         vault.submoduleUpgrade(upgrade, address(0), "");
     }
 
