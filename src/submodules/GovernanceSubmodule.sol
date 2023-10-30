@@ -2,6 +2,7 @@
 pragma solidity 0.8.17;
 
 // Interfaces
+import {IController} from "../interfaces/utils/IController.sol";
 import {IGovernanceSubmodule} from "../interfaces/submodules/IGovernanceSubmodule.sol";
 
 // Libraries
@@ -13,7 +14,7 @@ import {Modifiers} from "../core/Modifiers.sol";
 // TODO: Require to confirm implementation here
 contract GovernanceSubmodule is Modifiers, IGovernanceSubmodule {
     function scheduleUpgrade(address _init) external onlyGovernance {
-        s.nextImplementationTimestamp = block.timestamp + s.nextImplementationDelay;
+        s.nextImplementationTimestamp = block.timestamp + IController(s.controller).nextImplementationDelay();
         s.nextInitContract = _init;
 
         emit LibEvents.ScheduleUpgrade(s.nextImplementationTimestamp, s.nextInitContract);

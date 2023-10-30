@@ -74,9 +74,9 @@ library LibVaultOps {
         uint256 rewardBalance = IERC20(s.unifiedRewardToken).balanceOf(address(this));
         if (rewardBalance > 100) {
             uint256 feeDenominator = LibConstants._FEE_DENOMINATOR;
-            uint256 strategistFee = rewardBalance * s.strategistFeeNumerator / feeDenominator;
-            uint256 platformFee = rewardBalance * s.platformFeeNumerator / feeDenominator;
-            uint256 profitSharingFee = rewardBalance * s.profitSharingNumerator / feeDenominator;
+            uint256 strategistFee = rewardBalance * IController(s.controller).strategistFeeNumerator() / feeDenominator;
+            uint256 platformFee = rewardBalance * IController(s.controller).platformFeeNumerator() / feeDenominator;
+            uint256 profitSharingFee = rewardBalance * IController(s.controller).profitSharingNumerator() / feeDenominator;
 
             address strategyFeeRecipient = s.strategist;
             address platformFeeRecipient = s.governance;
