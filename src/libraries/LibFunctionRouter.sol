@@ -108,26 +108,20 @@ library LibFunctionRouter {
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
             functionSelectors: functionSelectors
         });
-        functionSelectors = new bytes4[](19);
-        functionSelectors[0] = IConfigureSubmodule.setProfitSharingNumerator.selector;
-        functionSelectors[1] = IConfigureSubmodule.confirmSetProfitSharingNumerator.selector;
-        functionSelectors[2] = IConfigureSubmodule.setStrategistFeeNumerator.selector;
-        functionSelectors[3] = IConfigureSubmodule.confirmSetStrategistFeeNumerator.selector;
-        functionSelectors[4] = IConfigureSubmodule.setPlatformFeeNumerator.selector;
-        functionSelectors[5] = IConfigureSubmodule.confirmSetPlatformFeeNumerator.selector;
-        functionSelectors[6] = IConfigureSubmodule.configureExternalProtocol.selector;
-        functionSelectors[7] = IConfigureSubmodule.configureInfrastructure.selector;
-        functionSelectors[8] = IConfigureSubmodule.configurePool.selector;
-        functionSelectors[9] = IConfigureSubmodule.configureUnits.selector;
-        functionSelectors[10] = IConfigureSubmodule.addRewardTokens.selector;
-        functionSelectors[11] = IConfigureSubmodule.removeRewardToken.selector;
-        functionSelectors[12] = IConfigureSubmodule.setUnifiedRewardToken.selector;
-        functionSelectors[13] = IConfigureSubmodule.setUnifiedDepositToken.selector;
-        functionSelectors[14] = IConfigureSubmodule.setUnderlyingToken.selector;
-        functionSelectors[15] = IConfigureSubmodule.addPosition.selector;
-        functionSelectors[16] = IConfigureSubmodule.updatePosition.selector;
-        functionSelectors[17] = IConfigureSubmodule.setVaultPause.selector;
-        functionSelectors[18] = IConfigureSubmodule.setLiquidationRewardPause.selector;
+        functionSelectors = new bytes4[](13);
+        functionSelectors[0] = IConfigureSubmodule.configureExternalProtocol.selector;
+        functionSelectors[1] = IConfigureSubmodule.configureInfrastructure.selector;
+        functionSelectors[2] = IConfigureSubmodule.configurePool.selector;
+        functionSelectors[3] = IConfigureSubmodule.configureUnits.selector;
+        functionSelectors[4] = IConfigureSubmodule.addRewardTokens.selector;
+        functionSelectors[5] = IConfigureSubmodule.removeRewardToken.selector;
+        functionSelectors[6] = IConfigureSubmodule.setUnifiedRewardToken.selector;
+        functionSelectors[7] = IConfigureSubmodule.setUnifiedDepositToken.selector;
+        functionSelectors[8] = IConfigureSubmodule.setUnderlyingToken.selector;
+        functionSelectors[9] = IConfigureSubmodule.addPosition.selector;
+        functionSelectors[10] = IConfigureSubmodule.updatePosition.selector;
+        functionSelectors[11] = IConfigureSubmodule.setVaultPause.selector;
+        functionSelectors[12] = IConfigureSubmodule.setLiquidationRewardPause.selector;
         upgrade[3] = LibDataTypes.SubmoduleUpgrade({
             submoduleAddress: _configureSubmodule,
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
