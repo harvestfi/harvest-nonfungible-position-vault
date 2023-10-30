@@ -15,9 +15,6 @@ interface IVaultInfoSubmodule {
     // Fee Reward Shares
     function feeDenominator() external view returns (uint256 _feeDenominator);
     function strategist() external view returns (address _strategist);
-    function strategistFeeNumerator() external view returns (uint256 _strategistFeeNumerator);
-    function platformFeeNumerator() external view returns (uint256 _platformFeeNumerator);
-    function profitSharingNumerator() external view returns (uint256 _profitSharingNumerator);
     /// Simple two phase upgrade scheme
     // FIXME
     //function upgradeScheduled(bytes32 _id) external view returns (uint256 _upgradeScheduled);

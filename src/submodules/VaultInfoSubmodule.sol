@@ -46,18 +46,6 @@ contract VaultInfoSubmodule is Modifiers, IVaultInfoSubmodule {
         return s.strategist;
     }
 
-    function strategistFeeNumerator() external view override returns (uint256 _strategistFeeNumerator) {
-        return s.strategistFeeNumerator;
-    }
-
-    function platformFeeNumerator() external view override returns (uint256 _platformFeeNumerator) {
-        return s.platformFeeNumerator;
-    }
-
-    function profitSharingNumerator() external view override returns (uint256 _profitSharingNumerator) {
-        return s.profitSharingNumerator;
-    }
-
     // FIXME
     /*
     function upgradeScheduled(bytes32 _id) external view override returns (uint256 _upgradeScheduled) {
