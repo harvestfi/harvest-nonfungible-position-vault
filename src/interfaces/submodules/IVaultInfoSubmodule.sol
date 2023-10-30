@@ -15,10 +15,6 @@ interface IVaultInfoSubmodule {
     // Fee Reward Shares
     function feeDenominator() external view returns (uint256 _feeDenominator);
     function strategist() external view returns (address _strategist);
-    /// Simple two phase upgrade scheme
-    // FIXME
-    //function upgradeScheduled(bytes32 _id) external view returns (uint256 _upgradeScheduled);
-    //function upgradeExpiration() external view returns (uint256 _upgradeExpiration);
     // Vault
     function token0() external view returns (address _token0);
     function token1() external view returns (address _token1);

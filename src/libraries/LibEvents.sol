@@ -10,10 +10,6 @@ library LibEvents {
     // Upgrade
     event ScheduleUpgrade(uint256 nextImplementationTimestamp, address nextInitContract);
     event SubmoduleUpgrade(LibDataTypes.SubmoduleUpgrade[] _submoduleUpgrade, address _init, bytes _calldata);
-    // TODO: Require to confirm implementation here
-    //event CreateUpgrade(bytes32 id, address indexed who);
-    //event UpdateUpgradeExpiration(uint256 duration);
-    //event UpgradeCancelled(bytes32 id, address indexed who);
     // Configuration
     event FeeConfigurationUpdate(
         address indexed strategist, uint256 strategistFeeNumerator, uint256 platformFeeNumerator, uint256 profitSharingNumerator

@@ -64,15 +64,6 @@ library LibFunctionRouter {
         s.controller = _controller;
     }
 
-    //FIXME
-    /*
-    function setUpgradeExpiration() internal {
-        AppStorage storage s = LibAppStorage.systemStorage();
-        /// @dev We set the upgrade expiration to 7 days from now (604800 seconds)
-        s.upgradeExpiration = 1 weeks;
-    }
-    */
-
     function addSubmoduleFunctions(
         address _upgradeSubmodule,
         address _initializableSubmodule,
@@ -131,14 +122,6 @@ library LibFunctionRouter {
         functionSelectors[0] = IGovernanceSubmodule.scheduleUpgrade.selector;
         functionSelectors[1] = IGovernanceSubmodule.finalizeUpgrade.selector;
         functionSelectors[2] = IGovernanceSubmodule.shouldUpgrade.selector;
-        /*
-        // FIXME
-        functionSelectors[0] = IGovernanceSubmodule.createUpgrade.selector;
-        functionSelectors[1] = IGovernanceSubmodule.updateUpgradeExpiration.selector;
-        functionSelectors[2] = IGovernanceSubmodule.cancelUpgrade.selector;
-        functionSelectors[3] = IGovernanceSubmodule.getUpgrade.selector;
-        functionSelectors[4] = IGovernanceSubmodule.getUpgradeExpiration.selector;
-        */
         upgrade[4] = LibDataTypes.SubmoduleUpgrade({
             submoduleAddress: _governanceSubmodule,
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
