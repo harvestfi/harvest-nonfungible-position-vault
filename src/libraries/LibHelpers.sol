@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.17;
 
+// Libraries
+import {LibDataTypes} from "../libraries/LibDataTypes.sol";
+
 /// @notice Pure functions
 library LibHelpers {
     // Conversion Utilities
@@ -34,5 +37,33 @@ library LibHelpers {
             mstore(add(b, 32), input)
         }
         return b;
+    }
+
+    function _submoduleUpgradeStructCompare(
+        LibDataTypes.SubmoduleUpgrade calldata _submoduleUpgradeA,
+        LibDataTypes.SubmoduleUpgrade calldata _submoduleUpgradeB
+    ) internal pure returns (bool) {
+        return (_submoduleUpgradeA.submoduleAddress == _submoduleUpgradeB.submoduleAddress)
+            && (_submoduleUpgradeA.action == _submoduleUpgradeB.action)
+            && _functionSelectorListCompare(_submoduleUpgradeA.functionSelectors, _submoduleUpgradeB.functionSelectors);
+    }
+
+    function _functionSelectorListCompare(bytes4[] calldata _functionSelectorsA, bytes4[] calldata _functionSelectorsB)
+        internal
+        pure
+        returns (bool)
+    {
+        if (_functionSelectorsA.length != _functionSelectorsB.length) {
+            return false;
+        }
+        for (uint256 i; i < _functionSelectorsA.length;) {
+            if (_functionSelectorsA[i] != _functionSelectorsB[i]) {
+                return false;
+            }
+            unchecked {
+                i++;
+            }
+        }
+        return true;
     }
 }
