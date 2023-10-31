@@ -28,18 +28,21 @@ contract UpgradeSubmodule is Modifiers, IUpgradeSubmodule {
     /// @param _init The address of the contract or submodule to execute _calldata
     /// @param _calldata A function call, including function selector and arguments
     ///                  _calldata is executed with delegatecall on _init
-    function submoduleUpgrade(LibDataTypes.SubmoduleUpgrade[] calldata _submoduleUpgrade, address _init, bytes calldata _calldata)
+    function submoduleUpgrade(LibDataTypes.SubmoduleUpgrade calldata _submoduleUpgrade, address _init, bytes calldata _calldata)
         external
         override
         onlyGovernanceOrController
     {
-        if (_init != s.nextInitContract) {
+        if (s.nextInitContract != _init) {
             revert LibErrors.InvalidAddress(LibErrors.AddressErrorCodes.DoesNotMatch, s.nextInitContract);
         }
 
         if (s.nextImplementationTimestamp < block.timestamp) {
             revert LibErrors.InvalidTimestamp(LibErrors.TimestampErrorCodes.TooEarly, s.nextImplementationTimestamp);
         }
+
+        // TODO: Finish implement this
+        if (s.submoduleUpgrade != _submoduleUpgrade) {}
 
         LibFunctionRouter.FunctionRouterStorage storage frs = LibFunctionRouter.functionRouterStorage();
         uint256 originalSelectorCount = frs.selectorCount;
@@ -52,16 +55,13 @@ contract UpgradeSubmodule is Modifiers, IUpgradeSubmodule {
             // "selectorCount >> 3" is a gas efficient division by 8 "selectorCount / 8"
             selectorSlot = frs.selectorSlots[selectorCount >> 3];
         }
-        // loop through submodule cut
-        for (uint256 submoduleIndex = 0; submoduleIndex < _submoduleUpgrade.length; submoduleIndex++) {
-            (selectorCount, selectorSlot) = LibFunctionRouter.addReplaceRemoveSubmoduleSelectors(
-                selectorCount,
-                selectorSlot,
-                _submoduleUpgrade[submoduleIndex].submoduleAddress,
-                _submoduleUpgrade[submoduleIndex].action,
-                _submoduleUpgrade[submoduleIndex].functionSelectors
-            );
-        }
+        (selectorCount, selectorSlot) = LibFunctionRouter.addReplaceRemoveSubmoduleSelectors(
+            selectorCount,
+            selectorSlot,
+            _submoduleUpgrade.submoduleAddress,
+            _submoduleUpgrade.action,
+            _submoduleUpgrade.functionSelectors
+        );
         if (selectorCount != originalSelectorCount) {
             frs.selectorCount = uint16(selectorCount);
         }
@@ -71,7 +71,9 @@ contract UpgradeSubmodule is Modifiers, IUpgradeSubmodule {
             // "selectorCount >> 3" is a gas efficient division by 8 "selectorCount / 8"
             frs.selectorSlots[selectorCount >> 3] = selectorSlot;
         }
-        emit LibEvents.SubmoduleUpgrade(_submoduleUpgrade, _init, _calldata);
+        LibDataTypes.SubmoduleUpgrade[] memory __submoduleUpgrade = new LibDataTypes.SubmoduleUpgrade[](1);
+        __submoduleUpgrade[0] = _submoduleUpgrade;
+        emit LibEvents.SubmoduleUpgrade(__submoduleUpgrade, _init, _calldata);
         LibFunctionRouter.initializeFunctionRouter(_init, _calldata);
     }
 }
