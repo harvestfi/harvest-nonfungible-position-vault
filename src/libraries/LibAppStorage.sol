@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.17;
 
+// Libraries
+import {LibDataTypes} from "./LibDataTypes.sol";
+
 struct Position {
     uint256 tokenId;
     uint256 initialLiquidity;
@@ -20,10 +23,9 @@ struct AppStorage {
     // Fee Reward Shares
     address strategist;
     /// Simple two phase upgrade scheme
+    LibDataTypes.SubmoduleUpgrade submoduleUpgrade;
     address nextInitContract;
     uint256 nextImplementationTimestamp;
-    //mapping(bytes32 => uint256) upgradeScheduled; // id of the upgrade => the time that the upgrade is valid until.
-    //uint256 upgradeExpiration;
     // Vault
     address token0;
     address token1;
