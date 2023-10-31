@@ -5,7 +5,8 @@ library LibDataTypes {
     enum SubmoduleUpgradeAction {
         Add,
         Replace,
-        Remove
+        Remove,
+        None
     }
     // Add=0, Replace=1, Remove=2
 
