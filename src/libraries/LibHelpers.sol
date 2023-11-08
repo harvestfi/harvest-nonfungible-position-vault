@@ -40,15 +40,15 @@ library LibHelpers {
     }
 
     function _submoduleUpgradeStructCompare(
-        LibDataTypes.SubmoduleUpgrade calldata _submoduleUpgradeA,
-        LibDataTypes.SubmoduleUpgrade calldata _submoduleUpgradeB
+        LibDataTypes.SubmoduleUpgrade memory _submoduleUpgradeA,
+        LibDataTypes.SubmoduleUpgrade memory _submoduleUpgradeB
     ) internal pure returns (bool) {
         return (_submoduleUpgradeA.submoduleAddress == _submoduleUpgradeB.submoduleAddress)
             && (_submoduleUpgradeA.action == _submoduleUpgradeB.action)
             && _functionSelectorListCompare(_submoduleUpgradeA.functionSelectors, _submoduleUpgradeB.functionSelectors);
     }
 
-    function _functionSelectorListCompare(bytes4[] calldata _functionSelectorsA, bytes4[] calldata _functionSelectorsB)
+    function _functionSelectorListCompare(bytes4[] memory _functionSelectorsA, bytes4[] memory _functionSelectorsB)
         internal
         pure
         returns (bool)
