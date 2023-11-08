@@ -41,10 +41,10 @@ contract System is D00Defaults {
         vault = INonFungiblePositionVault(address(new NonFungiblePositionVault(governance, controller)));
 
         // create the upgrade
-        LibDataTypes.SubmoduleUpgrade[] memory upgrade = new LibDataTypes.SubmoduleUpgrade[](1);
+        //LibDataTypes.SubmoduleUpgrade memory upgrade = new LibDataTypes.SubmoduleUpgrade;
         bytes4[] memory functionSelectors = new bytes4[](1);
         functionSelectors[0] = IInvestSubmodule.doHardWork.selector;
-        upgrade[0] = LibDataTypes.SubmoduleUpgrade({
+        LibDataTypes.SubmoduleUpgrade memory upgrade = LibDataTypes.SubmoduleUpgrade({
             submoduleAddress: investSubmodule,
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
             functionSelectors: functionSelectors
@@ -68,6 +68,9 @@ contract System is D00Defaults {
         );
         changePrank(governance);
 
+        //schedule the upgrade
+        vault.scheduleUpgrade(upgrade, address(initVault));
+
         // initialize the vault
         vault.submoduleUpgrade(
             upgrade,
@@ -85,15 +88,17 @@ contract System is D00Defaults {
         // deploy the mock submodule v2
         MockSubmoduleV2 mockSubmoduleV2 = new MockSubmoduleV2();
         // create the first upgrade
-        LibDataTypes.SubmoduleUpgrade[] memory upgrade = new LibDataTypes.SubmoduleUpgrade[](1);
         bytes4[] memory functionSelectors = new bytes4[](2);
         functionSelectors[0] = MockSubmodule.setOne.selector;
         functionSelectors[1] = MockSubmodule.getOne.selector;
-        upgrade[0] = LibDataTypes.SubmoduleUpgrade({
+        LibDataTypes.SubmoduleUpgrade memory upgrade = LibDataTypes.SubmoduleUpgrade({
             submoduleAddress: address(mockSubmodule),
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
             functionSelectors: functionSelectors
         });
+        //schedule the upgrade
+        vault.scheduleUpgrade(upgrade, address(0));
+
         vault.submoduleUpgrade(upgrade, address(0), "");
         // set the variables
         (bool result, bytes memory resultData) = address(vault).call(abi.encodeWithSelector(MockSubmodule.setOne.selector, 123));
@@ -102,25 +107,29 @@ contract System is D00Defaults {
         (result, resultData) = address(vault).call(abi.encodeWithSelector(MockSubmodule.getOne.selector));
         assertEq(abi.decode(resultData, (uint256)), 123);
         // create the second upgrade
-        LibDataTypes.SubmoduleUpgrade[] memory upgrade2 = new LibDataTypes.SubmoduleUpgrade[](1);
         bytes4[] memory functionSelectors2 = new bytes4[](2);
         functionSelectors2[0] = MockSubmoduleV2.setTwo.selector;
         functionSelectors2[1] = MockSubmoduleV2.getTwo.selector;
-        upgrade2[0] = LibDataTypes.SubmoduleUpgrade({
+        LibDataTypes.SubmoduleUpgrade memory upgrade2 = LibDataTypes.SubmoduleUpgrade({
             submoduleAddress: address(mockSubmoduleV2),
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
             functionSelectors: functionSelectors2
         });
+        //schedule the upgrade
+        vault.scheduleUpgrade(upgrade2, address(0));
+
         vault.submoduleUpgrade(upgrade2, address(0), "");
-        LibDataTypes.SubmoduleUpgrade[] memory upgrade3 = new LibDataTypes.SubmoduleUpgrade[](1);
         bytes4[] memory functionSelectors3 = new bytes4[](2);
         functionSelectors3[0] = MockSubmoduleV2.setOne.selector;
         functionSelectors3[1] = MockSubmoduleV2.getOne.selector;
-        upgrade3[0] = LibDataTypes.SubmoduleUpgrade({
+        LibDataTypes.SubmoduleUpgrade memory upgrade3 = LibDataTypes.SubmoduleUpgrade({
             submoduleAddress: address(mockSubmoduleV2),
             action: LibDataTypes.SubmoduleUpgradeAction.Replace,
             functionSelectors: functionSelectors3
         });
+        //schedule the upgrade
+        vault.scheduleUpgrade(upgrade3, address(0));
+
         vault.submoduleUpgrade(upgrade3, address(0), "");
         // set the variables
         (result, resultData) = address(vault).call(abi.encodeWithSelector(MockSubmoduleV2.setTwo.selector, 456));

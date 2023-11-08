@@ -54,19 +54,16 @@ contract D01Deployment is D00Defaults, PoolHelper {
         joinSubmodule = address(new JoinSubmodule());
         vm.makePersistent(joinSubmodule);
 
-        // create the upgrade
-        LibDataTypes.SubmoduleUpgrade[] memory upgrade = new LibDataTypes.SubmoduleUpgrade[](1);
-
         // Get all function selectors from the forge artifacts for this contract.
         bytes4[] memory functionSelectors = generateSelectors("JoinSubmodule");
-        upgrade[0] = LibDataTypes.SubmoduleUpgrade({
+        // create the upgrade
+        LibDataTypes.SubmoduleUpgrade memory upgrade = LibDataTypes.SubmoduleUpgrade({
             submoduleAddress: joinSubmodule,
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
             functionSelectors: functionSelectors
         });
-        // TODO: implement this
         // schedule upgrade
-        vault.scheduleUpgrade(address(0));
+        vault.scheduleUpgrade(upgrade, address(0));
 
         // fast forward to upgrade time
 
@@ -80,9 +77,8 @@ contract D01Deployment is D00Defaults, PoolHelper {
         vm.makePersistent(investSubmodule);
 
         // create the upgrade
-        LibDataTypes.SubmoduleUpgrade[] memory upgrade = new LibDataTypes.SubmoduleUpgrade[](1);
         bytes4[] memory functionSelectors = generateSelectors("InvestSubmodule");
-        upgrade[0] = LibDataTypes.SubmoduleUpgrade({
+        LibDataTypes.SubmoduleUpgrade memory upgrade = LibDataTypes.SubmoduleUpgrade({
             submoduleAddress: investSubmodule,
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
             functionSelectors: functionSelectors
@@ -97,9 +93,8 @@ contract D01Deployment is D00Defaults, PoolHelper {
         vm.makePersistent(exitSubmodule);
 
         // create the upgrade
-        LibDataTypes.SubmoduleUpgrade[] memory upgrade = new LibDataTypes.SubmoduleUpgrade[](1);
         bytes4[] memory functionSelectors = generateSelectors("ExitSubmodule");
-        upgrade[0] = LibDataTypes.SubmoduleUpgrade({
+        LibDataTypes.SubmoduleUpgrade memory upgrade = LibDataTypes.SubmoduleUpgrade({
             submoduleAddress: exitSubmodule,
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
             functionSelectors: functionSelectors
@@ -114,9 +109,8 @@ contract D01Deployment is D00Defaults, PoolHelper {
         vm.makePersistent(vaultInfoSubmodule);
 
         // create the upgrade
-        LibDataTypes.SubmoduleUpgrade[] memory upgrade = new LibDataTypes.SubmoduleUpgrade[](1);
         bytes4[] memory functionSelectors = generateSelectors("VaultInfoSubmodule");
-        upgrade[0] = LibDataTypes.SubmoduleUpgrade({
+        LibDataTypes.SubmoduleUpgrade memory upgrade = LibDataTypes.SubmoduleUpgrade({
             submoduleAddress: vaultInfoSubmodule,
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
             functionSelectors: functionSelectors
