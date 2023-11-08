@@ -4,6 +4,10 @@ pragma solidity 0.8.17;
 // import test base and helpers.
 import "forge-std/Test.sol";
 
+// Core / Infrastructure
+import {Controller} from "../../src/controller/Controller.sol";
+import {Storage} from "../../src/controller/inheritance/Storage.sol";
+
 contract D00Defaults is Test {
     // Network Parameters
     uint256 public forkNetwork;
@@ -13,7 +17,10 @@ contract D00Defaults is Test {
     // System Parameters
     string public vaultName = "fPancakeV3";
     address public governance;
-    address public controller;
+    // Infrastructure: Controller
+    Controller public controller;
+    Storage public controllerStorage;
+    // External protocols
     address public nonFungibleManagerPancake = 0x46A15B0b27311cedF172AB29E4f4766fbE7F4364;
     address public masterchefV3Pancake = 0x556B9306565093C855AEA9AE92A594704c2Cd59e;
     // Position Parameters
@@ -27,6 +34,11 @@ contract D00Defaults is Test {
     uint256 public amount1Desired = 1999999999999; //128064663508;
     uint256 public amount0Min = 0; //121335827458995953327294;
     uint256 public amount1Min = 0; //123766189343;
+
+    function setUpController() public virtual {
+        controllerStorage = new Storage();
+        controller = new Controller();
+    }
 
     function setUp() public virtual {
         console2.log("\n -- Global Defaults\n");
