@@ -18,6 +18,7 @@ library LibErrors {
     error TokenAlreadyRegistered(address _token);
     error InvalidTimestamp(TimestampErrorCodes _errorCode, uint256 _timestamp);
     error InvalidAddress(AddressErrorCodes _errorCode, address _address);
+    error InvalidConfiguration(string _reason);
     error DecimalsMismatch(address _token0, uint8 _decimals0, address _token1, uint8 _decimals1);
     // Position
     error PositionStaked(uint256 _positionId);
