@@ -13,6 +13,7 @@ import {IUpgradeSubmodule} from "../interfaces/submodules/IUpgradeSubmodule.sol"
 
 // Libraries
 import {LibFunctionRouter} from "../libraries/LibFunctionRouter.sol";
+import {LibHelpers} from "../libraries/LibHelpers.sol";
 import {LibDataTypes} from "../libraries/LibDataTypes.sol";
 import {LibEvents} from "../libraries/LibEvents.sol";
 import {LibErrors} from "../libraries/LibErrors.sol";
@@ -41,8 +42,9 @@ contract UpgradeSubmodule is Modifiers, IUpgradeSubmodule {
             revert LibErrors.InvalidTimestamp(LibErrors.TimestampErrorCodes.TooEarly, s.nextImplementationTimestamp);
         }
 
-        // TODO: Finish implement this
-        if (s.submoduleUpgrade != _submoduleUpgrade) {}
+        if (LibHelpers._submoduleUpgradeStructCompare(s.submoduleUpgrade, _submoduleUpgrade)) {
+            revert LibErrors.InvalidConfiguration("Upgrade setting does not match");
+        }
 
         LibFunctionRouter.FunctionRouterStorage storage frs = LibFunctionRouter.functionRouterStorage();
         uint256 originalSelectorCount = frs.selectorCount;
