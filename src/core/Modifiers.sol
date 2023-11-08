@@ -92,4 +92,11 @@ contract Modifiers {
         }
         _;
     }
+
+    modifier controllerConfigured() {
+        if (s.controller == address(0)) {
+            revert LibErrors.AddressUnconfigured();
+        }
+        _;
+    }
 }

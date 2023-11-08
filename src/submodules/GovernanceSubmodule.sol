@@ -13,7 +13,11 @@ import {LibEvents} from "../libraries/LibEvents.sol";
 import {Modifiers} from "../core/Modifiers.sol";
 
 contract GovernanceSubmodule is Modifiers, IGovernanceSubmodule {
-    function scheduleUpgrade(LibDataTypes.SubmoduleUpgrade calldata _submoduleUpgrade, address _init) external onlyGovernance {
+    function scheduleUpgrade(LibDataTypes.SubmoduleUpgrade calldata _submoduleUpgrade, address _init)
+        external
+        onlyGovernance
+        controllerConfigured
+    {
         s.nextImplementationTimestamp = block.timestamp + IController(s.controller).nextImplementationDelay();
         s.submoduleUpgrade = _submoduleUpgrade;
         s.nextInitContract = _init;
