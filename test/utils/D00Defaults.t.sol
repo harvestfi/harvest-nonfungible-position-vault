@@ -6,7 +6,16 @@ import "forge-std/Test.sol";
 
 // Core / Infrastructure
 import {Controller} from "../../src/controller/Controller.sol";
+import {RewardForwarder} from "../../src/controller/RewardForwarder.sol";
+import {ProfitSharingReceiver} from "../../src/controller/ProfitSharingReceiver.sol";
 import {Storage} from "../../src/controller/inheritance/Storage.sol";
+
+// Libraries
+import {LibDataTypes} from "../../src/libraries/LibDataTypes.sol";
+import {UniversalLiquidator} from "universal-liquidator/src/core/UniversalLiquidator.sol";
+import {UniversalLiquidatorRegistry} from "universal-liquidator/src/core/UniversalLiquidatorRegistry.sol";
+import {PancakeV3Dex} from "universal-liquidator/src/core/dexes/PancakeV3Dex.sol";
+import {strings} from "lib/solidity-stringutils/src/strings.sol";
 
 contract D00Defaults is Test {
     // Network Parameters
@@ -20,6 +29,13 @@ contract D00Defaults is Test {
     // Infrastructure: Controller
     Controller public controller;
     Storage public controllerStorage;
+    ProfitSharingReceiver public profitSharingReceiver;
+    RewardForwarder public rewardForwarder;
+    uint256 public nextImplementationDelay = 43200;
+    // Infrastructure: Universal Liquidator
+    UniversalLiquidator public universalLiquidator;
+    UniversalLiquidatorRegistry public universalLiquidatorRegistry;
+    PancakeV3Dex public pancakeV3;
     // External protocols
     address public nonFungibleManagerPancake = 0x46A15B0b27311cedF172AB29E4f4766fbE7F4364;
     address public masterchefV3Pancake = 0x556B9306565093C855AEA9AE92A594704c2Cd59e;
@@ -35,9 +51,28 @@ contract D00Defaults is Test {
     uint256 public amount0Min = 0; //121335827458995953327294;
     uint256 public amount1Min = 0; //123766189343;
 
+    function setUpUniversalLiquidator() public virtual {
+        // deploy universal liquidator
+        universalLiquidator = new UniversalLiquidator();
+        vm.makePersistent(address(universalLiquidator));
+        // deploy universal liquidator registry
+        universalLiquidatorRegistry = new UniversalLiquidatorRegistry();
+        vm.makePersistent(address(universalLiquidatorRegistry));
+        universalLiquidator.setPathRegistry(address(universalLiquidatorRegistry));
+        // deploy dexes
+        pancakeV3 = new PancakeV3Dex();
+        vm.makePersistent(address(pancakeV3));
+        universalLiquidatorRegistry.addDex(bytes32(bytes("pancakeV3")), address(pancakeV3));
+    }
+
     function setUpController() public virtual {
         controllerStorage = new Storage();
-        controller = new Controller();
+        profitSharingReceiver = new ProfitSharingReceiver(address(controllerStorage));
+        rewardForwarder = new RewardForwarder(address(controllerStorage));
+        controller =
+        new Controller(address(controllerStorage), 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2, governance, address(profitSharingReceiver), address(rewardForwarder), address(universalLiquidator), nextImplementationDelay);
+
+        controllerStorage.setController(address(controller));
     }
 
     function setUp() public virtual {
@@ -47,12 +82,14 @@ contract D00Defaults is Test {
         forkNetwork = vm.createSelectFork(_rpcUrl, MAINNET_FORK_BLOCK_NUMBER);
 
         governance = makeAddr("Governance 0");
-        controller = makeAddr("Controller 0");
         console2.log("governance address: ", governance);
-        console2.log("controller address: ", controller);
+        console2.log("controller address: ", address(controller));
         vm.label(governance, "Account governance");
-        vm.label(controller, "Account controller");
+        vm.label(address(controller), "Account controller");
 
         vm.startPrank(governance);
+
+        setUpUniversalLiquidator();
+        setUpController();
     }
 }
