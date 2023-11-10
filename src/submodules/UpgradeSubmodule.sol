@@ -42,7 +42,7 @@ contract UpgradeSubmodule is Modifiers, IUpgradeSubmodule {
             revert LibErrors.InvalidTimestamp(LibErrors.TimestampErrorCodes.TooEarly, s.nextImplementationTimestamp);
         }
 
-        if (LibHelpers._submoduleUpgradeStructCompare(s.submoduleUpgrade, _submoduleUpgrade)) {
+        if (!LibHelpers._submoduleUpgradeStructCompare(s.submoduleUpgrade, _submoduleUpgrade)) {
             revert LibErrors.InvalidConfiguration("Upgrade setting does not match");
         }
 
