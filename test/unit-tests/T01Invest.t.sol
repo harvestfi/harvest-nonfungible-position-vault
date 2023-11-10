@@ -17,7 +17,6 @@ contract Invest is D01Deployment {
         super.setUp();
         addVaultInfoSubmodule();
         addJoinSubmodule();
-        addUniversalLiquidator();
     }
 
     function testDoHardWork() public virtual {
