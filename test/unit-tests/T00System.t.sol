@@ -38,7 +38,7 @@ contract System is D00Defaults {
         address investSubmodule = address(new InvestSubmodule());
 
         // deploy the vault
-        vault = INonFungiblePositionVault(address(new NonFungiblePositionVault(governance, controller)));
+        vault = INonFungiblePositionVault(address(new NonFungiblePositionVault(governance, address(controller))));
 
         // create the upgrade
         //LibDataTypes.SubmoduleUpgrade memory upgrade = new LibDataTypes.SubmoduleUpgrade;
@@ -82,7 +82,7 @@ contract System is D00Defaults {
     // TODO: Here could apply fuzzer as input
     function testStorageUpgrade() public virtual {
         // deploy the vault
-        vault = INonFungiblePositionVault(address(new NonFungiblePositionVault(governance, controller)));
+        vault = INonFungiblePositionVault(address(new NonFungiblePositionVault(governance, address(controller))));
         // deploy the mock submodule
         MockSubmodule mockSubmodule = new MockSubmodule();
         // deploy the mock submodule v2
