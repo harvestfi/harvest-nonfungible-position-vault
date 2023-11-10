@@ -22,9 +22,6 @@ import {IVaultInfoSubmodule} from "../../src/interfaces/submodules/IVaultInfoSub
 
 // Libraries
 import {LibDataTypes} from "../../src/libraries/LibDataTypes.sol";
-import {UniversalLiquidator} from "universal-liquidator/src/core/UniversalLiquidator.sol";
-import {UniversalLiquidatorRegistry} from "universal-liquidator/src/core/UniversalLiquidatorRegistry.sol";
-import {PancakeV3Dex} from "universal-liquidator/src/core/dexes/PancakeV3Dex.sol";
 import {strings} from "lib/solidity-stringutils/src/strings.sol";
 
 contract D01Deployment is D00Defaults, PoolHelper {
@@ -37,15 +34,12 @@ contract D01Deployment is D00Defaults, PoolHelper {
     address public investSubmodule;
     address public exitSubmodule;
     address public vaultInfoSubmodule;
-    UniversalLiquidator public universalLiquidator;
-    UniversalLiquidatorRegistry public universalLiquidatorRegistry;
-    PancakeV3Dex public pancakeV3;
 
     function setUp() public virtual override {
         super.setUp();
 
         // deploy the vault
-        vault = INonFungiblePositionVault(address(new NonFungiblePositionVault(governance, controller)));
+        vault = INonFungiblePositionVault(address(new NonFungiblePositionVault(governance, address(controller))));
         vm.makePersistent(address(vault));
     }
 
@@ -64,9 +58,8 @@ contract D01Deployment is D00Defaults, PoolHelper {
         });
         // schedule upgrade
         vault.scheduleUpgrade(upgrade, address(0));
-
         // fast forward to upgrade time
-
+        vm.roll(nextImplementationDelay);
         // execute upgrade
         vault.submoduleUpgrade(upgrade, address(0), "");
     }
@@ -83,7 +76,11 @@ contract D01Deployment is D00Defaults, PoolHelper {
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
             functionSelectors: functionSelectors
         });
-
+        // schedule upgrade
+        vault.scheduleUpgrade(upgrade, address(0));
+        // fast forward to upgrade time
+        vm.roll(nextImplementationDelay);
+        // execute upgrade
         vault.submoduleUpgrade(upgrade, address(0), "");
     }
 
@@ -99,7 +96,11 @@ contract D01Deployment is D00Defaults, PoolHelper {
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
             functionSelectors: functionSelectors
         });
-
+        // schedule upgrade
+        vault.scheduleUpgrade(upgrade, address(0));
+        // fast forward to upgrade time
+        vm.roll(nextImplementationDelay);
+        // execute upgrade
         vault.submoduleUpgrade(upgrade, address(0), "");
     }
 
@@ -115,22 +116,12 @@ contract D01Deployment is D00Defaults, PoolHelper {
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
             functionSelectors: functionSelectors
         });
-
+        // schedule upgrade
+        vault.scheduleUpgrade(upgrade, address(0));
+        // fast forward to upgrade time
+        vm.roll(nextImplementationDelay);
+        // execute upgrade
         vault.submoduleUpgrade(upgrade, address(0), "");
-    }
-
-    function addUniversalLiquidator() public virtual {
-        // deploy universal liquidator
-        universalLiquidator = new UniversalLiquidator();
-        vm.makePersistent(address(universalLiquidator));
-        // deploy universal liquidator registry
-        universalLiquidatorRegistry = new UniversalLiquidatorRegistry();
-        vm.makePersistent(address(universalLiquidatorRegistry));
-        universalLiquidator.setPathRegistry(address(universalLiquidatorRegistry));
-        // deploy dexes
-        pancakeV3 = new PancakeV3Dex();
-        vm.makePersistent(address(pancakeV3));
-        universalLiquidatorRegistry.addDex(bytes32(bytes("pancakeV3")), address(pancakeV3));
     }
 
     // return array of function selectors for given facet name
