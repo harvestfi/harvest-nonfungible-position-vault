@@ -23,7 +23,6 @@ contract PoolHelper is D00Defaults {
         address whale = makeAddr("Whale 0");
         deal(_token0, whale, 10 ether);
         for (uint256 index; index < _round;) {
-            console2.log(index);
             changePrank(whale);
 
             ISwapRouter.ExactInputParams memory swapInfo =

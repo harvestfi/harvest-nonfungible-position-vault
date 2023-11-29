@@ -62,9 +62,7 @@ contract UniV3VaultFactory is Ownable {
     function deploy(address store, uint256 univ3PoolId) external onlyWhitelisted returns (address vault) {
         INonfungiblePositionManager uniV3posManager = INonfungiblePositionManager(positionManager);
 
-        UniVaultProxy vaultProxy = new UniVaultProxy(
-      uniVaultBeaconProxyImplementation, ""
-    );
+        UniVaultProxy vaultProxy = new UniVaultProxy(uniVaultBeaconProxyImplementation, "");
 
         uniV3posManager.approve(address(vaultProxy), univ3PoolId);
 
@@ -90,9 +88,7 @@ contract UniV3VaultFactory is Ownable {
         require(changeRangeSubmoduleManaged != address(0), "changeRangeSubmoduleManaged not set");
         INonfungiblePositionManager uniV3posManager = INonfungiblePositionManager(positionManager);
 
-        UniVaultProxy vaultProxy = new UniVaultProxy(
-      uniVaultBeaconProxyImplementation, ""
-    );
+        UniVaultProxy vaultProxy = new UniVaultProxy(uniVaultBeaconProxyImplementation, "");
 
         uniV3posManager.approve(address(vaultProxy), univ3PoolIds[0]);
 

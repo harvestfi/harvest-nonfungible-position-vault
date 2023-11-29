@@ -94,7 +94,7 @@ contract VaultInfoSubmodule is Modifiers, IVaultInfoSubmodule {
      * @dev Returns the current amount of underlying assets owned by the vault.
      */
     function underlyingBalanceWithInvestment() public view returns (uint256) {
-        return LibVaultOps._getAllPositionLiquidity();
+        return LibVaultOps.getAllPositionLiquidity();
     }
 
     /**

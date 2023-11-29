@@ -72,7 +72,7 @@ contract TokenizedVaultSubmodule is Modifiers, ITokenizedVaultSubmodule {
      * @dev See {IERC4626-totalAssets}.
      */
     function totalAssets() public view virtual override returns (uint256) {
-        return LibVaultOps._getAllPositionLiquidity();
+        return LibVaultOps.getAllPositionLiquidity();
     }
 
     /**
