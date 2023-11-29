@@ -100,7 +100,7 @@ library LibVaultOps {
         }
     }
 
-    function _getAllPositionLiquidity() internal view returns (uint256 totalLiquidity) {
+    function getAllPositionLiquidity() internal view returns (uint256 totalLiquidity) {
         AppStorage storage s = LibAppStorage.systemStorage();
         for (uint256 index; index < s.positionCount;) {
             (,,,,, uint256 liquidity) = LibPositionManager.positionInfo(s.positions[index].tokenId);
