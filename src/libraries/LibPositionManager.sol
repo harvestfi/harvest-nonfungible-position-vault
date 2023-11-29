@@ -68,7 +68,7 @@ library LibPositionManager {
         position.initialLiquidity = _liquidity;
         position.tokenId = _tokenId;
 
-        // Approve the position manager to transfer the tokens
+        // Reset the allowances
         IERC20(s.token0).safeApprove(s.nonFungibleTokenPositionManager, 0);
         IERC20(s.token1).safeApprove(s.nonFungibleTokenPositionManager, 0);
     }
@@ -89,8 +89,10 @@ library LibPositionManager {
         IMasterChefV3(s.masterChef).withdraw(_positionId, address(this));
     }
 
-    function increaseLiquidity(uint256 _positionId) internal {
+    function increaseLiquidity(uint256 _positionId, uint256 _depositAmount) internal {
         AppStorage storage s = LibAppStorage.systemStorage();
+        // Approve the position manager to transfer the tokens
+        IERC20(s.unifiedDepositToken).safeIncreaseAllowance(s.masterChef, _depositAmount);
         LibDataTypes.IncreaseLiquidityParams memory params = LibDataTypes.IncreaseLiquidityParams({
             tokenId: s.positions[_positionId].tokenId,
             amount0Desired: IERC20(s.token0).balanceOf(address(this)),
@@ -101,6 +103,8 @@ library LibPositionManager {
         });
 
         IMasterChefV3(s.masterChef).increaseLiquidity(params);
+        // Reset the allowances
+        IERC20(s.unifiedDepositToken).safeApprove(s.masterChef, 0);
     }
 
     function decreaseLiquidity(uint256 _positionId, uint128 _rmLiquidity) internal {
