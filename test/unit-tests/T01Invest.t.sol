@@ -46,6 +46,10 @@ contract Invest is D01Deployment {
         _path[0] = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
         _path[1] = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
         universalLiquidatorRegistry.setPath(bytes32(bytes("pancakeV3")), _path);
+        // WETH -> USDT
+        _path[0] = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+        _path[1] = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
+        universalLiquidatorRegistry.setPath(bytes32(bytes("pancakeV3")), _path);
         // configure liquidation fee
         // CAKE -> WETH
         pancakeV3.setFee(0x152649eA73beAb28c5b49B26eb48f7EAD6d4c898, 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2, 2500);
