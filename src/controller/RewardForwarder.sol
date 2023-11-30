@@ -21,7 +21,7 @@ contract RewardForwarder is Controllable {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
-    address public constant iFARM = address(0x9dCA587dc65AC0a043828B0acd946d71eb8D46c1);
+    address public constant FARM = address(0x1571eD0bed4D987fe2b498DdBaE7DFA19519F651);
 
     constructor(address _storage) Controllable(_storage) {}
 
@@ -54,7 +54,7 @@ contract RewardForwarder is Controllable {
             IERC20(_targetToken).safeTransfer(IController(_controller).protocolFeeReceiver(), _platformFee);
         }
 
-        if (_token != iFARM) {
+        if (_token != FARM) {
             IERC20(_token).safeApprove(liquidator, 0);
             IERC20(_token).safeApprove(liquidator, _profitSharingFee.add(_strategistFee));
 
@@ -62,19 +62,19 @@ contract RewardForwarder is Controllable {
 
             if (_profitSharingFee > 0) {
                 IUniversalLiquidator(liquidator).swap(
-                    _token, iFARM, _profitSharingFee, amountOutMin, IController(_controller).profitSharingReceiver()
+                    _token, FARM, _profitSharingFee, amountOutMin, IController(_controller).profitSharingReceiver()
                 );
             }
             if (_strategistFee > 0) {
                 IUniversalLiquidator(liquidator).swap(
-                    _token, iFARM, _strategistFee, amountOutMin, IStrategy(msg.sender).strategist()
+                    _token, FARM, _strategistFee, amountOutMin, IStrategy(msg.sender).strategist()
                 );
             }
         } else {
             if (_strategistFee > 0) {
-                IERC20(iFARM).safeTransfer(IStrategy(msg.sender).strategist(), _strategistFee);
+                IERC20(FARM).safeTransfer(IStrategy(msg.sender).strategist(), _strategistFee);
             }
-            IERC20(iFARM).safeTransfer(IController(_controller).profitSharingReceiver(), _profitSharingFee);
+            IERC20(FARM).safeTransfer(IController(_controller).profitSharingReceiver(), _profitSharingFee);
         }
     }
 }
