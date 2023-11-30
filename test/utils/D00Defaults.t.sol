@@ -63,14 +63,29 @@ contract D00Defaults is Test {
         pancakeV3 = new PancakeV3Dex();
         vm.makePersistent(address(pancakeV3));
         universalLiquidatorRegistry.addDex(bytes32(bytes("pancakeV3")), address(pancakeV3));
+        /*
+        // set iFARM liquidation path
+        address[] memory _path = new address[](2);
+        // iFARM -> WETH
+        _path[0] = 0x1571eD0bed4D987fe2b498DdBaE7DFA19519F651;
+        _path[1] = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+        universalLiquidatorRegistry.setPath(bytes32(bytes("pancakeV3")), _path);
+        */
     }
 
     function setUpController() public virtual {
         controllerStorage = new Storage();
         profitSharingReceiver = new ProfitSharingReceiver(address(controllerStorage));
         rewardForwarder = new RewardForwarder(address(controllerStorage));
-        controller =
-        new Controller(address(controllerStorage), 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2, governance, address(profitSharingReceiver), address(rewardForwarder), address(universalLiquidator), nextImplementationDelay);
+        controller = new Controller(
+            address(controllerStorage),
+            0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2,
+            governance,
+            address(profitSharingReceiver),
+            address(rewardForwarder),
+            address(universalLiquidator),
+            nextImplementationDelay
+        );
 
         controllerStorage.setController(address(controller));
     }
@@ -83,13 +98,14 @@ contract D00Defaults is Test {
 
         governance = makeAddr("Governance 0");
         console2.log("governance address: ", governance);
-        console2.log("controller address: ", address(controller));
         vm.label(governance, "Account governance");
-        vm.label(address(controller), "Account controller");
 
         vm.startPrank(governance);
 
         setUpUniversalLiquidator();
         setUpController();
+
+        vm.label(address(controller), "Account controller");
+        console2.log("controller address: ", address(controller));
     }
 }
