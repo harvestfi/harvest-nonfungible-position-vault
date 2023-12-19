@@ -1,15 +1,15 @@
 //SPDX-License-Identifier: Unlicense
-pragma solidity 0.7.6;
+pragma solidity 0.8.17;
 pragma abicoder v2;
 
 // ERC20
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/SafeERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/math/SafeMathUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 
 // ERC721
-import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721HolderUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/utils/ERC721HolderUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
 
 // UniswapV3 core
@@ -20,7 +20,7 @@ import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import "./interface/uniswap/IUniswapV3Staker.sol";
 
 // reentrancy guard
-import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 
 // UniswapV3 periphery contracts
 import "@uniswap/v3-periphery/contracts/interfaces/INonfungiblePositionManager.sol";
@@ -87,7 +87,7 @@ contract UniVaultUpgradeableV1 is ERC20Upgradeable, ERC721HolderUpgradeable, Ree
 
     // functions are tied to a submodule
     // this allows us to update a submodule without updating all the function signature to submodule
-    function functionHandler(bytes4 functionSignature) public returns (address submodule) {
+    function functionHandler(bytes4 functionSignature) public view returns (address submodule) {
         GlobalStorage storage globalStorage = getGlobalStorage();
         return globalStorage.functionToSubmodule[functionSignature];
     }
@@ -107,7 +107,7 @@ contract UniVaultUpgradeableV1 is ERC20Upgradeable, ERC721HolderUpgradeable, Ree
         assert(_GLOBAL_STORAGE_SLOT == bytes32(uint256(keccak256("eip1967.uniVault.globalStorage")) - 1));
     }
 
-    function vaultPaused() public returns (bool) {
+    function vaultPaused() public view returns (bool) {
         return getBoolean(_VAULT_PAUSE_SLOT);
     }
 
@@ -379,10 +379,10 @@ contract UniVaultUpgradeableV1 is ERC20Upgradeable, ERC721HolderUpgradeable, Ree
 
         // if there's an old submodule, deregisters its interface
         if (oldSubmodule != address(0)) {
-            (bool success, bytes memory data) =
+            (bool _success, bytes memory _data) =
                 (oldSubmodule).delegatecall(abi.encodeWithSignature("registerInterface(bytes32,bool)", submoduleHash, false));
-            string memory revertMsg = data._getRevertMsgFromRes();
-            require(success, revertMsg);
+            string memory _revertMsg = _data._getRevertMsgFromRes();
+            require(_success, _revertMsg);
         }
 
         // register the submodule hash
@@ -395,7 +395,7 @@ contract UniVaultUpgradeableV1 is ERC20Upgradeable, ERC721HolderUpgradeable, Ree
         require(success, revertMsg);
     }
 
-    function version() public view returns (string memory) {
+    function version() public pure returns (string memory) {
         return "1.1.0";
     }
 
@@ -419,4 +419,6 @@ contract UniVaultUpgradeableV1 is ERC20Upgradeable, ERC721HolderUpgradeable, Ree
             revert("msg.sig is not assigned to submodule");
         }
     }
+
+    receive() external payable {}
 }

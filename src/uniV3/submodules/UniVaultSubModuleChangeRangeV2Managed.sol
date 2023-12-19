@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: Unlicense
-pragma solidity 0.7.6;
+pragma solidity 0.8.17;
 pragma abicoder v2;
 
 import "@uniswap/v3-core/contracts/libraries/TickMath.sol";
@@ -11,7 +11,7 @@ import "../interface/uniswapV2/IUniswapV2Router02.sol";
 contract UniVaultSubmoduleChangeRangeV2Managed is UniVaultSubmoduleChangeRangeV1 {
     using SafeMathUpgradeable for uint256;
 
-    uint256 internal constant INDEX_NOT_FOUND = uint256(-1);
+    uint256 internal constant INDEX_NOT_FOUND = type(uint256).max;
     bytes32 internal constant _LOCAL_STORAGE_SLOT_V2_MANAGED = 0x06bc87915c202efffe30f9e888a1400ac812e3fce7b75d676c422e2b1ca89608;
 
     event RangeChanged(uint256 oldPosId, uint256 newPosId, uint256 original0, uint256 original1, uint256 final0, uint256 final1);
@@ -66,7 +66,7 @@ contract UniVaultSubmoduleChangeRangeV2Managed is UniVaultSubmoduleChangeRangeV1
         localStorage.sellPath = newSellPath;
     }
 
-    function isManaged() public view returns (bool) {
+    function isManaged() public pure returns (bool) {
         return true;
     }
 
@@ -121,7 +121,7 @@ contract UniVaultSubmoduleChangeRangeV2Managed is UniVaultSubmoduleChangeRangeV1
     }
 
     function isInRange(uint256 positionId) public view returns (bool) {
-        (,, address _token0, address _token1, uint24 _fee, int24 _tickLower, int24 _tickUpper, uint128 _liquidity,,,,) =
+        (,, address _token0, address _token1, uint24 _fee, int24 _tickLower, int24 _tickUpper,,,,,) =
             INonfungiblePositionManager(_NFT_POSITION_MANAGER).positions(positionId);
         uint160 sqrtRatioX96 = getSqrtPriceX96(_token0, _token1, _fee);
         uint160 sqrtRatioXA96 = TickMath.getSqrtRatioAtTick(_tickLower);

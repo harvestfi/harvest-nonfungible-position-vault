@@ -1,9 +1,9 @@
-pragma solidity 0.7.6;
+pragma solidity 0.8.17;
 
-import "@openzeppelin/contracts/proxy/UpgradeableBeacon.sol";
-import "@openzeppelin/contracts-upgradeable/math/SafeMathUpgradeable.sol";
+import "@openzeppelin/contracts/proxy/beacon/UpgradeableBeacon.sol";
+import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 
-import "@openzeppelin/contracts/utils/EnumerableSet.sol";
+import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 
 contract UniVaultBeacon is UpgradeableBeacon {
     using EnumerableSet for EnumerableSet.AddressSet;

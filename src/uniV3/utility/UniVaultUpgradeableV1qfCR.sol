@@ -1,15 +1,15 @@
 //SPDX-License-Identifier: Unlicense
-pragma solidity 0.7.6;
+pragma solidity 0.8.17;
 pragma abicoder v2;
 
 // ERC20
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/SafeERC20Upgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/math/SafeMathUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/math/SafeMathUpgradeable.sol";
 
 // ERC721
-import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721HolderUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC721/utils/ERC721HolderUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
 
 // UniswapV3 core
@@ -17,7 +17,7 @@ import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Factory.sol";
 import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 
 // reentrancy guard
-import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 
 // UniswapV3 periphery contracts
 import "@uniswap/v3-periphery/contracts/interfaces/INonfungiblePositionManager.sol";
@@ -69,7 +69,7 @@ contract UniVaultUpgradeableV1qfCR is ERC20Upgradeable, ERC721HolderUpgradeable,
         token1().safeApprove(_NFT_POSITION_MANAGER, 0);
         token1().safeApprove(_NFT_POSITION_MANAGER, _initAmount1);
 
-        (uint256 _tokenId, uint128 _initialLiquidity,,) = INonfungiblePositionManager(_NFT_POSITION_MANAGER).mint(
+        INonfungiblePositionManager(_NFT_POSITION_MANAGER).mint(
             INonfungiblePositionManager.MintParams({
                 token0: address(token0()),
                 token1: address(token1()),
@@ -103,7 +103,7 @@ contract UniVaultUpgradeableV1qfCR is ERC20Upgradeable, ERC721HolderUpgradeable,
         uint256 oldPosId = getStorage().posId();
 
         // remove liquidity from old
-        (uint256 _receivedToken0, uint256 _receivedToken1) = INonfungiblePositionManager(_NFT_POSITION_MANAGER).decreaseLiquidity(
+        INonfungiblePositionManager(_NFT_POSITION_MANAGER).decreaseLiquidity(
             INonfungiblePositionManager.DecreaseLiquidityParams({
                 tokenId: oldPosId,
                 liquidity: _oldLiquidity,
@@ -118,8 +118,8 @@ contract UniVaultUpgradeableV1qfCR is ERC20Upgradeable, ERC721HolderUpgradeable,
             INonfungiblePositionManager.CollectParams({
                 tokenId: oldPosId,
                 recipient: address(this),
-                amount0Max: uint128(-1), // collect all token0 (since we are changing ranges)
-                amount1Max: uint128(-1) // collect all token1 (since we are changing ranges)
+                amount0Max: type(uint128).max, // collect all token0 (since we are changing ranges)
+                amount1Max: type(uint128).max // collect all token1 (since we are changing ranges)
             })
         );
 
@@ -143,7 +143,7 @@ contract UniVaultUpgradeableV1qfCR is ERC20Upgradeable, ERC721HolderUpgradeable,
         token1().safeApprove(_NFT_POSITION_MANAGER, 0);
         token1().safeApprove(_NFT_POSITION_MANAGER, _amount1);
         // increase the liquidity
-        (uint128 _liquidity,,) = INonfungiblePositionManager(_NFT_POSITION_MANAGER).increaseLiquidity(
+        INonfungiblePositionManager(_NFT_POSITION_MANAGER).increaseLiquidity(
             INonfungiblePositionManager.IncreaseLiquidityParams({
                 tokenId: getStorage().posId(),
                 amount0Desired: _amount0,
