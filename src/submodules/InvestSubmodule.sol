@@ -39,10 +39,15 @@ contract InvestSubmodule is Modifiers, IInvestSubmodule {
         // increase liquidity (LibPositionManager)
         uint256 tokenBalance = IERC20(s.unifiedDepositToken).balanceOf(address(this));
         if (tokenBalance > 0) {
+            uint256 _amount0;
+            uint256 _amount1;
             if (s.unifiedDepositToken == s.token0) {
-                (uint256 actualAmount0, uint256 actualAmount1) = LibZap.zap(_positionId, 0, tokenBalance, 0, 0, 0);
-                //LibPositionManager.increaseLiquidity(_positionId, tokenBalance);
-            } else {}
+                _amount0 = tokenBalance;
+            } else {
+                _amount1 = tokenBalance;
+            }
+            LibZap.zap(_positionId, 0, _amount0, _amount1, 0, 0);
+            LibPositionManager.increaseLiquidity(_positionId);
         }
     }
 }
