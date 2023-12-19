@@ -201,41 +201,40 @@ library LibZap {
         AppStorage storage s = LibAppStorage.systemStorage();
 
         require(_amount1In == 0 || _amount0In == 0, "Choose one token");
-        address tokenIn;
-        address tokenOut;
-        uint256 amountIn;
-        uint256 amountOut;
-        if (_amount0In == 0) {
-            tokenIn = s.token1;
-            tokenOut = s.token0;
-            amountIn = _amount1In;
-            amountOut = _amount0Out;
-        } else {
-            tokenIn = s.token0;
-            tokenOut = s.token1;
-            amountIn = _amount0In;
-            amountOut = _amount1Out;
-        }
-
-        IERC20(tokenIn).safeApprove(LibConstants._V3_ROUTER, 0);
-        IERC20(tokenIn).safeApprove(LibConstants._V3_ROUTER, amountIn);
-        uint256 actualAmountOut = ISwapRouter(LibConstants._V3_ROUTER).exactInputSingle(
-            ISwapRouter.ExactInputSingleParams({
-                tokenIn: tokenIn,
-                tokenOut: tokenOut,
-                fee: s.fee,
-                recipient: address(this),
-                deadline: block.timestamp,
-                amountIn: amountIn,
-                amountOutMinimum: amountOut,
-                sqrtPriceLimitX96: _sqrtPriceLimitX96
-            })
-        );
 
         if (_amount0In == 0) {
+            IERC20(s.token1).safeApprove(LibConstants._V3_ROUTER, 0);
+            IERC20(s.token1).safeApprove(LibConstants._V3_ROUTER, _amount1In);
+            uint256 actualAmountOut = ISwapRouter(LibConstants._V3_ROUTER).exactInputSingle(
+                ISwapRouter.ExactInputSingleParams({
+                    tokenIn: s.token1,
+                    tokenOut: s.token0,
+                    fee: s.fee,
+                    recipient: address(this),
+                    deadline: block.timestamp,
+                    amountIn: _amount1In,
+                    amountOutMinimum: _amount0Out,
+                    sqrtPriceLimitX96: _sqrtPriceLimitX96
+                })
+            );
             return (actualAmountOut, 0);
+        } else {
+            IERC20(s.token0).safeApprove(LibConstants._V3_ROUTER, 0);
+            IERC20(s.token0).safeApprove(LibConstants._V3_ROUTER, _amount0In);
+            uint256 actualAmountOut = ISwapRouter(LibConstants._V3_ROUTER).exactInputSingle(
+                ISwapRouter.ExactInputSingleParams({
+                    tokenIn: s.token0,
+                    tokenOut: s.token1,
+                    fee: s.fee,
+                    recipient: address(this),
+                    deadline: block.timestamp,
+                    amountIn: _amount0In,
+                    amountOutMinimum: _amount1Out,
+                    sqrtPriceLimitX96: _sqrtPriceLimitX96
+                })
+            );
+            return (0, actualAmountOut);
         }
-        return (0, actualAmountOut);
     }
 
     /**
