@@ -12,7 +12,7 @@ import {LibErrors} from "../../src/libraries/LibErrors.sol";
 // Interfaces
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract Invest is D01Deployment {
+contract T01Invest is D01Deployment {
     function setUp() public virtual override {
         super.setUp();
         addVaultInfoSubmodule();

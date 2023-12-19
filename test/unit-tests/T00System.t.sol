@@ -22,7 +22,7 @@ import {MockVault} from "../mocks/MockVault.sol";
 import {MockSubmodule} from "../mocks/MockSubmodule.sol";
 import {MockSubmoduleV2} from "../mocks/MockSubmoduleV2.sol";
 
-contract System is D00Defaults {
+contract T00System is D00Defaults {
     InitVault public initVault;
     INonFungiblePositionVault public vault;
 

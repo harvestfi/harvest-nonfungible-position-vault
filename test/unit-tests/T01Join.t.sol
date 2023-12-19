@@ -13,7 +13,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../interfaces/IUSDT.sol";
 import {INonfungiblePositionManager} from "../../src/interfaces/protocols/pancake/INonfungiblePositionManager.sol";
 
-contract Join is D01Deployment {
+contract T01Join is D01Deployment {
     function setUp() public virtual override {
         super.setUp();
         addVaultInfoSubmodule();
