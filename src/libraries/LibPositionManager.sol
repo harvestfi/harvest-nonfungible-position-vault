@@ -65,7 +65,7 @@ library LibPositionManager {
         Position storage position = s.positions[s.positionCount++];
         position.tickLower = _tickLower;
         position.tickUpper = _tickUpper;
-        position.initialLiquidity = _liquidity;
+        position.liquidity = _liquidity;
         position.tokenId = _tokenId;
 
         // Reset the allowances

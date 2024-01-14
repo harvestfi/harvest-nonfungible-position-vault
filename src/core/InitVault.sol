@@ -32,7 +32,7 @@ contract InitVault is Modifiers {
         s.fee = _fee;
         position.tickLower = _tickLower;
         position.tickUpper = _tickUpper;
-        position.initialLiquidity = _initialLiquidity;
+        position.liquidity = _initialLiquidity;
         position.tokenId = _tokenId;
 
         // set the decimals and underlying unit

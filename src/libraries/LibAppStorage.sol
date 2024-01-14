@@ -6,7 +6,7 @@ import {LibDataTypes} from "./LibDataTypes.sol";
 
 struct Position {
     uint256 tokenId;
-    uint256 initialLiquidity;
+    uint256 liquidity;
     int24 tickLower;
     int24 tickUpper;
     bool staked;

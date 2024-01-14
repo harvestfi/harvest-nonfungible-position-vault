@@ -117,7 +117,7 @@ contract ConfigureSubmodule is Modifiers, IConfigureSubmodule {
     {
         Position storage position = s.positions[s.positionCount++];
         position.tokenId = _tokenId;
-        position.initialLiquidity = _liquidity;
+        position.liquidity = _liquidity;
         position.tickLower = _tickLower;
         position.tickUpper = _tickUpper;
 
@@ -131,7 +131,7 @@ contract ConfigureSubmodule is Modifiers, IConfigureSubmodule {
     {
         Position storage position = s.positions[_positionId];
         position.tokenId = _tokenId;
-        position.initialLiquidity = _liquidity;
+        position.liquidity = _liquidity;
         position.tickLower = _tickLower;
         position.tickUpper = _tickUpper;
 
