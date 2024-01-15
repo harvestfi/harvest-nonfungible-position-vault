@@ -40,6 +40,18 @@ library LibEvents {
     // TokenizedVault
     event Transfer(address indexed from, address indexed to, uint256 value);
     event Approval(address indexed owner, address indexed spender, uint256 value);
+    /**
+     * Caller has exchanged assets for shares, and transferred those shares to owner.
+     *
+     * MUST be emitted when tokens are deposited into the Vault via the mint and deposit methods.
+     */
+    event Deposit(address indexed sender, address indexed receiver, uint256 assets, uint256 shares);
+    /**
+     * Caller has exchanged shares, owned by owner, for assets, and transferred those assets to receiver.
+     *
+     * MUST be emitted when shares are withdrawn from the Vault in ERC4626.redeem or ERC4626.withdraw methods.
+     */
+    event Withdraw(address indexed sender, address indexed receiver, address indexed owner, uint256 assets, uint256 shares);
     // Position Operations
     event RewardLiquidationPaused(bool paused);
     // Invest Operations
