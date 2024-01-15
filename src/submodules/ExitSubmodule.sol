@@ -8,7 +8,5 @@ import {IExitSubmodule} from "../interfaces/submodules/IExitSubmodule.sol";
 import {Modifiers} from "../core/Modifiers.sol";
 
 contract ExitSubmodule is Modifiers, IExitSubmodule {
-    function withdrawFullAmount() external {}
-
-    function withdrawByAmount() external {}
+    function exitFullAmount() external {}
 }
