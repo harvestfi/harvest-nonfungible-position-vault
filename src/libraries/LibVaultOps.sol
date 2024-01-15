@@ -99,15 +99,4 @@ library LibVaultOps {
             emit LibEvents.StrategistFeeLogInReward(s.strategist, rewardToken, 0, 0, block.timestamp);
         }
     }
-
-    function getAllPositionLiquidity() internal view returns (uint256 totalLiquidity) {
-        AppStorage storage s = LibAppStorage.systemStorage();
-        for (uint256 index; index < s.positionCount;) {
-            (,,,,, uint256 liquidity) = LibPositionManager.positionInfo(s.positions[index].tokenId);
-            totalLiquidity += liquidity;
-            unchecked {
-                index++;
-            }
-        }
-    }
 }

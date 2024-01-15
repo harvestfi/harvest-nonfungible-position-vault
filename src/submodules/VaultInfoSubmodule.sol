@@ -7,7 +7,7 @@ import {IVaultInfoSubmodule} from "../interfaces/submodules/IVaultInfoSubmodule.
 // Libraries
 import {Position} from "../libraries/LibAppStorage.sol";
 import {LibPositionManager} from "../libraries/LibPositionManager.sol";
-import {LibVaultOps} from "../libraries/LibVaultOps.sol";
+import {LibTokenizedVault} from "../libraries/LibTokenizedVault.sol";
 import {LibConstants} from "../libraries/LibConstants.sol";
 
 // Helpers
@@ -94,7 +94,7 @@ contract VaultInfoSubmodule is Modifiers, IVaultInfoSubmodule {
      * @dev Returns the current amount of underlying assets owned by the vault.
      */
     function underlyingBalanceWithInvestment() public view returns (uint256) {
-        return LibVaultOps.getAllPositionLiquidity();
+        return LibTokenizedVault.totalAssets();
     }
 
     /**
