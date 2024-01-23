@@ -5,7 +5,6 @@ pragma solidity 0.8.17;
 import {IVaultInfoSubmodule} from "../interfaces/submodules/IVaultInfoSubmodule.sol";
 
 // Libraries
-import {Position} from "../libraries/LibAppStorage.sol";
 import {LibPositionManager} from "../libraries/LibPositionManager.sol";
 import {LibTokenizedVault} from "../libraries/LibTokenizedVault.sol";
 import {LibConstants} from "../libraries/LibConstants.sol";
@@ -104,27 +103,8 @@ contract VaultInfoSubmodule is Modifiers, IVaultInfoSubmodule {
         return s.totalSupply == 0 ? s.underlyingUnit : s.underlyingUnit * underlyingBalanceWithInvestment() / s.totalSupply;
     }
 
-    function positionCount() external view override returns (uint256 _count) {
-        return s.positionCount;
-    }
-
-    function latestPositionId() external view override returns (uint256 _positionId) {
-        return s.positionCount - 1;
-    }
-
-    function positions(uint256 _positionId) external view override returns (Position memory _position) {
-        return s.positions[_positionId];
-    }
-
-    function allPosition() external view override returns (Position[] memory) {
-        Position[] memory _positions = new Position[](s.positionCount);
-        for (uint256 index; index < s.positionCount;) {
-            _positions[index] = s.positions[index];
-            unchecked {
-                index++;
-            }
-        }
-        return _positions;
+    function currentTokenId() external view override returns (uint256 _positionId) {
+        return s.currentTokenId;
     }
 
     function nonFungibleTokenPositionManager() external view override returns (address _nonFungibleTokenPositionManager) {

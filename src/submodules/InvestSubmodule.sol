@@ -21,10 +21,10 @@ import {Modifiers} from "../core/Modifiers.sol";
 contract InvestSubmodule is Modifiers, IInvestSubmodule {
     using SafeERC20 for IERC20;
 
-    function doHardWork(uint256 _positionId) external override onlyGovernanceOrController {
+    function doHardWork() external override onlyGovernanceOrController {
         // claim rewards: harvest + collect
-        LibPositionManager.harvest(_positionId);
-        LibPositionManager.collect(_positionId);
+        LibPositionManager.harvest();
+        LibPositionManager.collect();
         // liquidate to universal reward token through universal liquidators
         if (s.liquidationRewardPause) {
             // profits can be disabled for possible simplified and rapoolId exit
@@ -46,8 +46,8 @@ contract InvestSubmodule is Modifiers, IInvestSubmodule {
             } else {
                 _amount1 = tokenBalance;
             }
-            LibZap.zap(_positionId, 0, _amount0, _amount1, 0, 0);
-            LibPositionManager.increaseLiquidity(_positionId);
+            LibZap.zap(0, _amount0, _amount1, 0, 0);
+            LibPositionManager.increaseLiquidity();
         }
     }
 }

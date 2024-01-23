@@ -4,14 +4,6 @@ pragma solidity 0.8.17;
 // Libraries
 import {LibDataTypes} from "./LibDataTypes.sol";
 
-struct Position {
-    uint256 tokenId;
-    uint256 liquidity;
-    int24 tickLower;
-    int24 tickUpper;
-    bool staked;
-}
-
 struct AppStorage {
     // System
     uint8 initialized;
@@ -44,8 +36,11 @@ struct AppStorage {
     string name;
     string symbol;
     // Position
-    uint256 positionCount;
-    mapping(uint256 => Position) positions;
+    uint256 currentTokenId;
+    uint256 liquidity;
+    int24 tickLower;
+    int24 tickUpper;
+    bool positionStaked;
     // External
     address nonFungibleTokenPositionManager;
     address masterChef;

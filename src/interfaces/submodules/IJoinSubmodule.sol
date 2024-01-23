@@ -11,5 +11,5 @@ interface IJoinSubmodule {
         uint256 _amount1Min
     ) external returns (uint256 _tokenId, uint128 _liquidity, uint256 _amount0, uint256 _amount1);
 
-    function stakePosition(uint256 _tokenId) external;
+    function stakePosition() external;
 }

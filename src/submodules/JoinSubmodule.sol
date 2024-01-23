@@ -35,7 +35,7 @@ contract JoinSubmodule is Modifiers, IJoinSubmodule {
         LibTokenizedVault.mint(msg.sender, uint256(_liquidity));
     }
 
-    function stakePosition(uint256 _positionId) external override onlyGovernanceOrController {
-        LibPositionManager.stake(_positionId);
+    function stakePosition() external override onlyGovernanceOrController {
+        LibPositionManager.stake();
     }
 }

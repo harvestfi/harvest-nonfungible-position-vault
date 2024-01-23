@@ -1,9 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.17;
 
-// Interfaces
-import {Position} from "../../libraries/LibAppStorage.sol";
-
 interface IVaultInfoSubmodule {
     // System
     function initialized() external view returns (uint8 _initialized);
@@ -30,10 +27,7 @@ interface IVaultInfoSubmodule {
     function underlyingBalanceWithInvestment() external view returns (uint256 _balance);
     function getPricePerFullShare() external view returns (uint256 _price);
     // Position
-    function positionCount() external view returns (uint256 _count);
-    function latestPositionId() external view returns (uint256 _positionId);
-    function positions(uint256 _tokenId) external view returns (Position memory _position);
-    function allPosition() external view returns (Position[] memory _positions);
+    function currentTokenId() external view returns (uint256 _currentTokenId);
     // External
     function nonFungibleTokenPositionManager() external view returns (address _nonFungibleTokenPositionManager);
     function masterChef() external view returns (address _masterChef);

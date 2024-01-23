@@ -13,7 +13,7 @@ import "@uniswap/v3-core/contracts/interfaces/IUniswapV3Pool.sol";
 import {IMasterChefV3} from "../interfaces/protocols/pancake/IMasterChefV3.sol";
 
 // Libraries
-import {Position, AppStorage, LibAppStorage} from "./LibAppStorage.sol";
+import {AppStorage, LibAppStorage} from "./LibAppStorage.sol";
 import {LibDataTypes} from "./LibDataTypes.sol";
 import {LibErrors} from "./LibErrors.sol";
 
@@ -62,34 +62,31 @@ library LibPositionManager {
             })
         );
 
-        Position storage position = s.positions[s.positionCount++];
-        position.tickLower = _tickLower;
-        position.tickUpper = _tickUpper;
-        position.liquidity = _liquidity;
-        position.tokenId = _tokenId;
+        s.tickLower = _tickLower;
+        s.tickUpper = _tickUpper;
+        s.liquidity = _liquidity;
+        s.currentTokenId = _tokenId;
 
         // Reset the allowances
         IERC20(s.token0).safeApprove(s.nonFungibleTokenPositionManager, 0);
         IERC20(s.token1).safeApprove(s.nonFungibleTokenPositionManager, 0);
     }
 
-    function stake(uint256 _positionId) internal addressConfiguration {
+    function stake() internal addressConfiguration {
         AppStorage storage s = LibAppStorage.systemStorage();
-        if (s.positions[_positionId].staked) {
-            revert LibErrors.PositionStaked(_positionId);
+        if (s.positionStaked) {
+            revert LibErrors.PositionStaked(s.currentTokenId);
         }
-        IERC721Upgradeable(s.nonFungibleTokenPositionManager).safeTransferFrom(
-            address(this), s.masterChef, s.positions[_positionId].tokenId
-        );
-        s.positions[_positionId].staked = true;
+        IERC721Upgradeable(s.nonFungibleTokenPositionManager).safeTransferFrom(address(this), s.masterChef, s.currentTokenId);
+        s.positionStaked = true;
     }
 
-    function withdraw(uint256 _positionId) internal {
+    function withdraw() internal {
         AppStorage storage s = LibAppStorage.systemStorage();
-        IMasterChefV3(s.masterChef).withdraw(_positionId, address(this));
+        IMasterChefV3(s.masterChef).withdraw(s.currentTokenId, address(this));
     }
 
-    function increaseLiquidity(uint256 _positionId) internal {
+    function increaseLiquidity() internal {
         AppStorage storage s = LibAppStorage.systemStorage();
         uint256 _amount0 = IERC20(s.token0).balanceOf(address(this));
         uint256 _amount1 = IERC20(s.token0).balanceOf(address(this));
@@ -97,7 +94,7 @@ library LibPositionManager {
         IERC20(s.token0).safeApprove(s.masterChef, _amount0);
         IERC20(s.token1).safeApprove(s.masterChef, _amount1);
         LibDataTypes.IncreaseLiquidityParams memory params = LibDataTypes.IncreaseLiquidityParams({
-            tokenId: s.positions[_positionId].tokenId,
+            tokenId: s.currentTokenId,
             amount0Desired: _amount0,
             amount1Desired: _amount1,
             amount0Min: 0,
@@ -111,10 +108,10 @@ library LibPositionManager {
         IERC20(s.token1).safeApprove(s.masterChef, 0);
     }
 
-    function decreaseLiquidity(uint256 _positionId, uint128 _rmLiquidity) internal {
+    function decreaseLiquidity(uint128 _rmLiquidity) internal {
         AppStorage storage s = LibAppStorage.systemStorage();
         LibDataTypes.DecreaseLiquidityParams memory params = LibDataTypes.DecreaseLiquidityParams({
-            tokenId: s.positions[_positionId].tokenId,
+            tokenId: s.currentTokenId,
             liquidity: _rmLiquidity,
             amount0Min: 0,
             amount1Min: 0,
@@ -124,10 +121,10 @@ library LibPositionManager {
         IMasterChefV3(s.masterChef).decreaseLiquidity(params);
     }
 
-    function collect(uint256 _positionId) internal returns (uint256 amount0, uint256 amount1) {
+    function collect() internal returns (uint256 amount0, uint256 amount1) {
         AppStorage storage s = LibAppStorage.systemStorage();
         LibDataTypes.CollectParams memory params = LibDataTypes.CollectParams({
-            tokenId: s.positions[_positionId].tokenId,
+            tokenId: s.currentTokenId,
             recipient: address(this),
             amount0Max: type(uint128).max,
             amount1Max: type(uint128).max
@@ -136,9 +133,9 @@ library LibPositionManager {
         return IMasterChefV3(s.masterChef).collect(params);
     }
 
-    function harvest(uint256 _positionId) internal returns (uint256 reward) {
+    function harvest() internal returns (uint256 reward) {
         AppStorage storage s = LibAppStorage.systemStorage();
-        return IMasterChefV3(s.masterChef).harvest(s.positions[_positionId].tokenId, address(this));
+        return IMasterChefV3(s.masterChef).harvest(s.currentTokenId, address(this));
     }
 
     function positionInfo(uint256 _tokenId) internal view returns (address, address, uint24, int24, int24, uint256) {

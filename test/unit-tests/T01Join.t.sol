@@ -5,7 +5,6 @@ pragma solidity 0.8.17;
 import {D01Deployment, console2} from "../utils/D01Deployment.t.sol";
 
 // libraries
-import {Position} from "../../src/libraries/LibAppStorage.sol";
 import {LibErrors} from "../../src/libraries/LibErrors.sol";
 
 // Interfaces
@@ -38,10 +37,8 @@ contract T01Join is D01Deployment {
         vault.configurePool(token0, token1, fee, vaultName);
         // join position
         vault.createPosition(tickLower, tickUpper, amount0Desired, amount1Desired, amount0Min, amount1Min);
-        uint256 positionCount = vault.positionCount();
-        Position[] memory position = vault.allPosition();
-        assertEq(position.length, 1);
-        assertEq(position.length, positionCount);
+        uint256 currentTokenId = vault.currentTokenId();
+        assertNotEq(currentTokenId, 0);
     }
 
     function testStake() public virtual {
@@ -65,15 +62,14 @@ contract T01Join is D01Deployment {
         );
 
         changePrank(governance);
-        vault.addPosition(tokenId, liquidity, tickLower, tickUpper);
+        vault.updatePosition(tokenId, liquidity, tickLower, tickUpper);
         // stake position should fail before configure external protocol
-        uint256 positionId = vault.positionCount() - 1;
         vm.expectRevert(LibErrors.AddressUnconfigured.selector);
-        vault.stakePosition(positionId);
+        vault.stakePosition();
         // configure external protocol
         vault.configureExternalProtocol(nonFungibleManagerPancake, masterchefV3Pancake);
         // stake position
-        vault.stakePosition(positionId);
+        vault.stakePosition();
     }
 
     function testJoinAndStake() public virtual {
@@ -94,6 +90,6 @@ contract T01Join is D01Deployment {
         // join position
         vault.createPosition(tickLower, tickUpper, amount0Desired, amount1Desired, amount0Min, amount1Min);
         // stake position
-        vault.stakePosition(vault.positionCount() - 1);
+        vault.stakePosition();
     }
 }

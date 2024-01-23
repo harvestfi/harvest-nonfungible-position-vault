@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import {IConfigureSubmodule} from "../interfaces/submodules/IConfigureSubmodule.sol";
 
 // Libraries
-import {Position} from "../libraries/LibAppStorage.sol";
 import {LibPositionManager} from "../libraries/LibPositionManager.sol";
 import {LibConstants} from "../libraries/LibConstants.sol";
 import {LibErrors} from "../libraries/LibErrors.sol";
@@ -110,32 +109,17 @@ contract ConfigureSubmodule is Modifiers, IConfigureSubmodule {
         emit LibEvents.UnderlyingTokenUpdate(_underlyingToken);
     }
 
-    function addPosition(uint256 _tokenId, uint256 _liquidity, int24 _tickLower, int24 _tickUpper)
+    function updatePosition(uint256 _tokenId, uint256 _liquidity, int24 _tickLower, int24 _tickUpper)
         external
         override
         onlyGovernanceOrController
     {
-        Position storage position = s.positions[s.positionCount++];
-        position.tokenId = _tokenId;
-        position.liquidity = _liquidity;
-        position.tickLower = _tickLower;
-        position.tickUpper = _tickUpper;
+        s.currentTokenId = _tokenId;
+        s.liquidity = _liquidity;
+        s.tickLower = _tickLower;
+        s.tickUpper = _tickUpper;
 
-        emit LibEvents.PositionAdd(s.positionCount, _tokenId, _liquidity, _tickLower, _tickUpper);
-    }
-
-    function updatePosition(uint256 _positionId, uint256 _tokenId, uint256 _liquidity, int24 _tickLower, int24 _tickUpper)
-        external
-        override
-        onlyGovernanceOrController
-    {
-        Position storage position = s.positions[_positionId];
-        position.tokenId = _tokenId;
-        position.liquidity = _liquidity;
-        position.tickLower = _tickLower;
-        position.tickUpper = _tickUpper;
-
-        emit LibEvents.PositionUpdate(_positionId, _tokenId, _liquidity, _tickLower, _tickUpper);
+        emit LibEvents.PositionUpdate(_tokenId, _liquidity, _tickLower, _tickUpper);
     }
 
     function setVaultPause(bool _pause) public override onlyGovernanceOrController {

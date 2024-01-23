@@ -5,7 +5,7 @@ pragma solidity 0.8.17;
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
 // Libraries
-import {Position, AppStorage, LibAppStorage} from "../libraries/LibAppStorage.sol";
+import {AppStorage, LibAppStorage} from "../libraries/LibAppStorage.sol";
 import {LibTokenizedVault} from "../libraries/LibTokenizedVault.sol";
 import {LibPositionManager} from "../libraries/LibPositionManager.sol";
 import {LibErrors} from "../libraries/LibErrors.sol";
@@ -18,7 +18,6 @@ contract InitVault is Modifiers {
         public
         initializer
     {
-        Position storage position = s.positions[s.positionCount++];
         s.nonFungibleTokenPositionManager = _nftPositionManager;
         s.masterChef = _masterchef;
 
@@ -30,10 +29,10 @@ contract InitVault is Modifiers {
         s.token0 = _token0;
         s.token1 = _token1;
         s.fee = _fee;
-        position.tickLower = _tickLower;
-        position.tickUpper = _tickUpper;
-        position.liquidity = _initialLiquidity;
-        position.tokenId = _tokenId;
+        s.tickLower = _tickLower;
+        s.tickUpper = _tickUpper;
+        s.liquidity = _initialLiquidity;
+        s.currentTokenId = _tokenId;
 
         // set the decimals and underlying unit
         uint8 decimals0 = IERC20Metadata(_token0).decimals();
@@ -45,7 +44,7 @@ contract InitVault is Modifiers {
         s.underlyingUnit = 10 ** decimals0;
 
         // stake position
-        LibPositionManager.stake(s.positionCount - 1);
+        LibPositionManager.stake();
 
         // initializing the vault token. By default, it has 18 decimals.
         LibTokenizedVault.__ERC20_init_unchained(

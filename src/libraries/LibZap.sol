@@ -30,7 +30,6 @@ library LibZap {
      * @param _originalAmount1 the current amount for token1 available for zapping
      */
     function zap(
-        uint256 _positionId,
         uint160 _sqrtPriceLimitX96,
         uint256 _originalAmount0,
         uint256 _originalAmount1,
@@ -39,25 +38,25 @@ library LibZap {
     ) internal returns (uint256 actualAmount0, uint256 actualAmount1) {
         require(_originalAmount0 > 0 || _originalAmount1 > 0, "Cannot be both 0");
         if (_originalAmount0 == 0) {
-            return _zapZero0(_positionId, _originalAmount1, _amount0OutMin, _sqrtPriceLimitX96);
+            return _zapZero0(_originalAmount1, _amount0OutMin, _sqrtPriceLimitX96);
         }
         if (_originalAmount1 == 0) {
-            return _zapZero1(_positionId, _originalAmount0, _amount1OutMin, _sqrtPriceLimitX96);
+            return _zapZero1(_originalAmount0, _amount1OutMin, _sqrtPriceLimitX96);
         }
     }
 
     /**
      * @dev Handles zap for the case when we have 0 token0s
      */
-    function _zapZero0(uint256 _positionId, uint256 _originalAmount1, uint256 _amount0OutMin, uint160 _sqrtPriceLimitX96)
+    function _zapZero0(uint256 _originalAmount1, uint256 _amount0OutMin, uint160 _sqrtPriceLimitX96)
         private
         returns (uint256, uint256)
     {
         AppStorage storage s = LibAppStorage.systemStorage();
 
         uint160 sqrtRatioX96 = getSqrtPriceX96();
-        uint160 sqrtRatioXA96 = TickMath.getSqrtRatioAtTick(s.positions[_positionId].tickLower);
-        uint160 sqrtRatioXB96 = TickMath.getSqrtRatioAtTick(s.positions[_positionId].tickUpper);
+        uint160 sqrtRatioXA96 = TickMath.getSqrtRatioAtTick(s.tickLower);
+        uint160 sqrtRatioXB96 = TickMath.getSqrtRatioAtTick(s.tickUpper);
 
         if (sqrtRatioX96 <= sqrtRatioXA96) {
             // we are below the low range, swap _originalAmount1 to token0
@@ -121,15 +120,15 @@ library LibZap {
     /**
      * @dev Handles zap for the case when we have 0 token1s
      */
-    function _zapZero1(uint256 _positionId, uint256 _originalAmount0, uint256 _amount1OutMin, uint160 _sqrtPriceLimitX96)
+    function _zapZero1(uint256 _originalAmount0, uint256 _amount1OutMin, uint160 _sqrtPriceLimitX96)
         private
         returns (uint256, uint256)
     {
         AppStorage storage s = LibAppStorage.systemStorage();
 
         uint160 sqrtRatioX96 = getSqrtPriceX96();
-        uint160 sqrtRatioXA96 = TickMath.getSqrtRatioAtTick(s.positions[_positionId].tickLower);
-        uint160 sqrtRatioXB96 = TickMath.getSqrtRatioAtTick(s.positions[_positionId].tickUpper);
+        uint160 sqrtRatioXA96 = TickMath.getSqrtRatioAtTick(s.tickLower);
+        uint160 sqrtRatioXB96 = TickMath.getSqrtRatioAtTick(s.tickUpper);
 
         if (sqrtRatioX96 <= sqrtRatioXA96) {
             return (0, 0);

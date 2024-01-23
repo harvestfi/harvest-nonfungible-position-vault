@@ -99,7 +99,7 @@ library LibFunctionRouter {
             action: LibDataTypes.SubmoduleUpgradeAction.Add,
             functionSelectors: functionSelectors
         });
-        functionSelectors = new bytes4[](13);
+        functionSelectors = new bytes4[](12);
         functionSelectors[0] = IConfigureSubmodule.configureExternalProtocol.selector;
         functionSelectors[1] = IConfigureSubmodule.configureInfrastructure.selector;
         functionSelectors[2] = IConfigureSubmodule.configurePool.selector;
@@ -109,10 +109,9 @@ library LibFunctionRouter {
         functionSelectors[6] = IConfigureSubmodule.setUnifiedRewardToken.selector;
         functionSelectors[7] = IConfigureSubmodule.setUnifiedDepositToken.selector;
         functionSelectors[8] = IConfigureSubmodule.setUnderlyingToken.selector;
-        functionSelectors[9] = IConfigureSubmodule.addPosition.selector;
-        functionSelectors[10] = IConfigureSubmodule.updatePosition.selector;
-        functionSelectors[11] = IConfigureSubmodule.setVaultPause.selector;
-        functionSelectors[12] = IConfigureSubmodule.setLiquidationRewardPause.selector;
+        functionSelectors[9] = IConfigureSubmodule.updatePosition.selector;
+        functionSelectors[10] = IConfigureSubmodule.setVaultPause.selector;
+        functionSelectors[11] = IConfigureSubmodule.setLiquidationRewardPause.selector;
         upgrade[3] = LibDataTypes.SubmoduleUpgrade({
             submoduleAddress: _configureSubmodule,
             action: LibDataTypes.SubmoduleUpgradeAction.Add,

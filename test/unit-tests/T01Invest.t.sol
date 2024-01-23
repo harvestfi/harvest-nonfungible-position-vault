@@ -6,7 +6,6 @@ import {D01Deployment, console2} from "../utils/D01Deployment.t.sol";
 import {PoolHelper} from "../utils/PoolHelper.t.sol";
 
 // libraries
-import {Position} from "../../src/libraries/LibAppStorage.sol";
 import {LibErrors} from "../../src/libraries/LibErrors.sol";
 
 // Interfaces
@@ -73,13 +72,13 @@ contract T01Invest is D01Deployment {
         // join position
         vault.createPosition(tickLower, tickUpper, amount0Desired, amount1Desired, amount0Min, amount1Min);
         // stake position
-        vault.stakePosition(vault.positionCount() - 1);
+        vault.stakePosition();
 
         bytes memory encodedPath0 = abi.encodePacked(token0, fee, token1);
         bytes memory encodedPath1 = abi.encodePacked(token1, fee, token0);
         mockSwap(10, 0x1b81D678ffb9C0263b24A97847620C99d213eB14, encodedPath0, encodedPath1, token0, token1);
 
         // do hard work
-        vault.doHardWork(vault.positionCount() - 1);
+        vault.doHardWork();
     }
 }

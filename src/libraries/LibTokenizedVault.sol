@@ -35,13 +35,7 @@ library LibTokenizedVault {
      */
     function totalAssets() internal view returns (uint256 totalLiquidity) {
         AppStorage storage s = LibAppStorage.systemStorage();
-        for (uint256 index; index < s.positionCount;) {
-            (,,,,, uint256 liquidity) = LibPositionManager.positionInfo(s.positions[index].tokenId);
-            totalLiquidity += liquidity;
-            unchecked {
-                index++;
-            }
-        }
+        return s.liquidity;
     }
 
     //HACK: Check for implementations here

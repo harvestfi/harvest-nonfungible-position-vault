@@ -11,9 +11,7 @@ interface IConfigureSubmodule {
     function setUnifiedRewardToken(address _rewardToken) external;
     function setUnifiedDepositToken(address _depositToken) external;
     function setUnderlyingToken(address _underlyingToken) external;
-    function addPosition(uint256 _tokenId, uint256 _liquidity, int24 _tickLower, int24 _tickUpper) external;
-    function updatePosition(uint256 _positionId, uint256 _tokenId, uint256 _liquidity, int24 _tickLower, int24 _tickUpper)
-        external;
+    function updatePosition(uint256 _tokenId, uint256 _liquidity, int24 _tickLower, int24 _tickUpper) external;
     function setVaultPause(bool _pause) external;
     function setLiquidationRewardPause(bool _pause) external;
 }

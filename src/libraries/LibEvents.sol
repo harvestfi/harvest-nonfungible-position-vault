@@ -31,8 +31,7 @@ library LibEvents {
     event UnifiedRewardTokenUpdate(address indexed rewardToken);
     event UnifiedDepositTokenUpdate(address indexed depositToken);
     event UnderlyingTokenUpdate(address indexed underlyingToken);
-    event PositionAdd(uint256 positionId, uint256 tokenId, uint256 liquidity, int24 tickLower, int24 tickUpper);
-    event PositionUpdate(uint256 positionId, uint256 tokenId, uint256 liquidity, int24 tickLower, int24 tickUpper);
+    event PositionUpdate(uint256 tokenId, uint256 liquidity, int24 tickLower, int24 tickUpper);
     event VaultPauseUpdate(bool paused);
     event LiquidationRewardPauseUpdate(bool paused);
     // Initializable
